@@ -40,3 +40,6 @@ dist/
 Thumbs.db
 desktop.ini
 
+# Ignorar diretórios removidos na branch docs
+backend/
+staticfiles/
