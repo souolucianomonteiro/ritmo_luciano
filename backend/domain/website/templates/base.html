@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Luciano Monteiro - Engenheiro de Software{% endblock %}</title>
+    
+    <!-- Carregar as bibliotecas de tags do Django -->
+    {% load static cms_tags menu_tags sekizai_tags %}
+
+    <!-- Link para o arquivo CSS principal -->
+    <link rel="stylesheet" href="{% static 'website/css/styles.css' %}">
+
+    <!-- Carregar o CSS adicional para o projeto -->
+    {% render_block "css" %}
+</head>
+<body>
+
+    <!-- Barra de Ferramentas do Django CMS -->
+    {% cms_toolbar %}
+
+    <!-- Seção de Cabeçalho -->
+    <header role="banner">
+        <div class="container">
+            <div class="logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'website/img/logo.png' %}" alt="Logotipo Luciano Monteiro">
+                </a>
+            </div>
+
+            <nav role="navigation">
+                <ul>
+                    {% show_menu 0 1 1 100 %}
+                </ul>
+            </nav>
+
+            {% block header %}
+            {% placeholder "header" %}
+            {% endblock %}
+        </div>
+    </header>
+
+    <!-- Seção Principal de Conteúdo -->
+    <main>
+        <div class="container">
+            {% block content %}
+            <!-- Conteúdo principal será injetado aqui nas páginas específicas -->
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Seção de Rodapé -->
+    <footer>
+        <div class="container">
+            {% block footer %}
+            {% placeholder "footer" %}
+            {% endblock %}
+        </div>
+    </footer>
+
+    <!-- Carregar scripts adicionais para o projeto -->
+    {% render_block "js" %}
+</body>
+</html>

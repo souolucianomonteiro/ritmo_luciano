@@ -1,0 +1,19 @@
+.welcome-section {
+    background-color: #4B0082;
+    padding: 20px;
+}
+
+.welcome-section h1, .welcome-section h2 {
+    color: white;
+}
+
+.welcome-section p {
+    color: #FFFFFF;
+    font-size: 1.2em;
+}
+
+.social-links img {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+}

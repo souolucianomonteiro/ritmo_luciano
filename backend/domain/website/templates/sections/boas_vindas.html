@@ -1,0 +1,28 @@
+<div class="boas-vindas-section">
+    <div class="imagem-conceito-container">
+        <img src="{{ instance.imagem.url }}" alt="{{ instance.alt_text }}" class="imagem-conceito">
+    </div>
+    <div class="faixa-superior"></div>
+    <div class="overlay-content">
+        <div class="boas-vindas-content">
+            <h1>{{ instance.title }}</h1>
+            <h2>{{ instance.subtitle }}</h2>
+            <p>{{ instance.text }}</p>
+            <div class="boas-vindas-logo">
+                <img src="{{ instance.logo.url }}" alt="Logomarca USP" class="logomarca-usp">
+            </div>
+            <div class="boas-vindas-icons">
+                <a href="https://www.instagram.com/soulucianomonteiro" target="_blank">
+                    <img src="{% static 'website/img/instagram-icon.png' %}" alt="Instagram" class="icone-rede-social">
+                </a>
+                <a href="https://www.facebook.com/soulucianomonteiro" target="_blank">
+                    <img src="{% static 'website/img/facebook-icon.png' %}" alt="Facebook" class="icone-rede-social">
+                </a>
+                <a href="https://www.linkedin.com/in/soulucianomonteiro" target="_blank">
+                    <img src="{% static 'website/img/linkedin-icon.png' %}" alt="LinkedIn" class="icone-rede-social">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="faixa-inferior"></div>
+</div>
