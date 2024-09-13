@@ -13,8 +13,6 @@ venv.bak/
 # Django
 *.log
 *.pot
-*.pyc
-__pycache__/
 local_settings.py
 db.sqlite3
 media/
@@ -34,11 +32,8 @@ dist/
 .vscode/
 .idea/
 
-
 # Sistema Operacional
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Git
-.git/
