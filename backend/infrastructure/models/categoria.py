@@ -20,7 +20,12 @@ class CategoriaModel(models.Model):
         :return: String representando a categoria.
         """
         return f"Categoria: {self.nome}"
-
     
     class Meta:
+        """
+        Metadados para a model TipoPluginModel.
+
+        Define o rótulo da aplicação, o nome singular e plural para exibição
+        no Django Admin.
+        """
         app_label = 'infrastructure'
