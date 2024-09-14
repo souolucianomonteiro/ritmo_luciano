@@ -11,8 +11,9 @@ gráfica amigável.
 from django.contrib import admin
 from infrastructure.models.artefato_plugin import ArtefatoPluginModel
 
-@admin.register(ArtefatoPluginModel)
+
 class ArtefatoPluginAdmin(admin.ModelAdmin):
+
     """
     Configuração do Django Admin para a model ArtefatoPluginModel.
     Define como a model será exibida e manipulada no Django Admin.
@@ -32,3 +33,6 @@ class ArtefatoPluginAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
         }),
     )
+
+
+admin.register(ArtefatoPluginModel, ArtefatoPluginAdmin)
