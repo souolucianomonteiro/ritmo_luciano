@@ -1,7 +1,7 @@
 from .categoria import CategoriaAdmin
 from .tipo_plugin import TipoPluginAdmin
-from infrastructure.models.artefato_plugin import ArtefatoPluginModel
+from .artefato_plugin import ArtefatoPluginAdmin
 
 __all__ = [
-    'CategoriaAdmin', 'TipoPluginAdmin', 'ArtefatoPluginModel'
+    'CategoriaAdmin', 'TipoPluginAdmin', 'ArtefatoPluginAdmin'
 ]
