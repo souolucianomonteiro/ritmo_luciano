@@ -11,7 +11,7 @@ gráfica amigável.
 from django.contrib import admin
 from infrastructure.models.artefato_plugin import ArtefatoPluginModel
 
-
+@admin.register(ArtefatoPluginModel)
 class ArtefatoPluginAdmin(admin.ModelAdmin):
 
     """
@@ -33,6 +33,3 @@ class ArtefatoPluginAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
         }),
     )
-
-
-admin.register(ArtefatoPluginModel, ArtefatoPluginAdmin)
