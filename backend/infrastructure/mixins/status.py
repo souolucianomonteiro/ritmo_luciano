@@ -12,18 +12,17 @@ Classes:
 """
 
 from django.db import models
+from .mixin_base import MixinBase
 
 
-class StatusMixin(models.Model):
+class StatusMixin(MixinBase):
     """
     Mixin que adiciona um campo de status a um modelo Django.
 
     Este mixin fornece um campo `status` que pode ser usado para
-    rastrear o estado
-    de uma instância do modelo. Ele oferece uma lista de escolhas padrão
-    para o campo,
-    incluindo 'active', 'inactive', 'pending' e 'completed'. O valor padrão
-    é 'active'.
+    rastrear o estado de uma instância do modelo. Ele oferece uma lista 
+    de escolhas padrão para o campo, incluindo 'active', 'inactive', 
+    'pending' e 'completed'. O valor padrão é 'active'.
 
     Atributos:
         STATUS_CHOICES (list): Lista de tuplas que define as opções
@@ -33,8 +32,7 @@ class StatusMixin(models.Model):
 
     Métodos:
         save(*args, **kwargs): (Herdado de models.Model) Salva a instância
-        atual do modelo,
-        aplicando validações e gerenciando a lógica do status.
+        atual do modelo, aplicando validações e gerenciando a lógica do status.
     """
 
     STATUS_CHOICES = [
@@ -44,15 +42,18 @@ class StatusMixin(models.Model):
         ('completed', 'Completed'),
     ]
 
-    status = models.CharField(max_length=10,
-                              choices=STATUS_CHOICES, default='active')
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='active'
+    )
 
     class Meta:
         """
-        Classe Meta para definir que este é um modelo abstrato.
+        Metadados para a classe modelo.
 
-        Atributos:
-            abstract (bool): Define que esta classe não será utilizada
-            para criar tabelas no banco de dados.
+        Define que a classe é abstrata, ou seja, não será criada uma tabela
+        diretamente para este modelo no banco de dados. Outras classes podem
+        herdar este modelo e estender sua funcionalidade.
         """
         abstract = True

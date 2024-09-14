@@ -7,31 +7,38 @@ marcar registros como excluídos sem removê-los fisicamente do banco de dados.
 
 from django.db import models
 from django.utils.timezone import now
+from .mixin_base import MixinBase
 
 
-class SoftDeleteMixin(models.Model):
+class SoftDeleteMixin(MixinBase):
     """
-    Mixin que adiciona campos e métodos para exclusão lógica em models.
+    Mixin que adiciona a funcionalidade de exclusão lógica (soft delete) para
+    modelos Django. Em vez de excluir registros do banco de dados, esta
+    abordagem marca os registros como inativos.
 
     Atributos:
-        is_deleted (bool): Indica se o registro foi excluído.
-        deleted_at (datetime): Armazena a data e hora da exclusão.
+        is_deleted (bool): Indica se o registro foi marcado como excluído.
+        deleted_at (datetime): Armazena a data e hora da exclusão lógica do
+        registro.
     """
 
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
-    def marcar_como_excluido(self):
+    def delete(self, using=None, keep_parents=False):
         """
-        Marca o registro como excluído e define a data e hora da exclusão.
+        Sobrescreve o método delete padrão para realizar uma exclusão lógica,
+        marcando o registro como excluído e armazenando a data e hora da
+        exclusão.
         """
         self.is_deleted = True
         self.deleted_at = now()
         self.save()
 
-    def restaurar(self):
+    def restore(self):
         """
-        Restaura o registro marcado como excluído, removendo a marcação.
+        Método para restaurar um registro que foi excluído logicamente,
+        revertendo os campos is_deleted e deleted_at.
         """
         self.is_deleted = False
         self.deleted_at = None

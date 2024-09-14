@@ -5,13 +5,12 @@ Este mixin adiciona campos para rastrear a data de criação, a data da última
 modificação e os usuários responsáveis pelas operações de criação e alteração
 dos registros no banco de dados.
 """
-
 from django.db import models
 from django.utils.timezone import now
 from django.conf import settings
+from infrastructure.mixins.mixin_base import MixinBase
 
-
-class AuditMixin(models.Model):
+class AuditMixin(MixinBase):
     """
     Mixin que adiciona campos de auditoria para rastreamento de criação e
     modificação de registros, incluindo os usuários responsáveis.

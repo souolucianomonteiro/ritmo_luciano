@@ -30,9 +30,10 @@ Exemplo de uso:
 """
 from django.db import models
 from django.utils.text import slugify
+from .mixin_base import MixinBase
 
 
-class SlugMixin(models.Model):
+class SlugMixin(MixinBase):
     """
     Mixin que adiciona um campo slug para URLs amigáveis em modelos Django.
     """
@@ -40,8 +41,11 @@ class SlugMixin(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        """
+        Sobrescreve o método save para gerar automaticamente o slug
+        se ele não for fornecido, baseado no campo 'nome'.
+        """
         # Se o slug ainda não foi definido, cria um com base no campo 'nome'
-        # Ajuste o campo 'nome' conforme necessário
         if not self.slug:
             self.slug = slugify(self.nome)
         super().save(*args, **kwargs)

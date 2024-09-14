@@ -7,9 +7,10 @@ marcar registros como inativos e reativá-los posteriormente.
 
 from django.db import models
 from django.utils.timezone import now
+from .mixin_base import MixinBase
 
 
-class InactivateMixin(models.Model):
+class InactivateMixin(MixinBase):
     """
     Mixin que adiciona campos e métodos para inativação em models.
 

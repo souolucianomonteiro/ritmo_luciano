@@ -7,9 +7,10 @@
 """
 
 from django.db import models
+from .mixin_base import MixinBase
 
 
-class OrderingMixin(models.Model):
+class OrderingMixin(MixinBase):
     """
     Mixin que adiciona um campo de ordenação e define uma
     ordem padrão para os registros.
@@ -23,6 +24,8 @@ class OrderingMixin(models.Model):
         Define que a classe é abstrata, ou seja, não será criada uma tabela
         diretamente para este modelo no banco de dados. Outras classes podem
         herdar este modelo e estender sua funcionalidade.
+
+        Define também a ordem padrão dos registros pelo campo `order`.
         """
         abstract = True
         ordering = ['order']
