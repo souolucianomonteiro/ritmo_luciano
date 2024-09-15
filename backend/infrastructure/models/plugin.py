@@ -44,6 +44,7 @@ class PluginModel(
     artefato_plugin = models.ForeignKey(ArtefatoPluginModel, on_delete=models.
                                         CASCADE, null=True, blank=True)
     documentacao = models.TextField(null=True, blank=True)
+    caminho_arquivo = models.CharField(max_length=500)
     permissoes = models.JSONField(default=list)
     historico_modificacoes = models.JSONField(default=list)
     tags = models.JSONField(default=list)

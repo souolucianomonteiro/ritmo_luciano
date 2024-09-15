@@ -53,6 +53,7 @@ class Plugin:
     artefato_plugin: ArtefatoPlugin
     status: str
     documentacao: Optional[str]
+    caminho_arquivo: str
     permissoes: List[str] = field(default_factory=list)
     historico_modificacoes: List[str] = field(default_factory=list)
     tags: List[str] = field(default_factory=list)

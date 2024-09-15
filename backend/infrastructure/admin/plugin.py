@@ -26,7 +26,7 @@ class PluginAdmin(admin.ModelAdmin):
         'tipo_plugin', 
         'versao', 
         'status', 
-        'uuid',  # Exibindo o UUID na lista
+        'id',  # Exibindo o UUID na lista
         'created_at', 
         'updated_at'
     )
@@ -40,10 +40,10 @@ class PluginAdmin(admin.ModelAdmin):
     search_fields = (
         'nome', 
         'versao', 
-        'uuid'  # Permitindo busca pelo UUID
+        'id'  # Permitindo busca pelo UUID
     )
     readonly_fields = (
-        'uuid',  # O UUID é somente leitura
+        'id',  # O UUID é somente leitura
         'created_at', 
         'updated_at', 
         'created_by', 
@@ -58,7 +58,7 @@ class PluginAdmin(admin.ModelAdmin):
                 'tipo_plugin', 
                 'versao', 
                 'status', 
-                'uuid',  # Incluindo UUID no conjunto de campos
+                'id',  # Incluindo UUID no conjunto de campos
                 'descricao', 
                 'caminho_arquivo', 
                 'documentacao', 
