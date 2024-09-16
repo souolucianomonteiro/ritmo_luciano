@@ -38,6 +38,7 @@ class TagPluginModel(AuditMixin, SoftDeleteMixin, InactivateMixin, models.
         singular e plural das instâncias do modelo para exibição no Django
         Admin.
         """
-        db_table = 'tags_plugin'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_tags_plugin'
         verbose_name = 'Tag de Plugin'
         verbose_name_plural = 'Tags de Plugin'

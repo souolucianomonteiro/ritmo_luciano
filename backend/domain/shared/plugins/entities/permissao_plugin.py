@@ -11,13 +11,14 @@ class PermissaoPlugin:
 
     Atributos:
         id (UUID): Identificador único da permissão.
-        plugin_id (UUID): Identificador do plugin ao qual a permissão
-        está associada.
-        codename (str): Código único da permissão.
-        name (str): Nome descritivo da permissão.
+        name (str): Nome da permissão.
+        codename (str): Codinome da permissão.
+        content_type_id (UUID): Identificador do tipo de conteúdo associado à permissão.
+        plugin_id (UUID): Identificador do plugin associado à permissão.
     """
-
     id: UUID
-    plugin_id: UUID
-    codename: str
     name: str
+    codename: str
+    content_type_id: UUID
+    plugin_id: UUID
+

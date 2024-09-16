@@ -25,6 +25,19 @@ class PluginAdmin(admin.ModelAdmin):
 
     filter_horizontal = ('permissoes', 'historico_modificacoes', 'tags', 'dependencias', 'templates')
 
+    # Organizando campos em seções com títulos
+    fieldsets = (
+        ('Informações do Plugin', {
+            'fields': ('nome', 'categoria', 'tipo_plugin', 'versao', 'descricao', 'artefato_plugin', 'documentacao', 'caminho_arquivo')
+        }),
+        ('Associações', {
+            'fields': ('tags', 'permissoes', 'historico_modificacoes', 'dependencias', 'templates')
+        }),
+        ('Informações de Auditoria e Soft Delete', {
+            'fields': ('created_by', 'updated_by', 'is_deleted', 'deleted_at', 'is_active', 'inactivated_at')
+        }),
+    )
+
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, change, **kwargs)
         # Lógica adicional pode ser adicionada aqui, se necessário

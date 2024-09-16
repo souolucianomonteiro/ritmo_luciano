@@ -33,6 +33,7 @@ class HistoricoModificacoesModel(AuditMixin, SoftDeleteMixin, InactivateMixin, m
         Define o nome da tabela no banco de dados (`historico_modificacoes`), além de configurar o nome
         singular e plural das instâncias do modelo para exibição no Django Admin.
         """
-        db_table = 'historico_modificacoes'
-        verbose_name = 'Histórico de Modificações'
-        verbose_name_plural = 'Históricos de Modificações'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_historico_modificacoes_plugin'
+        verbose_name = 'Histórico de Modificações do Plugin'
+        verbose_name_plural = 'Históricos de Modificações dos Plugins'

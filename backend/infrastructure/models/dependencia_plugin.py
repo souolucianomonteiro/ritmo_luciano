@@ -34,7 +34,10 @@ class DependenciaModel (
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    plugin = models.ForeignKey('PluginModel', related_name='dependencias', on_delete=models.CASCADE)
+    plugin = models.ForeignKey(
+        'PluginModel', 
+        on_delete=models.CASCADE, 
+        related_name='dependencia_plugin_set')  
     tipo_dependencia = models.CharField(max_length=50, choices=TIPO_DEPENDENCIA_CHOICES, default=PLUGIN)
     dependencia_plugin = models.ForeignKey('PluginModel', null=True, blank=True, on_delete=models.CASCADE)
     nome_dependencia = models.CharField(max_length=255, null=True, blank=True)
@@ -47,6 +50,7 @@ class DependenciaModel (
         Define o rótulo da aplicação, o nome singular e plural para exibição
         no Django Admin.
         """
-        db_table = 'dependencias'
-        verbose_name = 'Dependência'
-        verbose_name_plural = 'Dependências'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_dependencias_plugin'
+        verbose_name = 'Dependência do Plugin'
+        verbose_name_plural = 'Dependências do Plugin'

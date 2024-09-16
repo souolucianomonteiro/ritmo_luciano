@@ -1,7 +1,8 @@
 # backend/infrastructure/models/template_plugin_model.py
 
-from django.db import models
 from uuid import uuid4
+from django.db import models
+
 
 class TemplatePluginModel(models.Model):
     """
@@ -16,13 +17,17 @@ class TemplatePluginModel(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    plugin = models.ForeignKey('PluginModel', on_delete=models.CASCADE, related_name='templates')
+    plugin = models.ForeignKey(
+        'PluginModel', 
+        on_delete=models.CASCADE, 
+        related_name='template_plugin_set')
     nome_template = models.CharField(max_length=255)
     caminho_arquivo = models.CharField(max_length=255)
     contexto_placeholder = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:
-        db_table = 'template_plugin'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_template_plugin'
         verbose_name = 'Template de Plugin'
         verbose_name_plural = 'Templates de Plugin'
 
