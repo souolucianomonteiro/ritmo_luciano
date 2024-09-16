@@ -52,20 +52,6 @@ class Plugin:
     categoria_id: UUID
     tipo_plugin_id: UUID
     versao: str
-<<<<<<< HEAD
-    descricao: Optional[str]
-    artefato_plugin: ArtefatoPlugin
-    status: str
-    documentacao: Optional[str]
-    caminho_arquivo: str
-    permissoes: List[str] = field(default_factory=list)
-    historico_modificacoes: List[str] = field(default_factory=list)
-    tags: List[str] = field(default_factory=list)
-    dependencias: List[str] = field(default_factory=list)
-    criado_em: datetime
-    atualizado_em: datetime
-    ativo: bool
-=======
     descricao: Optional[str] = None
     artefato_plugin_id: Optional[UUID] = None
     documentacao: Optional[str] = None
@@ -75,4 +61,3 @@ class Plugin:
     tags: Optional[List[UUID]] = None
     dependencias: Optional[List[UUID]] = None
     templates: Optional[List[UUID]] = None
->>>>>>> models

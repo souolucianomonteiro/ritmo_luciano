@@ -15,6 +15,7 @@ from domain.shared.plugins.repositories.plugin import PluginRepository
 from domain.shared.plugins.aggregates.plugin import Plugin
 from infrastructure.models.plugin import PluginModel
 
+
 class DjangoPluginRepository(PluginRepository):
     """
     Implementação concreta do repositório do agregado Plugin utilizando o Django ORM.
@@ -46,21 +47,11 @@ class DjangoPluginRepository(PluginRepository):
                 artefato_plugin_id=plugin_model.artefato_plugin_id,
                 documentacao=plugin_model.documentacao,
                 caminho_arquivo=plugin_model.caminho_arquivo,
-<<<<<<< HEAD
-                permissoes=plugin_model.permissoes,
-                historico_modificacoes=plugin_model.historico_modificacoes,
-                tags=plugin_model.tags,
-                dependencias=plugin_model.dependencias,
-                criado_em=plugin_model.created_at,
-                atualizado_em=plugin_model.updated_at,
-                ativo=plugin_model.ativo,
-=======
                 permissoes=list(plugin_model.permissoes.all()),
                 historico_modificacoes=list(plugin_model.historico_modificacoes.all()),
                 tags=list(plugin_model.tags.all()),
                 dependencias=list(plugin_model.dependencias.all()),
                 templates=list(plugin_model.templates.all())
->>>>>>> models
             )
         except PluginModel.DoesNotExist:
             return None
@@ -93,50 +84,6 @@ class DjangoPluginRepository(PluginRepository):
         plugin_models = PluginModel.objects.all()  # pylint: disable=no-member
         return [
             Plugin(
-<<<<<<< HEAD
-                id=plugin.id,
-                uuid=plugin.uuid,
-                categoria=plugin.categoria,
-                tipo_plugin=plugin.tipo_plugin,
-                nome=plugin.nome,
-                descricao=plugin.descricao,
-                artefato_plugin=plugin.artefato_plugin,
-                versao=plugin.versao,
-                status=plugin.status,
-                documentacao=plugin.documentacao,
-                caminho_arquivo=plugin.caminho_arquivo,
-                permissoes=plugin.permissoes,
-                historico_modificacoes=plugin.historico_modificacoes,
-                tags=plugin.tags,
-                dependencias=plugin.dependencias,
-                criado_em=plugin.created_at,
-                atualizado_em=plugin.updated_at,
-                ativo=plugin.ativo,
-            ) for plugin in plugins
-        ]
-
-    def salvar(self, plugin: Plugin) -> None:
-        PluginModel.objects.update_or_create(
-            id=plugin.id,
-            defaults={
-                'uuid': plugin.uuid,
-                'nome': plugin.nome,
-                'categoria': plugin.categoria,
-                'tipo_plugin': plugin.tipo_plugin,
-                'descricao': plugin.descricao,
-                'artefato_plugin': plugin.artefato_plugin,
-                'versao': plugin.versao,
-                'status': plugin.status,
-                'documentacao': plugin.documentacao,
-                'caminho_arquivo': plugin.caminho_arquivo,
-                'permissoes': plugin.permissoes,
-                'historico_modificacoes': plugin.historico_modificacoes,
-                'tags': plugin.tags,
-                'dependencias': plugin.dependencias,
-                'ativo': plugin.ativo,
-            }
-        )
-=======
                 id=plugin_model.id,
                 nome=plugin_model.nome,
                 categoria_id=plugin_model.categoria_id,
@@ -176,7 +123,6 @@ class DjangoPluginRepository(PluginRepository):
             )
             for plugin_model in plugin_models
         ]
->>>>>>> models
 
     def list_by_tipo(self, tipo_plugin_id: UUID) -> List[Plugin]:
         plugin_models = PluginModel.objects.filter(tipo_plugin_id=tipo_plugin_id)  # pylint: disable=no-member

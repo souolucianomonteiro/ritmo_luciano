@@ -50,12 +50,6 @@ class PluginModel(
     artefato_plugin = models.ForeignKey(ArtefatoPluginModel, on_delete=models.CASCADE, null=True, blank=True)
     documentacao = models.TextField(null=True, blank=True)
     caminho_arquivo = models.CharField(max_length=500)
-<<<<<<< HEAD
-    permissoes = models.JSONField(default=list)
-    historico_modificacoes = models.JSONField(default=list)
-    tags = models.JSONField(default=list)
-    dependencias = models.JSONField(default=list)
-=======
     
     # Relacionamentos para as novas entidades
     permissoes = models.ManyToManyField(PermissaoPluginModel, related_name='plugins')
@@ -63,7 +57,6 @@ class PluginModel(
     tags = models.ManyToManyField(TagPluginModel, related_name='plugins')
     dependencias = models.ManyToManyField(DependenciaModel, related_name='plugins')
     templates = models.ManyToManyField(TemplatePluginModel, related_name='plugins')
->>>>>>> models
 
     class Meta:
         """
