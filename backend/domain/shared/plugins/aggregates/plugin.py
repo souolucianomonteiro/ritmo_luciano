@@ -13,13 +13,11 @@ Classes:
     PluginRepositoryConcrete: Implementação concreta do repositório do
     agregado Plugin.
 """
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import List, Optional
-from domain.shared.plugins.entities.categoria import Categoria
-from domain.shared.plugins.entities.tipo_plugin import TipoPlugin
-from domain.shared.plugins.entities.artefato_plugin import ArtefatoPlugin
+# backend/domain/plugins/plugin.py
 
+from dataclasses import dataclass
+from typing import List, Optional
+from uuid import UUID
 
 @dataclass
 class Plugin:
@@ -27,28 +25,34 @@ class Plugin:
     Classe de domínio que representa o agregado Plugin.
 
     Atributos:
-        id (Optional[int]): Identificador único do plugin.
+        id (UUID): Identificador único do plugin.
         nome (str): Nome do plugin.
+        categoria_id (UUID): Identificador da categoria do plugin.
+        tipo_plugin_id (UUID): Identificador do tipo do plugin.
         versao (str): Versão do plugin.
-        descricao (Optional[str]): Descrição do plugin.
-        status (str): Status atual do plugin.
-        documentacao (Optional[str]): Documentação associada ao plugin.
-        permissoes (List[str]): Lista de permissões necessárias para o uso do
-        plugin.
-        historico_modificacoes (List[str]): Histórico de modificações do
-        plugin.
-        tags (List[str]): Tags associadas ao plugin para classificação.
-        dependencias (List[str]): Dependências de outros plugins ou pacotes.
-        criado_em (datetime): Data de criação do plugin.
-        atualizado_em (datetime): Data de última atualização do plugin.
-        ativo (bool): Indica se o plugin está ativo.
+        descricao (str, opcional): Descrição do plugin.
+        artefato_plugin_id (UUID, opcional): Identificador do artefato 
+        associado ao plugin.
+        documentacao (str, opcional): Documentação do plugin.
+        caminho_arquivo (str): Caminho do arquivo principal do plugin.
+        permissoes (List[UUID], opcional): Lista de identificadores das
+        permissões associadas ao plugin.
+        historico_modificacoes (List[UUID], opcional): Lista de
+        identificadores de históricos de modificações do plugin.
+        tags (List[UUID], opcional): Lista de identificadores de tags
+        associadas ao plugin.
+        dependencias (List[UUID], opcional): Lista de identificadores de
+        dependências do plugin.
+        templates (List[UUID], opcional): Lista de identificadores dos 
+        templates associados ao plugin.
     """
 
-    id: Optional[int]
-    categoria: Categoria
-    tipo_plugin: TipoPlugin
+    id: UUID
     nome: str
+    categoria_id: UUID
+    tipo_plugin_id: UUID
     versao: str
+<<<<<<< HEAD
     descricao: Optional[str]
     artefato_plugin: ArtefatoPlugin
     status: str
@@ -61,3 +65,14 @@ class Plugin:
     criado_em: datetime
     atualizado_em: datetime
     ativo: bool
+=======
+    descricao: Optional[str] = None
+    artefato_plugin_id: Optional[UUID] = None
+    documentacao: Optional[str] = None
+    caminho_arquivo: str
+    permissoes: Optional[List[UUID]] = None
+    historico_modificacoes: Optional[List[UUID]] = None
+    tags: Optional[List[UUID]] = None
+    dependencias: Optional[List[UUID]] = None
+    templates: Optional[List[UUID]] = None
+>>>>>>> models

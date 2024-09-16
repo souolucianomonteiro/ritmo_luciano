@@ -16,65 +16,16 @@ from infrastructure.models.plugin import PluginModel
 @admin.register(PluginModel)
 class PluginAdmin(admin.ModelAdmin):
     """
-    Configuração do Django Admin para a model PluginModel.
-    Define como a model será exibida e manipulada no Django Admin.
+    Configurações de exibição e administração do modelo PluginModel no Django Admin.
     """
 
-    list_display = (
-        'nome', 
-        'categoria', 
-        'tipo_plugin', 
-        'versao', 
-        'status', 
-        'id',  # Exibindo o UUID na lista
-        'created_at', 
-        'updated_at'
-    )
-    list_filter = (
-        'categoria', 
-        'tipo_plugin', 
-        'status', 
-        'created_at', 
-        'updated_at'
-    )
-    search_fields = (
-        'nome', 
-        'versao', 
-        'id'  # Permitindo busca pelo UUID
-    )
-    readonly_fields = (
-        'id',  # O UUID é somente leitura
-        'created_at', 
-        'updated_at', 
-        'created_by', 
-        'updated_by'
-    )
+    list_display = ('nome', 'categoria', 'tipo_plugin', 'versao')
+    search_fields = ('nome', 'categoria__nome', 'tipo_plugin__nome', 'versao')
+    list_filter = ('categoria', 'tipo_plugin')
 
-    fieldsets = (
-        (None, {
-            'fields': (
-                'nome', 
-                'categoria', 
-                'tipo_plugin', 
-                'versao', 
-                'status', 
-                'id',  # Incluindo UUID no conjunto de campos
-                'descricao', 
-                'caminho_arquivo', 
-                'documentacao', 
-                'permissoes', 
-                'historico_modificacoes', 
-                'tags', 
-                'dependencias'
-            )
-        }),
-        ('Informações de Auditoria', {
-            'fields': (
-                'created_at', 
-                'updated_at', 
-                'created_by', 
-                'updated_by'
-            ),
-            'classes': ('collapse',),
-        }),
-    )
+    filter_horizontal = ('permissoes', 'historico_modificacoes', 'tags', 'dependencias', 'templates')
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj, change, **kwargs)
+        # Lógica adicional pode ser adicionada aqui, se necessário
+        return form

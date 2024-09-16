@@ -21,7 +21,12 @@ from infrastructure.mixins.status import StatusMixin
 from infrastructure.models.categoria import CategoriaModel
 from infrastructure.models.tipo_plugin import TipoPluginModel
 from infrastructure.models.artefato_plugin import ArtefatoPluginModel
-
+from infrastructure.models.permissao_plugin import PermissaoPluginModel
+from infrastructure.models.historico_modificacoes import (
+                                HistoricoModificacoesModel)
+from infrastructure.models.tag_plugin import TagPluginModel
+from infrastructure.models.dependencia_plugin import DependenciaModel
+from infrastructure.models.template_plugin import TemplatePluginModel
 
 class PluginModel(
     AuditMixin,
@@ -33,7 +38,8 @@ class PluginModel(
     """
     Model para a persistência do agregado Plugin no banco de dados.
     Inclui informações essenciais sobre o plugin, como nome, versão, status,
-    documentação, permissões, histórico de modificações, tags e dependências.
+    documentação, permissões, histórico de modificações, tags, dependências,
+    e templates.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nome = models.CharField(max_length=255)
@@ -41,23 +47,35 @@ class PluginModel(
     tipo_plugin = models.ForeignKey(TipoPluginModel, on_delete=models.CASCADE)
     versao = models.CharField(max_length=50)
     descricao = models.TextField(null=True, blank=True)
-    artefato_plugin = models.ForeignKey(ArtefatoPluginModel, on_delete=models.
-                                        CASCADE, null=True, blank=True)
+    artefato_plugin = models.ForeignKey(ArtefatoPluginModel, on_delete=models.CASCADE, null=True, blank=True)
     documentacao = models.TextField(null=True, blank=True)
     caminho_arquivo = models.CharField(max_length=500)
+<<<<<<< HEAD
     permissoes = models.JSONField(default=list)
     historico_modificacoes = models.JSONField(default=list)
     tags = models.JSONField(default=list)
     dependencias = models.JSONField(default=list)
+=======
+    
+    # Relacionamentos para as novas entidades
+    permissoes = models.ManyToManyField(PermissaoPluginModel, related_name='plugins')
+    historico_modificacoes = models.ManyToManyField(HistoricoModificacoesModel, related_name='plugins')
+    tags = models.ManyToManyField(TagPluginModel, related_name='plugins')
+    dependencias = models.ManyToManyField(DependenciaModel, related_name='plugins')
+    templates = models.ManyToManyField(TemplatePluginModel, related_name='plugins')
+>>>>>>> models
 
     class Meta:
         """
-        Metadados para a model PluginModel.
+        Metadados do modelo PluginModel.
 
-        Define o rótulo da aplicação, o nome singular e plural para exibição
-        no Django Admin.
+        Define o nome da tabela no banco de dados (`plugin`), além de
+        configurar o nome
+        singular e plural das instâncias do modelo para exibição no Django
+        Admin.
         """
         app_label = 'infrastructure'
         db_table = 'infrastructure_plugin'
         verbose_name = 'Plugin'
         verbose_name_plural = 'Plugins'
+
