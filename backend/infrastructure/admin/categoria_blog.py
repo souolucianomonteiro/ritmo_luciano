@@ -10,7 +10,7 @@ Classes:
     CategoryAdmin: Classe que define a configuração do Django Admin para a model Category.
 """
 from django.contrib import admin
-from infrastructure.models.categoria_post import Category
+from infrastructure.models.categoria_blog import Category
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

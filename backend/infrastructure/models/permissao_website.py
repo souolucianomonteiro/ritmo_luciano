@@ -30,7 +30,8 @@ class PermissaoWebsite(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin
         Define o comportamento do modelo no Django, incluindo o nome da tabela 
         no banco de dados, e nomes legíveis para o Django Admin.
         """
-        db_table = 'permissao_website'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_permissao_website'
         verbose_name = 'Permissão de Website'
         verbose_name_plural = 'Permissões de Website'
 

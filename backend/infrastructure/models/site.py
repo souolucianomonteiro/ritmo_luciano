@@ -50,7 +50,8 @@ class CustomSite(
         Define o nome da tabela no banco de dados para evitar conflitos com
         a tabela nativa.
         """
-        db_table = 'custom_site'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_custom_site'
         verbose_name = 'Site Personalizado'
         verbose_name_plural = 'Sites Personalizados'
 

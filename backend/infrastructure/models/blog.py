@@ -48,7 +48,8 @@ class Blog(
         Define o comportamento do modelo no Django, incluindo o nome da tabela 
         no banco de dados, e nomes legíveis para o Django Admin.
         """
-        db_table = 'blog'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_blog'
         verbose_name = 'Blog'
         verbose_name_plural = 'Blogs'
 
