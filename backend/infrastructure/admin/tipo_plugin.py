@@ -9,7 +9,6 @@ administração padrão do Django.
 from django.contrib import admin
 from infrastructure.models.tipo_plugin import TipoPluginModel
 
-
 @admin.register(TipoPluginModel)
 class TipoPluginAdmin(admin.ModelAdmin):
     """
@@ -24,3 +23,13 @@ class TipoPluginAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'created_at', 'updated_at')
     readonly_fields = ('created_at', 'updated_at')
     ordering = ('nome',)
+
+    # Organizando os campos em seções
+    fieldsets = (
+        ('Informações do Tipo de Plugin', {
+            'fields': ('nome', 'is_active')
+        }),
+        ('Informações de Auditoria', {
+            'fields': ('created_at', 'updated_at')
+        }),
+    )
