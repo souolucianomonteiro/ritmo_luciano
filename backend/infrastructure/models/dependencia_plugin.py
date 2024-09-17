@@ -51,6 +51,6 @@ class DependenciaModel (
         no Django Admin.
         """
         app_label = 'infrastructure'
-        db_table = 'infrastructure_dependencias_plugin'
+        db_table = 'infrastructure_dependencia_plugin'
         verbose_name = 'Dependência do Plugin'
         verbose_name_plural = 'Dependências do Plugin'

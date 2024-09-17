@@ -39,6 +39,6 @@ class TagPluginModel(AuditMixin, SoftDeleteMixin, InactivateMixin, models.
         Admin.
         """
         app_label = 'infrastructure'
-        db_table = 'infrastructure_tags_plugin'
+        db_table = 'infrastructure_tag_plugin'
         verbose_name = 'Tag de Plugin'
         verbose_name_plural = 'Tags de Plugin'

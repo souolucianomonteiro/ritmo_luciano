@@ -34,6 +34,6 @@ class HistoricoModificacoesModel(AuditMixin, SoftDeleteMixin, InactivateMixin, m
         singular e plural das instâncias do modelo para exibição no Django Admin.
         """
         app_label = 'infrastructure'
-        db_table = 'infrastructure_historico_modificacoes_plugin'
+        db_table = 'infrastructure_historico_modificacao_plugin'
         verbose_name = 'Histórico de Modificações do Plugin'
         verbose_name_plural = 'Históricos de Modificações dos Plugins'

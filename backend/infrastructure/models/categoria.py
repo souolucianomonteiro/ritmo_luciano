@@ -29,6 +29,7 @@ class CategoriaModel(models.Model):
         no Django Admin.
         """
         app_label = 'infrastructure'
+        db_table = 'infrastructure_categoria_plugin'
         verbose_name = 'Categoria do Plugin'
         verbose_name_plural = 'Categoria do Plugin'
 

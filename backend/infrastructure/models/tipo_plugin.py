@@ -29,6 +29,7 @@ class TipoPluginModel(AuditMixin, InactivateMixin, models.Model):
         no Django Admin.
         """
         app_label = 'infrastructure'
+        db_table = 'infrastructure_tipo_plugin'
         verbose_name = 'Tipo do Plugin'
         verbose_name_plural = 'Tipo do Plugin'
 

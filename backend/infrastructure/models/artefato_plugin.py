@@ -46,7 +46,7 @@ class ArtefatoPluginModel(AuditMixin, SoftDeleteMixin, InactivateMixin,
         no Django Admin.
         """
         app_label = 'infrastructure'
-        app_label = 'infrastructure'
+        db_table = 'infrastructure_artefato_plugin'
         verbose_name = 'Artefato do Plugin'
         verbose_name_plural = 'Artefatos do Plugin'
         
