@@ -4,6 +4,7 @@ from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.status import StatusMixin
 
+
 class UsuarioTipo(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin, models.Model):
     """
     Model que representa o tipo de usuário no sistema.

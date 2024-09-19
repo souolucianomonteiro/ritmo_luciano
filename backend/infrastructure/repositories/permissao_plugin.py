@@ -11,7 +11,8 @@ from infrastructure.models.permissao_plugin import PermissaoPluginModel
 
 class DjangoPermissaoPluginRepository(PermissaoPluginRepository):
     """
-    Implementação concreta do repositório de permissões de plugins utilizando o Django ORM.
+    Implementação concreta do repositório de permissões de plugins utilizando
+    o Django ORM.
     """
 
     def add(self, permissao: PermissaoPlugin) -> None:
