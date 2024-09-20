@@ -12,7 +12,7 @@ Classes:
 """
 
 from django.db import models
-from django.contrib.auth.models import User
+from infrastructure.models.pessoa_fisica import PessoaFisicaModel
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
@@ -38,7 +38,7 @@ class Blog(
 
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
+    proprietario = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE, related_name='blogs')
     site = models.ForeignKey('CustomSite', on_delete=models.CASCADE, related_name='blogs')
 
     class Meta:

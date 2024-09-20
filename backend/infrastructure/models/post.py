@@ -12,15 +12,17 @@ Classes:
 
 from django.db import models
 from infrastructure.mixins.audit import AuditMixin
-from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.status import StatusMixin
+from infrastructure.models.pessoa_fisica_tipo import PessoaFisicaTipo
+from infrastructure.models.comentario_post import ComentarioPost
+from infrastructure.models.tag_post import TagPost
 
 
 class Post(
-            AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin,
+            AuditMixin, SoftDeleteMixin, StatusMixin,
             models.Model
-            ):
+        ):
     """
     Model que representa uma postagem de blog.
 
@@ -29,16 +31,34 @@ class Post(
         slug (SlugField): O slug da postagem usado na URL.
         content (TextField): O conteúdo da postagem.
         published_date (DateTimeField): A data de publicação da postagem.
-        author (ForeignKey): O autor da postagem, relacionado ao User.
+        autor (ForeignKey): O autor da postagem, relacionado ao PessoaFisicaTipo.
         blog (ForeignKey): O blog ao qual esta postagem pertence.
+        comentarios (ManyToManyField): Relacionamento com ComentárioPost.
+        reacoes (ManyToManyField): Relacionamento para reações (a implementar).
+        numero_compartilhamentos (IntegerField): Número de vezes que o post foi compartilhado.
+        compartilhado (BooleanField): Indica se o post foi compartilhado.
+        status (CharField): Estado da postagem (rascunho, concluído, publicado, removido).
     """
+
+    STATUS_CHOICES = [
+        ('rascunho', 'Rascunho'),
+        ('concluido', 'Concluído'),
+        ('publicado', 'Publicado'),
+        ('removido', 'Removido'),
+    ]
 
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    autor = models.ForeignKey(PessoaFisicaTipo, on_delete=models.CASCADE, related_name='posts')
     blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='posts')
+    comentarios = models.ManyToManyField(ComentarioPost, related_name='posts', blank=True)
+    reacoes = models.ManyToManyField('ReacaoPost', related_name='posts', blank=True)  # A implementar
+    numero_compartilhamentos = models.IntegerField(default=0)
+    compartilhado = models.BooleanField(default=False)
+    tags = models.ManyToManyField(TagPost, related_name='posts', blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='rascunho')
 
     class Meta:
         """

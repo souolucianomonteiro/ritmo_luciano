@@ -16,21 +16,32 @@ from infrastructure.models.post import Post
 class PostAdmin(admin.ModelAdmin):
     """
     Configurações de exibição e administração do modelo Post no Django Admin.
+    As informações são organizadas em seções para facilitar a visualização.
     """
-
-    list_display = ('title', 'author', 'blog', 'published_date', 'is_active')
-    search_fields = ('title', 'author__username', 'blog__title')
-    list_filter = ('blog', 'is_active', 'published_date')
-    readonly_fields = ('created_at', 'updated_at')
+    list_display = ('title', 'slug', 'published_date', 'autor', 'blog', 'status', 'numero_compartilhamentos')
+    search_fields = ('title', 'slug', 'autor__primeiro_nome', 'autor__sobrenome', 'blog__title')
+    list_filter = ('status', 'published_date', 'blog', 'autor')
+    ordering = ('-published_date',)
 
     fieldsets = (
-        ('Informações da Postagem', {
-            'fields': ('title', 'slug', 'content', 'author', 'blog', 'is_active')
+        ('Informações Gerais', {
+            'fields': ('title', 'slug', 'content', 'status')
         }),
-        ('Datas e Auditoria', {
-            'fields': ('created_at', 'updated_at', 'published_date')
+        ('Autor e Blog', {
+            'fields': ('autor', 'blog')
+        }),
+        ('Datas', {
+            'fields': ('published_date',)
+        }),
+        ('Relacionamentos', {
+            'fields': ('comentarios', 'reacoes', 'votacoes', 'compartilhamentos')
+        }),
+        ('Compartilhamento', {
+            'fields': ('compartilhado', 'numero_compartilhamentos')
         }),
     )
+
+    filter_horizontal = ('comentarios', 'reacoes', 'votacoes', 'compartilhamentos')
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, change, **kwargs)
