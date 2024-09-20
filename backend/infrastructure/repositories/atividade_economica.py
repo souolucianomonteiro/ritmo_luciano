@@ -9,12 +9,13 @@ Classes:
     DjangoAtividadeEconomicaRepository: Repositório concreto que implementa os métodos de persistência
     para a entidade Atividade Econômica utilizando o Django ORM.
 """
-from infrastructure.models.atividade_economica import AtividadeEconomicaModel
+from typing import List, Optional
 from domain.website.entities.atividade_economica import (
                                 AtividadeEconomicaDomain)
 from domain.website.repositories.atividade_economica import (
                                 AtividadeEconomicaRepository)
-from typing import List, Optional
+from infrastructure.models.atividade_economica import AtividadeEconomicaModel
+
 
 class DjangoAtividadeEconomicaRepository(AtividadeEconomicaRepository):
     """

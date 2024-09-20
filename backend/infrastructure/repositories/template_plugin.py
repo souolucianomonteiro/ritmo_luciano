@@ -3,9 +3,9 @@
 
 from uuid import UUID
 from typing import List, Optional
+from domain.shared.plugins.entities.template_plugin import TemplatePlugin
 from domain.shared.plugins.repositories.template_plugin import (
                                         TemplatePluginRepository)
-from domain.shared.plugins.entities.template_plugin import TemplatePlugin
 from infrastructure.models.template_plugin import TemplatePluginModel
 
 

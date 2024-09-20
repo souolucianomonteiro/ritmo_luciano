@@ -3,9 +3,9 @@
 
 from uuid import UUID
 from typing import List, Optional
+from domain.shared.plugins.entities.permissao_plugin import PermissaoPlugin
 from domain.shared.plugins.repositories.permissao_plugin import (
                                         PermissaoPluginRepository)
-from domain.shared.plugins.entities.permissao_plugin import PermissaoPlugin
 from infrastructure.models.permissao_plugin import PermissaoPluginModel
 
 

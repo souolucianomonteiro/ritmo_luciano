@@ -4,9 +4,9 @@
 
 from uuid import UUID
 from typing import List, Optional
+from domain.shared.plugins.entities.dependencia_plugin import Dependencia
 from domain.shared.plugins.repositories.dependencia_plugin import (
                                                 DependenciaRepository)
-from domain.shared.plugins.entities.dependencia_plugin import Dependencia
 from infrastructure.models.dependencia_plugin import DependenciaModel
 
 

@@ -2,8 +2,8 @@
 # pylint: disable=no-member
 
 from typing import List, Optional
-from domain.shared.plugins.repositories.categoria import CategoriaRepository
 from domain.shared.plugins.entities.categoria import Categoria
+from domain.shared.plugins.repositories.categoria import CategoriaRepository
 from infrastructure.models.categoria import CategoriaModel
 
 

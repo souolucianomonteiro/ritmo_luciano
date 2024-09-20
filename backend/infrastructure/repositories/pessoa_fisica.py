@@ -9,11 +9,11 @@ Agora também inclui a relação de endereços associados à PessoaFisica.
 """
 from typing import Optional, List
 from datetime import date
-from infrastructure.models.pessoa_fisica import PessoaFisicaModel
-from infrastructure.models.endereco import EnderecoModel
 from domain.website.entities.pessoa_fisica import PessoaFisicaDomain
 from domain.website.repositories.pessoa_fisica import PessoaFisicaRepository
-from domain.website.entities.endereco import EnderecoDomain
+from infrastructure.models.pessoa_fisica import PessoaFisicaModel
+from infrastructure.models.usuario_tipo import UsuarioTipo
+from infrastructure.models.endereco import EnderecoModel
 
 
 class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
@@ -42,47 +42,12 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
             iniciador_conta_empresa=pessoa_fisica.iniciador_conta_empresa
         )
         pessoa_fisica_model.save()
-
-        # Atualizando os endereços associados
-        self._salvar_enderecos(pessoa_fisica_model, pessoa_fisica.enderecos)
-
         pessoa_fisica.id = pessoa_fisica_model.id
-        return pessoa_fisica
 
-    def _salvar_enderecos(self, pessoa_fisica_model: PessoaFisicaModel, enderecos: List[EnderecoDomain]) -> None:
-        """
-        Função privada para salvar os endereços associados a uma Pessoa Física.
-        """
-        endereco_models = []
-        for endereco in enderecos:
-            endereco_model, _ = EnderecoModel.objects.get_or_create(
-                rua=endereco.rua,
-                numero=endereco.numero,
-                complemento=endereco.complemento,
-                bairro=endereco.bairro,
-                cidade=endereco.cidade,
-                estado=endereco.estado,
-                cep=endereco.cep,
-                pais=endereco.pais,
-                tipo=endereco.tipo,
-                pessoa_fisica_id=pessoa_fisica_model.id,
-                pessoa_juridica_id=endereco.pessoa_juridica_id,
-                is_active=endereco.is_active,
-                data_inicio=endereco.data_inicio,
-                data_fim=endereco.data_fim
-            )
-            endereco_models.append(endereco_model)
-
-        pessoa_fisica_model.enderecos.set(endereco_models)
-
-    def get_by_id(self, pessoa_fisica_id: int) -> Optional[PessoaFisicaDomain]:
-        try:
-            pessoa_fisica_model = PessoaFisicaModel.objects.get(id=pessoa_fisica_id)
-
-            # Mapeando endereços
-            enderecos = [
-                EnderecoDomain(
-                    endereco_id=endereco.id,
+        # Salvando os endereços
+        if pessoa_fisica.enderecos:
+            enderecos_models = [
+                EnderecoModel.objects.get_or_create(
                     rua=endereco.rua,
                     numero=endereco.numero,
                     complemento=endereco.complemento,
@@ -90,13 +55,64 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
                     cidade=endereco.cidade,
                     estado=endereco.estado,
                     cep=endereco.cep,
-                    pais=endereco.pais,
-                    tipo=endereco.tipo,
-                    pessoa_fisica_id=endereco.pessoa_fisica_id,
-                    pessoa_juridica_id=endereco.pessoa_juridica_id,
-                    is_active=endereco.is_active,
-                    data_inicio=endereco.data_inicio,
-                    data_fim=endereco.data_fim
+                    pais=endereco.pais
+                )[0]
+                for endereco in pessoa_fisica.enderecos
+            ]
+            pessoa_fisica_model.enderecos.set(enderecos_models)
+
+        # Salvando os tipos de usuário associados
+        tipos_usuario = [
+            UsuarioTipo(
+                id=tipo_usuario.id if hasattr(tipo_usuario, 'id') else None,  # Verifica se há ID
+                nome=tipo_usuario.nome,
+                descricao=tipo_usuario.descricao
+            )
+            for tipo_usuario in UsuarioTipo.objects.filter(pessoas_fisicas=pessoa_fisica_model)
+        ]
+
+        return PessoaFisicaDomain(
+            id=pessoa_fisica_model.id,
+            primeiro_nome=pessoa_fisica_model.first_name,
+            sobrenome=pessoa_fisica_model.last_name,
+            email=pessoa_fisica_model.email,
+            data_nascimento=pessoa_fisica_model.data_nascimento,
+            idade_anos=None,  # Será calculado
+            idade_meses=None,  # Será calculado
+            cpf=pessoa_fisica_model.cpf,
+            genero=pessoa_fisica_model.genero,
+            profissao=None if pessoa_fisica_model.profissao is None else pessoa_fisica_model.profissao,
+            ocupacao=pessoa_fisica_model.ocupacao,
+            whatsapp=pessoa_fisica_model.whatsapp,
+            redes_sociais=pessoa_fisica_model.redes_sociais,
+            conta_pessoa=pessoa_fisica_model.conta_pessoa,
+            iniciador_conta_empresa=pessoa_fisica_model.iniciador_conta_empresa,
+            enderecos=pessoa_fisica.enderecos,  # Inclui os endereços
+            usuario_tipos=tipos_usuario  # Inclui os tipos de usuário
+        )
+
+    def get_by_id(self, pessoa_fisica_id: int) -> Optional[PessoaFisicaDomain]:
+        try:
+            pessoa_fisica_model = PessoaFisicaModel.objects.get(id=pessoa_fisica_id)
+            tipos_usuario = [
+                UsuarioTipo(
+                    id=tipo_usuario.id if hasattr(tipo_usuario, 'id') else None,
+                    nome=tipo_usuario.nome,
+                    descricao=tipo_usuario.descricao
+                )
+                for tipo_usuario in UsuarioTipo.objects.filter(pessoas_fisicas=pessoa_fisica_model)
+            ]
+
+            enderecos = [
+                EnderecoModel(
+                    rua=endereco.rua,
+                    numero=endereco.numero,
+                    complemento=endereco.complemento,
+                    bairro=endereco.bairro,
+                    cidade=endereco.cidade,
+                    estado=endereco.estado,
+                    cep=endereco.cep,
+                    pais=endereco.pais
                 )
                 for endereco in pessoa_fisica_model.enderecos.all()
             ]
@@ -117,10 +133,11 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
                 redes_sociais=pessoa_fisica_model.redes_sociais,
                 conta_pessoa=pessoa_fisica_model.conta_pessoa,
                 iniciador_conta_empresa=pessoa_fisica_model.iniciador_conta_empresa,
-                enderecos=enderecos
+                enderecos=enderecos,
+                usuario_tipos=tipos_usuario
             )
         except PessoaFisicaModel.DoesNotExist:
-            return None  
+            return None
 
     def delete(self, pessoa_fisica: PessoaFisicaDomain) -> None:
         PessoaFisicaModel.objects.filter(id=pessoa_fisica.id).delete()
@@ -145,8 +162,7 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
                 conta_pessoa=pessoa.conta_pessoa,
                 iniciador_conta_empresa=pessoa.iniciador_conta_empresa,
                 enderecos=[
-                    EnderecoDomain(
-                        endereco_id=endereco.id,
+                    EnderecoModel(
                         rua=endereco.rua,
                         numero=endereco.numero,
                         complemento=endereco.complemento,
@@ -154,15 +170,17 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
                         cidade=endereco.cidade,
                         estado=endereco.estado,
                         cep=endereco.cep,
-                        pais=endereco.pais,
-                        tipo=endereco.tipo,
-                        pessoa_fisica_id=endereco.pessoa_fisica_id,
-                        pessoa_juridica_id=endereco.pessoa_juridica_id,
-                        is_active=endereco.is_active,
-                        data_inicio=endereco.data_inicio,
-                        data_fim=endereco.data_fim
+                        pais=endereco.pais
                     )
                     for endereco in pessoa.enderecos.all()
+                ],
+                usuario_tipos=[
+                    UsuarioTipo(
+                        id=tipo_usuario.id if hasattr(tipo_usuario, 'id') else None,
+                        nome=tipo_usuario.nome,
+                        descricao=tipo_usuario.descricao
+                    )
+                    for tipo_usuario in UsuarioTipo.objects.filter(pessoas_fisicas=pessoa)
                 ]
             )
             for pessoa in pessoas_fisicas

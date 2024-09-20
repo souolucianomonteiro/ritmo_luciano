@@ -4,7 +4,8 @@ Módulo responsável pela definição da model PessoaFisicaModel.
 Este módulo define a model PessoaFisicaModel, que representa uma pessoa física
 no sistema.
 A model inclui campos para armazenar informações pessoais, como nome, email,
-CPF, data de nascimento, e aplica validações para garantir a integridade desses dados.
+CPF, data de nascimento, e aplica validações para garantir a integridade
+desses dados.
 
 Validações:
     - CPF: Verifica se o CPF fornecido é válido de acordo
@@ -14,7 +15,8 @@ Validações:
     e não está no futuro.
 
 Classes:
-    PessoaFisicaModel: Model que representa uma pessoa física no banco de dados.
+    PessoaFisicaModel: Model que representa uma pessoa física no banco
+    de dados.
 """
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -23,6 +25,7 @@ from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.status import StatusMixin
+from infrastructure.models.pessoa_fisica_tipo import UsuarioTipo
 from infrastructure.models.endereco import EnderecoModel
 from domain.shared.validations.valida_email import validar_email
 from domain.shared.validations.valida_data import validar_data_nascimento
@@ -35,8 +38,7 @@ class PessoaFisicaModel(
                         InactivateMixin, StatusMixin
                        ):
     """
-    Model que representa uma pessoa física no sistema, atuando também como uma
-    conta.
+    Model que representa uma pessoa física no sistema, atuando também como uma conta.
     
     Atributos:
         primeiro_nome: Primeiro nome da pessoa física.
@@ -53,8 +55,9 @@ class PessoaFisicaModel(
         sistema.
         iniciador_conta_empresa: Indica se essa pessoa física iniciou uma
         conta de pessoa jurídica.
+        usuario_tipo: Associações entre Pessoa Física e tipos de usuários.
     """
-    id = models.AutoField(primary_key=True)  
+    id = models.AutoField(primary_key=True)
     conta_pessoa = models.BooleanField(default=True)
     primeiro_nome = models.CharField(max_length=255)
     sobrenome = models.CharField(max_length=255)
@@ -75,9 +78,11 @@ class PessoaFisicaModel(
     ])
     iniciador_conta_empresa = models.BooleanField(default=False)
     enderecos = models.ManyToManyField(EnderecoModel, related_name='pessoas_fisicas', blank=True)
+    usuario_tipo = models.ManyToManyField(UsuarioTipo, related_name='pessoas_fisicas', blank=True)  
+
+    enderecos = models.ManyToManyField(EnderecoModel, related_name='pessoas_fisicas', blank=True)
 
     class Meta:
-        
         app_label = 'infrastructure'
         db_table = 'infrastructure_pessoa_fisica'
         verbose_name = 'Pessoa Física'
@@ -86,8 +91,7 @@ class PessoaFisicaModel(
     def __str__(self):
         return f'{self.primeiro_nome} {self.sobrenome}'
 
-
-def clean(self):
+    def clean(self):
         """
         Método de validação personalizado para PessoaFisicaModel.
 

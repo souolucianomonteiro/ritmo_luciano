@@ -1,8 +1,8 @@
 # pylint: disable=no-member
 
 from typing import List, Optional
-from domain.shared.plugins.repositories.tag_plugin import TagPluginRepository
 from domain.shared.plugins.entities.tag_plugin import TagPlugin
+from domain.shared.plugins.repositories.tag_plugin import TagPluginRepository
 from infrastructure.models.tag_plugin import TagPluginModel
 
 

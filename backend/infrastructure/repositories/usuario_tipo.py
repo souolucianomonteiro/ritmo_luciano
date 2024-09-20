@@ -12,9 +12,9 @@ Classes:
     UsuarioTipo.
 """
 from typing import Optional, List
-from infrastructure.models.usuario_tipo import UsuarioTipo
 from domain.website.entities.usuario_tipo import UsuarioTipoDomain
 from domain.website.repositories.usuario_tipo import UsuarioTipoRepository
+from infrastructure.models.usuario_tipo import UsuarioTipo
 
 
 class DjangoUsuarioTipoRepository(UsuarioTipoRepository):

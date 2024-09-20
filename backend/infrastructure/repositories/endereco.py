@@ -11,10 +11,9 @@ Classes:
       para a entidade EnderecoDomain.
 """
 from typing import List, Optional
-from infrastructure.models.endereco import EnderecoModel
 from domain.website.entities.endereco import EnderecoDomain
 from domain.website.repositories.endereco import EnderecoRepository
-
+from infrastructure.models.endereco import EnderecoModel
 
 class DjangoEnderecoRepository(EnderecoRepository):
     """

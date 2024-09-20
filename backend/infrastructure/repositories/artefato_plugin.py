@@ -8,9 +8,9 @@ os métodos para interação com o banco de dados, permitindo operações de
 CRUD (Create, Read, Update, Delete) para a entidade `ArtefatoPlugin`.
 """
 from typing import List, Optional
+from domain.shared.plugins.entities.artefato_plugin import ArtefatoPlugin
 from domain.shared.plugins.repositories.artefato_plugin import (
                                         ArtefatoPluginRepository)
-from domain.shared.plugins.entities.artefato_plugin import ArtefatoPlugin
 from infrastructure.models.artefato_plugin import ArtefatoPluginModel
 
 

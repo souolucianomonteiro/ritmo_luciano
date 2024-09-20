@@ -14,6 +14,8 @@ from typing import Optional, Literal
 from dataclasses import dataclass
 from datetime import date
 from domain.website.entities.endereco import EnderecoDomain
+from domain.website.entities.usuario_tipo import UsuarioTipoDomain
+
 
 @dataclass
 class PessoaFisicaDomain:
@@ -54,3 +56,4 @@ class PessoaFisicaDomain:
     conta_pessoa: bool
     iniciador_conta_empresa: bool
     enderecos: List[EnderecoDomain] = []
+    usuario_tipo: List[UsuarioTipoDomain] 

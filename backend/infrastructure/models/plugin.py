@@ -12,7 +12,6 @@ Classes:
     PluginModel: Model que representa um plugin, com todos os seus atributos e
     funcionalidades associadas.
 """
-import uuid
 from django.db import models
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
@@ -23,7 +22,7 @@ from infrastructure.models.tipo_plugin import TipoPluginModel
 from infrastructure.models.artefato_plugin import ArtefatoPluginModel
 from infrastructure.models.permissao_plugin import PermissaoPluginModel
 from infrastructure.models.historico_modificacoes import (
-                                HistoricoModificacoesModel)
+                            HistoricoModificacoesModel)
 from infrastructure.models.tag_plugin import TagPluginModel
 from infrastructure.models.dependencia_plugin import DependenciaModel
 from infrastructure.models.template_plugin import TemplatePluginModel
@@ -41,7 +40,7 @@ class PluginModel(
     documentação, permissões, histórico de modificações, tags, dependências,
     e templates.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=models.UUIDField, editable=False)
     nome = models.CharField(max_length=255)
     categoria = models.ForeignKey(CategoriaModel, on_delete=models.CASCADE)
     tipo_plugin = models.ForeignKey(TipoPluginModel, on_delete=models.CASCADE)
@@ -51,7 +50,6 @@ class PluginModel(
     documentacao = models.TextField(null=True, blank=True)
     caminho_arquivo = models.CharField(max_length=500)
     
-    # Relacionamentos para as novas entidades
     permissoes = models.ManyToManyField(PermissaoPluginModel, related_name='plugins')
     historico_modificacoes = models.ManyToManyField(HistoricoModificacoesModel, related_name='plugins')
     tags = models.ManyToManyField(TagPluginModel, related_name='plugins')
@@ -59,14 +57,6 @@ class PluginModel(
     templates = models.ManyToManyField(TemplatePluginModel, related_name='plugins')
 
     class Meta:
-        """
-        Metadados do modelo PluginModel.
-
-        Define o nome da tabela no banco de dados (`plugin`), além de
-        configurar o nome
-        singular e plural das instâncias do modelo para exibição no Django
-        Admin.
-        """
         app_label = 'infrastructure'
         db_table = 'infrastructure_plugin'
         verbose_name = 'Plugin'

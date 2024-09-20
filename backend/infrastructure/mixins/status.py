@@ -35,17 +35,10 @@ class StatusMixin(MixinBase):
         atual do modelo, aplicando validações e gerenciando a lógica do status.
     """
 
-    STATUS_CHOICES = [
-        ('active', 'Active'),
-        ('inactive', 'Inactive'),
-        ('pending', 'Pending'),
-        ('completed', 'Completed'),
-    ]
-
     status = models.CharField(
-        max_length=10,
-        choices=STATUS_CHOICES,
-        default='active'
+        max_length=20,  
+        choices=None,   # Choices definidos pela classe de origem
+        default=None    # Default também definido pela classe de origem
     )
 
     class Meta:

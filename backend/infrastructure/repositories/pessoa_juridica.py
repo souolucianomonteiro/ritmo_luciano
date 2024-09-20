@@ -1,22 +1,12 @@
 # pylint: disable=no-member
 
-"""
-Módulo responsável pela implementação concreta do repositório de 
-PessoaJuridica.
-
-Este módulo implementa o repositório concreto DjangoPessoaJuridicaRepository,
-utilizando o Django ORM para realizar as operações de persistência
-e recuperação de dados relacionados à entidade PessoaJuridica no banco de 
-dados.
-Agora também inclui a relação de endereços associados à PessoaJuridica.
-"""
 from typing import Optional, List
-from infrastructure.models.pessoa_juridica import PessoaJuridicaModel
-from infrastructure.models.endereco import EnderecoModel
 from domain.website.entities.pessoa_juridica import PessoaJuridicaDomain
 from domain.website.repositories.pessoa_juridica import (
-                                PessoaJuridicaRepository)
-from domain.website.entities.endereco import EnderecoDomain
+    PessoaJuridicaRepository)
+from infrastructure.models.pessoa_juridica import PessoaJuridicaModel
+from infrastructure.models.endereco import EnderecoModel
+from infrastructure.models.pessoa_fisica import PessoaFisicaModel
 
 
 class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
@@ -28,13 +18,18 @@ class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
     """
 
     def save(self, pessoa_juridica: PessoaJuridicaDomain) -> PessoaJuridicaDomain:
+        # Verificar se o usuário titular (pessoa física) existe
+        usuario_titular_model = PessoaFisicaModel.objects.get(id=pessoa_juridica.usuario_titular.id)
+        iniciador_model = PessoaFisicaModel.objects.get(id=pessoa_juridica.iniciador_id.id)
+
         pessoa_juridica_model = PessoaJuridicaModel(
             id=pessoa_juridica.id,
             razao_social=pessoa_juridica.razao_social,
             nome_fantasia=pessoa_juridica.nome_fantasia,
             cnpj=pessoa_juridica.cnpj,
             inscricao_estadual=pessoa_juridica.inscricao_estadual,
-            usuario_titular_id=pessoa_juridica.usuario_titular_id
+            usuario_titular=usuario_titular_model,  # Associar corretamente o usuário titular
+            iniciador=iniciador_model  # Associar o iniciador da conta
         )
         pessoa_juridica_model.save()
 
@@ -44,7 +39,7 @@ class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
         pessoa_juridica.id = pessoa_juridica_model.id
         return pessoa_juridica
 
-    def _salvar_enderecos(self, pessoa_juridica_model: PessoaJuridicaModel, enderecos: List[EnderecoDomain]) -> None:
+    def _salvar_enderecos(self, pessoa_juridica_model: PessoaJuridicaModel, enderecos: List[EnderecoModel]) -> None:
         """
         Função privada para salvar os endereços associados a uma Pessoa Jurídica.
         """
@@ -61,7 +56,6 @@ class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
                 pais=endereco.pais,
                 tipo=endereco.tipo,
                 pessoa_juridica_id=pessoa_juridica_model.id,
-                pessoa_fisica_id=endereco.pessoa_fisica_id,
                 is_active=endereco.is_active,
                 data_inicio=endereco.data_inicio,
                 data_fim=endereco.data_fim
@@ -76,7 +70,7 @@ class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
 
             # Mapeando endereços
             enderecos = [
-                EnderecoDomain(
+                EnderecoModel(
                     endereco_id=endereco.id,
                     rua=endereco.rua,
                     numero=endereco.numero,
@@ -87,7 +81,6 @@ class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
                     cep=endereco.cep,
                     pais=endereco.pais,
                     tipo=endereco.tipo,
-                    pessoa_fisica_id=endereco.pessoa_fisica_id,
                     pessoa_juridica_id=endereco.pessoa_juridica_id,
                     is_active=endereco.is_active,
                     data_inicio=endereco.data_inicio,
@@ -102,11 +95,26 @@ class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
                 nome_fantasia=pessoa_juridica_model.nome_fantasia,
                 cnpj=pessoa_juridica_model.cnpj,
                 inscricao_estadual=pessoa_juridica_model.inscricao_estadual,
-                usuario_titular_id=pessoa_juridica_model.usuario_titular_id,
+                usuario_titular=PessoaFisicaModel(
+                    id=pessoa_juridica_model.usuario_titular.id,
+                    primeiro_nome=pessoa_juridica_model.usuario_titular.first_name,
+                    sobrenome=pessoa_juridica_model.usuario_titular.last_name,
+                    email=pessoa_juridica_model.usuario_titular.email,
+                    cpf=pessoa_juridica_model.usuario_titular.cpf,
+                    genero=pessoa_juridica_model.usuario_titular.genero
+                ),
+                iniciador_id=PessoaFisicaModel(
+                    id=pessoa_juridica_model.iniciador.id,
+                    primeiro_nome=pessoa_juridica_model.iniciador.first_name,
+                    sobrenome=pessoa_juridica_model.iniciador.last_name,
+                    email=pessoa_juridica_model.iniciador.email,
+                    cpf=pessoa_juridica_model.iniciador.cpf,
+                    genero=pessoa_juridica_model.iniciador.genero
+                ),
                 enderecos=enderecos
             )
         except PessoaJuridicaModel.DoesNotExist:
-            return None  
+            return None
 
     def delete(self, pessoa_juridica: PessoaJuridicaDomain) -> None:
         PessoaJuridicaModel.objects.filter(id=pessoa_juridica.id).delete()
@@ -120,9 +128,24 @@ class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
                 nome_fantasia=pessoa_juridica.nome_fantasia,
                 cnpj=pessoa_juridica.cnpj,
                 inscricao_estadual=pessoa_juridica.inscricao_estadual,
-                usuario_titular_id=pessoa_juridica.usuario_titular_id,
+                usuario_titular=PessoaFisicaModel(
+                    id=pessoa_juridica.usuario_titular.id,
+                    primeiro_nome=pessoa_juridica.usuario_titular.first_name,
+                    sobrenome=pessoa_juridica.usuario_titular.last_name,
+                    email=pessoa_juridica.usuario_titular.email,
+                    cpf=pessoa_juridica.usuario_titular.cpf,
+                    genero=pessoa_juridica.usuario_titular.genero
+                ),
+                iniciador_id=PessoaFisicaModel(
+                    id=pessoa_juridica.iniciador.id,
+                    primeiro_nome=pessoa_juridica.iniciador.first_name,
+                    sobrenome=pessoa_juridica.iniciador.last_name,
+                    email=pessoa_juridica.iniciador.email,
+                    cpf=pessoa_juridica.iniciador.cpf,
+                    genero=pessoa_juridica.iniciador.genero
+                ),
                 enderecos=[
-                    EnderecoDomain(
+                    EnderecoModel(
                         endereco_id=endereco.id,
                         rua=endereco.rua,
                         numero=endereco.numero,
@@ -133,7 +156,6 @@ class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
                         cep=endereco.cep,
                         pais=endereco.pais,
                         tipo=endereco.tipo,
-                        pessoa_fisica_id=endereco.pessoa_fisica_id,
                         pessoa_juridica_id=endereco.pessoa_juridica_id,
                         is_active=endereco.is_active,
                         data_inicio=endereco.data_inicio,
