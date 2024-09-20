@@ -16,6 +16,8 @@ class PermissaoPluginModel(Permission):
         on_delete=models.CASCADE, 
         related_name='permissao_plugin_set')
     class Meta:
+
+        app_label = 'infrastructure'
         db_table = 'infrastructure_permissao_plugin'
         verbose_name = 'Permissão de Plugin'
         verbose_name_plural = 'Permissões de Plugin'

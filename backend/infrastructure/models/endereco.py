@@ -48,7 +48,7 @@ class EnderecoModel(models.Model):
         Metadados para a model EnderecoModel.
         """
         app_label = 'infrastructure'
-        db_table = 'endereco'
+        db_table = 'infrastructure_endereco'
         verbose_name = 'Endereço'
         verbose_name_plural = 'Endereços'
 

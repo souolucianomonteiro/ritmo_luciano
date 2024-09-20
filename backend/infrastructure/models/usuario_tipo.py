@@ -27,7 +27,8 @@ class UsuarioTipo(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin, mod
         Define o comportamento do modelo no Django, incluindo o nome da tabela 
         no banco de dados, e nomes legíveis para o Django Admin.
         """
-        db_table = 'usuario_tipo'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_usuario_tipo'
         verbose_name = 'Tipo de Usuário'
         verbose_name_plural = 'Tipos de Usuário'
 

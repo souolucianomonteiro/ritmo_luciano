@@ -47,7 +47,8 @@ class Post(
         Define o comportamento do modelo no Django, incluindo o nome da tabela 
         no banco de dados, e nomes legíveis para o Django Admin.
         """
-        db_table = 'post'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_post'
         verbose_name = 'Postagem de Blog'
         verbose_name_plural = 'Postagens de Blog'
         ordering = ['-published_date']
