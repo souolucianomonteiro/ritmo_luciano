@@ -29,3 +29,4 @@ class ReacaoDetalhe(models.Model):
 
     def __str__(self):
         return str(self.nome)
+    

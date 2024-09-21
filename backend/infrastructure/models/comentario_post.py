@@ -37,7 +37,7 @@ class ComentarioPost(AuditMixin, SoftDeleteMixin, InactivateMixin, StatusMixin, 
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     autor = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE)
-    texto = models.TextField()
+    comentario = models.TextField()
     data_comentario = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='aguardando')
 
