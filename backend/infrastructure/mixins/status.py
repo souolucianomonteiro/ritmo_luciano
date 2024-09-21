@@ -35,18 +35,24 @@ class StatusMixin(MixinBase):
         atual do modelo, aplicando validações e gerenciando a lógica do status.
     """
 
-    status = models.CharField(
-        max_length=20,  
-        choices=None,   # Choices definidos pela classe de origem
-        default=None    # Default também definido pela classe de origem
-    )
+    status = models.CharField(max_length=20, choices=[], default=None, null=True, blank=True)
 
     class Meta:
-        """
-        Metadados para a classe modelo.
-
-        Define que a classe é abstrata, ou seja, não será criada uma tabela
-        diretamente para este modelo no banco de dados. Outras classes podem
-        herdar este modelo e estender sua funcionalidade.
-        """
         abstract = True
+
+    def get_status_choices(self):
+        """
+        Sobrescreva este método na classe que herda o StatusMixin para definir as opções de status.
+        """
+        raise NotImplementedError("Defina 'get_status_choices' na sua model para fornecer opções de status.")
+
+    def save(self, *args, **kwargs):
+        """
+        No momento de salvar a instância, o mixin irá checar se a model filha tem opções de status definidas.
+        """
+        if not self.status:
+            # Checa se o status foi fornecido, senão aplica o primeiro valor disponível.
+            status_choices = self.get_status_choices()
+            if status_choices:
+                self.status = status_choices[0][0]  # Aplica o primeiro valor da tupla de choices
+        super().save(*args, **kwargs)

@@ -61,6 +61,13 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
             ]
             pessoa_fisica_model.enderecos.set(enderecos_models)
 
+        # Verifica se o usuário já tem um tipo associado. Se não, define como "Titular"
+        if not UsuarioTipo.objects.filter(pessoas_fisicas=pessoa_fisica_model).exists():
+            tipo_titular, created = UsuarioTipo.objects.get_or_create(nome='Titular', defaults={'descricao': 'Usuário Titular'})
+            pessoa_fisica_model.usuario_tipos.add(tipo_titular)
+
+        pessoa_fisica_model.save()
+
         # Salvando os tipos de usuário associados
         tipos_usuario = [
             UsuarioTipo(
@@ -90,7 +97,6 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
             enderecos=pessoa_fisica.enderecos,  # Inclui os endereços
             usuario_tipos=tipos_usuario  # Inclui os tipos de usuário
         )
-
     def get_by_id(self, pessoa_fisica_id: int) -> Optional[PessoaFisicaDomain]:
         try:
             pessoa_fisica_model = PessoaFisicaModel.objects.get(id=pessoa_fisica_id)

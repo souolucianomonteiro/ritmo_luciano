@@ -20,6 +20,14 @@ class UsuarioTipo(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin, mod
     nome = models.CharField(max_length=255, unique=True)
     descricao = models.TextField(null=True, blank=True)
 
+    STATUS_CHOICES = [
+        ('ativo', 'Ativo'),
+        ('inativo', 'Inativo'),
+    ]
+
+    def get_status_choices(self):
+        return self.STATUS_CHOICES
+
     class Meta:
         """
         Metadados para a model UsuarioTipo.
