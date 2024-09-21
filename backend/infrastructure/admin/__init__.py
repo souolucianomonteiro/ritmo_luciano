@@ -1,8 +1,8 @@
 """
-Módulo responsável pela configuração do Django Admin para o modelo EnderecoModel.
+Módulo responsável pela configuração do Django Admin.
 
-Este módulo define a classe EnderecoAdmin, que configura como os dados da entidade
-Endereço serão exibidos e manipulados na interface de administração do Django.
+Este módulo define as classes e os dados que serão exibidos e manipulados
+na interface de administração do Django.
 
 Classes:
     EnderecoAdmin: Classe que configura a interface de administração de EnderecoModel.
@@ -28,6 +28,12 @@ from .profissao import ProfissaoAdmin
 from .pessoa_fisica import PessoaFisicaAdmin
 from .pessoa_juridica import PessoaJuridicaAdmin
 from .endereco import EnderecoAdmin
+from .visualizacao_post import VisualizacaoPostAdmin
+from .reacao_comentario import ReacaoComentarioAdmin
+from .votacao_post import VotacaoPost
+from .compartilhamento_post import CompartilhamentoPostAdmin
+from .comentario_post import ComentarioPostAdmin
+from .reacao_detalhe import ReacaoDetalheAdmin
 
 __all__ = [
     'CategoriaAdmin', 'TipoPluginAdmin', 'ArtefatoPluginAdmin', 'PluginAdmin',
@@ -36,5 +42,8 @@ __all__ = [
     'SubdominioAdmin', 'BlogAdmin', 'PostAdmin', 'CategoryAdmin', 'TagAdmin',
     'UsuarioTipoAdmin', 'PermissaoWebsiteAdmin', 'ProfissaoAdmin',
     'PessoaFisicaAdmin', 'PessoaJuridicaAdmin', 'EnderecoAdmin',
+    'VisualizacaoPostAdmin', 'ReacaoComentarioAdmin', 'VotacaoPost',
+    'CompartilhamentoPostAdmin', 'ComentarioPostAdmin','ReacaoDetalheAdmin',
+
     
     ]

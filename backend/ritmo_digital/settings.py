@@ -252,6 +252,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'backend/domain/website/static'),
 ]
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 # STATIC_ROOT é usado para coletar todos os arquivos estáticos em
 # comando para servir o storage python manage.py collectstatic
@@ -264,8 +265,8 @@ STATICFILES_FINDERS = [
 ]
 
 # Configuração para arquivos de mídia
-MEDIA_URL = "media/"
-MEDIA_ROOT = str(BASE_DIR.parent / "media")
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type

@@ -11,12 +11,13 @@ Classes:
 """
 
 from django.db import models
+from djangocms_text_ckeditor.fields import HTMLField
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.status import StatusMixin
 from infrastructure.models.pessoa_fisica_tipo import PessoaFisicaTipo
 from infrastructure.models.comentario_post import ComentarioPost
-from infrastructure.models.tag_post import TagPost
+from infrastructure.models.tag_post import Tag
 
 
 class Post(
@@ -31,13 +32,16 @@ class Post(
         slug (SlugField): O slug da postagem usado na URL.
         content (TextField): O conteúdo da postagem.
         published_date (DateTimeField): A data de publicação da postagem.
-        autor (ForeignKey): O autor da postagem, relacionado ao PessoaFisicaTipo.
+        autor (ForeignKey): O autor da postagem, relacionado ao
+        PessoaFisicaTipo.
         blog (ForeignKey): O blog ao qual esta postagem pertence.
         comentarios (ManyToManyField): Relacionamento com ComentárioPost.
         reacoes (ManyToManyField): Relacionamento para reações (a implementar).
-        numero_compartilhamentos (IntegerField): Número de vezes que o post foi compartilhado.
+        numero_compartilhamentos (IntegerField): Número de vezes que o post
+        foi compartilhado.
         compartilhado (BooleanField): Indica se o post foi compartilhado.
-        status (CharField): Estado da postagem (rascunho, concluído, publicado, removido).
+        status (CharField): Estado da postagem (rascunho, concluído, publicado,
+        removido).
     """
 
     STATUS_CHOICES = [
@@ -49,7 +53,7 @@ class Post(
 
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
-    content = models.TextField()
+    content = HTMLField()
     published_date = models.DateTimeField(auto_now_add=True)
     autor = models.ForeignKey(PessoaFisicaTipo, on_delete=models.CASCADE, related_name='posts')
     blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='posts')
@@ -57,7 +61,7 @@ class Post(
     reacoes = models.ManyToManyField('ReacaoPost', related_name='posts', blank=True)  # A implementar
     numero_compartilhamentos = models.IntegerField(default=0)
     compartilhado = models.BooleanField(default=False)
-    tags = models.ManyToManyField(TagPost, related_name='posts', blank=True)
+    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='rascunho')
 
     class Meta:
