@@ -97,6 +97,7 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
             enderecos=pessoa_fisica.enderecos,  # Inclui os endereços
             usuario_tipos=tipos_usuario  # Inclui os tipos de usuário
         )
+        
     def get_by_id(self, pessoa_fisica_id: int) -> Optional[PessoaFisicaDomain]:
         try:
             pessoa_fisica_model = PessoaFisicaModel.objects.get(id=pessoa_fisica_id)

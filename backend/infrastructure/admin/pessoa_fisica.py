@@ -11,11 +11,11 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
     list_display = ('primeiro_nome', 'sobrenome', 'email', 'cpf', 'genero', 'idade_em_anos', 'idade_em_meses', 'conta_pessoa', 'iniciador_conta_empresa')
     search_fields = ('primeiro_nome', 'sobrenome', 'email', 'cpf')
     list_filter = ('genero', 'conta_pessoa', 'iniciador_conta_empresa')
-    ordering = ('primeiro_nome', 'sobrenome')
+    ordering = ('primeiro_nome','sobrenome')
 
     fieldsets = (
         ('Informações Pessoais', {
-            'fields': ('primeiro_nome', 'sobrenome', 'email', 'cpf', 'data_nascimento', 'idade_em_anos', 'idade_em_meses', 'genero'),
+            'fields': ('primeiro_nome', 'sobrenome','email', 'cpf', 'data_nascimento', 'genero'),
             'description': 'Preencha as informações pessoais da pessoa física.',
         }),
         ('Contato', {
@@ -32,14 +32,21 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Método para exibir idade em anos no admin
+    # Calcular e exibir idade em anos
     def idade_em_anos(self, obj):
-        return obj.idade_anos
+        if obj.data_nascimento:
+            hoje = date.today()
+            idade_anos = hoje.year - obj.data_nascimento.year - ((hoje.month, hoje.day) < (obj.data_nascimento.month, obj.data_nascimento.day))
+            return idade_anos
+        return None
 
-    # Método para exibir idade em meses no admin
+    # Calcular e exibir idade em meses
     def idade_em_meses(self, obj):
-        return obj.idade_meses
+        if obj.data_nascimento:
+            hoje = date.today()
+            idade_meses = (hoje.year - obj.data_nascimento.year) * 12 + hoje.month - obj.data_nascimento.month
+            return idade_meses
+        return None
 
-    # Definir as descrições para os campos de idade no admin
     idade_em_anos.short_description = 'Idade (Anos)'
     idade_em_meses.short_description = 'Idade (Meses)'
