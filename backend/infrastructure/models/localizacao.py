@@ -48,7 +48,8 @@ class Localizacao(models.Model):
         """
         Metadados para o modelo Localizacao.
         """
-        db_table = 'localizacao'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_localizacao'
         verbose_name = 'Localização'
         verbose_name_plural = 'Localizações'
 

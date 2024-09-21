@@ -18,15 +18,16 @@ Classes:
     PessoaFisicaModel: Model que representa uma pessoa física no banco
     de dados.
 """
-from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
+from datetime import date
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.exceptions import ValidationError
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.status import StatusMixin
-from infrastructure.models.pessoa_fisica_tipo import UsuarioTipo
 from infrastructure.models.endereco import EnderecoModel
+from infrastructure.models.usuario_tipo import UsuarioTipo
 from domain.shared.validations.valida_email import validar_email
 from domain.shared.validations.valida_data import validar_data_nascimento
 from domain.shared.validations.valida_cpf import validar_cpf
@@ -34,7 +35,7 @@ from .profissao import ProfissaoModel
 
 
 class PessoaFisicaModel(
-                        User, AuditMixin, SoftDeleteMixin,
+                        AbstractUser, AuditMixin, SoftDeleteMixin,
                         InactivateMixin, StatusMixin
                        ):
     """
@@ -57,12 +58,12 @@ class PessoaFisicaModel(
         conta de pessoa jurídica.
         usuario_tipo: Associações entre Pessoa Física e tipos de usuários.
     """
-    id = models.AutoField(primary_key=True)
     conta_pessoa = models.BooleanField(default=True)
     primeiro_nome = models.CharField(max_length=255)
     sobrenome = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     data_nascimento = models.DateField(null=True, blank=True)
+    nome = models.CharField(max_length=255)
     profissao = models.ForeignKey(ProfissaoModel, on_delete=models.SET_NULL, null=True, blank=True, related_name='pessoas_fisicas')
     ocupacao = models.CharField(max_length=255, null=True, blank=True)
     whatsapp = models.CharField(max_length=20, null=True, blank=True)
@@ -78,16 +79,55 @@ class PessoaFisicaModel(
     ])
     iniciador_conta_empresa = models.BooleanField(default=False)
     enderecos = models.ManyToManyField(EnderecoModel, related_name='pessoas_fisicas', blank=True)
-    usuario_tipo = models.ManyToManyField(UsuarioTipo, related_name='pessoas_fisicas', blank=True)  
+    tipos_de_usuario = models.ManyToManyField(
+        UsuarioTipo,
+        through='PessoaFisicaTipo',  # Model intermediária
+        related_name='pessoas_fisicas'
+    )
 
-    enderecos = models.ManyToManyField(EnderecoModel, related_name='pessoas_fisicas', blank=True)
+    # Adicionando related_name exclusivos para evitar conflitos
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='pessoa_fisica_groups',  # Nome exclusivo para evitar conflito
+        blank=True,
+        help_text='Os grupos aos quais este usuário pertence.',
+        verbose_name='Grupos'
+    )
+    
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='pessoa_fisica_permissions',  # Nome exclusivo para evitar conflito
+        blank=True,
+        help_text='Permissões específicas deste usuário.',
+        verbose_name='Permissões de usuário'
+    )
+    
+    @property
+    def idade_anos_e_meses(self):
+        """Calcula a idade em anos e meses"""
+        if isinstance(self.data_nascimento, date):
+            today = date.today()
 
-    class Meta:
-        app_label = 'infrastructure'
-        db_table = 'infrastructure_pessoa_fisica'
-        verbose_name = 'Pessoa Física'
-        verbose_name_plural = 'Pessoas Físicas'
+            # Calcula a idade em anos
+            years = today.year - self.data_nascimento.year
 
+            # Verifica se já passou o aniversário deste ano
+            if (today.month, today.day) < (self.data_nascimento.month, self.data_nascimento.day):
+                years -= 1
+
+            # Calcula os meses de diferença
+            months = today.month - self.data_nascimento.month
+            if today.day < self.data_nascimento.day:
+                months -= 1
+
+            # Ajusta o cálculo dos meses se necessário
+            if months < 0:
+                months += 12
+
+            return f"{years} anos e {months} meses"
+        
+        return None  # Caso não haja data de nascimento
+    
     def __str__(self):
         return f'{self.primeiro_nome} {self.sobrenome}'
 
@@ -108,3 +148,12 @@ class PessoaFisicaModel(
 
         # Valida a data de nascimento usando a função personalizada
         validar_data_nascimento(self.data_nascimento)
+
+    class Meta:
+        """
+        Metadados da model Pessoa Física.
+        """
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_pessoa_fisica'
+        verbose_name = 'Pessoa Física'
+        verbose_name_plural = 'Pessoas Físicas'

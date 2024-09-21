@@ -1,6 +1,5 @@
 from django.db import models
-from infrastructure.models.pessoa_fisica import PessoaFisicaModel
-from infrastructure.models.pessoa_juridica import PessoaJuridicaModel
+
 
 
 class EnderecoModel(models.Model):
@@ -37,8 +36,8 @@ class EnderecoModel(models.Model):
         ('comercial', 'Comercial'),
         ('correspondencia', 'Correspondência')
     ])
-    pessoa_fisica = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE, null=True, blank=True, related_name='enderecos')
-    pessoa_juridica = models.ForeignKey(PessoaJuridicaModel, on_delete=models.CASCADE, null=True, blank=True, related_name='enderecos')
+    pessoa_fisica = models.ForeignKey('PessoaFisicaModel', on_delete=models.CASCADE, null=True, blank=True, related_name='enderecos_fisica')
+    pessoa_juridica = models.ForeignKey('PessoaJuridicaModel', on_delete=models.CASCADE, null=True, blank=True, related_name='enderecos_juridica')
     is_active = models.BooleanField(default=True)
     data_inicio = models.DateTimeField(auto_now_add=True)
     data_fim = models.DateTimeField(null=True, blank=True)

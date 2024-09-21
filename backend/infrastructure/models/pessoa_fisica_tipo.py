@@ -1,7 +1,12 @@
+"""Módulo que implementa a model da relação pessoa física X usuario tipo"""
+
 from django.db import models
+from infrastructure.models.pessoa_fisica import PessoaFisicaModel
+from infrastructure.models.usuario_tipo import UsuarioTipo
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
+
 
 class PessoaFisicaTipo( 
                        AuditMixin, InactivateMixin,
@@ -18,8 +23,8 @@ class PessoaFisicaTipo(
         usuario_tipo (ForeignKey): Referência ao tipo de usuário.
     """
     
-    pessoa_fisica = models.ForeignKey('PessoaFisicaModel', on_delete=models.CASCADE)
-    usuario_tipo = models.ForeignKey('UsuarioTipo', on_delete=models.CASCADE)
+    pessoa_fisica = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE)
+    usuario_tipo = models.ForeignKey(UsuarioTipo, on_delete=models.CASCADE)
 
     class Meta:
         """
@@ -28,8 +33,8 @@ class PessoaFisicaTipo(
         Define o comportamento do modelo no Django, incluindo o nome da tabela
         no banco de dados e restrições de unicidade.
         """
-        app_label = 'insfrastructure'
-        db_table = 'pessoa_fisica_tipo'
+        app_label = 'infrastructure'
+        db_table = 'infrastructure_pessoa_fisica_tipo'
         verbose_name = 'Tipo de Usuário da Pessoa Física'
         verbose_name_plural = 'Tipos de Usuário das Pessoas Físicas'
         unique_together = ('pessoa_fisica', 'usuario_tipo')  

@@ -9,7 +9,6 @@
 """
 
 from django.db import models
-from infrastructure.models.post import Post
 from infrastructure.models.pessoa_fisica import PessoaFisicaModel
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
@@ -35,7 +34,7 @@ class ComentarioPost(AuditMixin, SoftDeleteMixin, InactivateMixin, StatusMixin, 
         ('publicado', 'Publicado'),
     ]
 
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE)
     autor = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE)
     comentario = models.TextField()
     data_comentario = models.DateTimeField(auto_now_add=True)

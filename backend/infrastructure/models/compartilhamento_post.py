@@ -21,7 +21,12 @@ class CompartilhamentoPost(models.Model):
     localizacao = models.ForeignKey(Localizacao, on_delete=models.SET_NULL, null=True)
     pessoa_fisica = models.ForeignKey(PessoaFisicaModel, on_delete=models.SET_NULL, null=True, blank=True)
     data_compartilhamento = models.DateTimeField(auto_now_add=True)
+    total_compartilhamentos = models.IntegerField(default=0)
 
+    def incrementar_compartilhamentos(self):
+        """ atualiza o total de compartilhamentos"""
+        self.total_compartilhamentos += 1
+        self.save()
     class Meta:
         app_label = 'infrastructure'
         db_table = 'infrastructure_compartilhamento_post'

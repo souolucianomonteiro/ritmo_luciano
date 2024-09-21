@@ -34,15 +34,17 @@ class PostAdmin(admin.ModelAdmin):
             'fields': ('published_date',)
         }),
         ('Relacionamentos', {
-            'fields': ('comentarios', 'reacoes', 'votacoes', 'compartilhamentos')
+            'fields': ('comentarios', 'reacoes')
         }),
         ('Compartilhamento', {
             'fields': ('compartilhado', 'numero_compartilhamentos')
         }),
     )
 
-    filter_horizontal = ('comentarios', 'reacoes', 'votacoes', 'compartilhamentos')
+    # Apenas campos ManyToManyField no filter_horizontal
+    filter_horizontal = ('comentarios', 'reacoes')
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, change, **kwargs)
         return form
+

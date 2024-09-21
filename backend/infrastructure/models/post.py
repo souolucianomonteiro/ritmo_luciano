@@ -58,7 +58,7 @@ class Post(
     autor = models.ForeignKey(PessoaFisicaTipo, on_delete=models.CASCADE, related_name='posts')
     blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='posts')
     comentarios = models.ManyToManyField(ComentarioPost, related_name='posts', blank=True)
-    reacoes = models.ManyToManyField('ReacaoPost', related_name='posts', blank=True)  # A implementar
+    reacoes = models.ManyToManyField('ReacaoDetalhe', related_name='posts', blank=True)  # A implementar
     numero_compartilhamentos = models.IntegerField(default=0)
     compartilhado = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag, related_name='posts', blank=True)

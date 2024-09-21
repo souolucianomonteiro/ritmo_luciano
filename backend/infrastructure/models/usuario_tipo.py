@@ -33,4 +33,4 @@ class UsuarioTipo(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin, mod
         verbose_name_plural = 'Tipos de Usuário'
 
     def __str__(self):
-        return self.nome
+        return str(self.nome)

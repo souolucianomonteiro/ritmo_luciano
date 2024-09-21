@@ -19,14 +19,14 @@ class BlogAdmin(admin.ModelAdmin):
     Configurações de exibição e administração do modelo Blog no Django Admin.
     """
 
-    list_display = ('title', 'owner', 'site', 'is_active', 'created_at', 'updated_at')
-    search_fields = ('title', 'owner__username', 'site__name')
+    list_display = ('title', 'proprietario', 'site', 'is_active', 'created_at', 'updated_at')
+    search_fields = ('title', 'proprietario__username', 'site__name')
     list_filter = ('site', 'is_active')
     readonly_fields = ('created_at', 'updated_at')
 
     fieldsets = (
         ('Informações do Blog', {
-            'fields': ('title', 'description', 'owner', 'site', 'is_active')
+            'fields': ('title', 'description', 'proprietario', 'site', 'is_active')
         }),
         ('Datas e Auditoria', {
             'fields': ('created_at', 'updated_at')
