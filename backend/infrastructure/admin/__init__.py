@@ -34,6 +34,8 @@ from .votacao_post import VotacaoPost
 from .compartilhamento_post import CompartilhamentoPostAdmin
 from .comentario_post import ComentarioPostAdmin
 from .reacao_detalhe import ReacaoDetalheAdmin
+from .imagem_post import ImagemPostAdmin
+
 
 __all__ = [
     'CategoriaAdmin', 'TipoPluginAdmin', 'ArtefatoPluginAdmin', 'PluginAdmin',
@@ -44,6 +46,7 @@ __all__ = [
     'PessoaFisicaAdmin', 'PessoaJuridicaAdmin', 'EnderecoAdmin',
     'VisualizacaoPostAdmin', 'ReacaoComentarioAdmin', 'VotacaoPost',
     'CompartilhamentoPostAdmin', 'ComentarioPostAdmin','ReacaoDetalheAdmin',
+    'ImagemPostAdmin', 
 
     
     ]
