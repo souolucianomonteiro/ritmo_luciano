@@ -10,25 +10,22 @@ Classes:
     TagAdmin: Classe que define a configuração do Django Admin para a model Tag.
 """
 from django.contrib import admin
-from infrastructure.models.tag_post import Tag
+from infrastructure.models.tag_post import TagPost
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+@admin.register(TagPost)
+class TagPostAdmin(admin.ModelAdmin):
     """
-    Configurações de exibição e administração do modelo Tag no Django Admin.
+    Configurações de exibição e administração da model TagPost no Django Admin.
     """
 
-    list_display = ('name', 'blog', 'is_active', 'created_at', 'updated_at')
-    search_fields = ('name', 'blog__title')
-    list_filter = ('blog', 'is_active')
-    readonly_fields = ('created_at', 'updated_at')
+    list_display = ('name', 'descricao')
+    search_fields = ('name', 'descricao')
+    ordering = ('name',)
 
     fieldsets = (
         ('Informações da Tag', {
-            'fields': ('name', 'blog', 'is_active')
-        }),
-        ('Datas e Auditoria', {
-            'fields': ('created_at', 'updated_at')
+            'fields': ('name', 'descricao'),
+            'description': 'Preencha as informações da tag de postagem.',
         }),
     )
 

@@ -1,11 +1,11 @@
 from dataclasses import dataclass
+from typing import Optional
 
 @dataclass(frozen=True)
-class TagPost:
+class TagPostDomain:
     """
-    Representa uma Tag associada a um Post no domínio do Blog.
-    A classe é um Objeto de Valor, pois não possui identidade própria,
-    e sua comparação é baseada nos atributos.
+    Objeto de valor que representa uma Tag associada a um Post ou Blog.
     """
-    nome: str
-    blog: str
+    name: str
+    descricao: Optional[str] = None
+

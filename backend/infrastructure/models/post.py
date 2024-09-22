@@ -17,7 +17,7 @@ from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.status import StatusMixin
 from infrastructure.models.pessoa_fisica_tipo import PessoaFisicaTipo
 from infrastructure.models.comentario_post import ComentarioPost
-from infrastructure.models.tag_post import Tag
+from infrastructure.models.tag_post import TagPost
 
 
 class Post(
@@ -61,7 +61,7 @@ class Post(
     reacoes = models.ManyToManyField('ReacaoDetalhe', related_name='posts', blank=True)  # A implementar
     numero_compartilhamentos = models.IntegerField(default=0)
     compartilhado = models.BooleanField(default=False)
-    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
+    tags = models.ManyToManyField(TagPost, related_name='posts', blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='rascunho')
 
     class Meta:

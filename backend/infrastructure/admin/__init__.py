@@ -5,9 +5,9 @@ Este módulo define as classes e os dados que serão exibidos e manipulados
 na interface de administração do Django.
 
 Classes:
-    EnderecoAdmin: Classe que configura a interface de administração de EnderecoModel.
+    EnderecoAdmin: Classe que configura a interface de administração
+    de EnderecoModel.
 """
-from .categoria import CategoriaAdmin
 from .tipo_plugin import TipoPluginAdmin
 from .artefato_plugin import ArtefatoPluginAdmin
 from .plugin import PluginAdmin
@@ -20,8 +20,8 @@ from .site import CustomSiteAdmin
 from .subdomínio import SubdominioAdmin
 from .blog import BlogAdmin
 from .post import PostAdmin
-from .categoria_post import CategoryAdmin
-from .tag_post import TagAdmin
+from .categoria_post import CategoriaPostAdmin
+from .tag_post import TagPostAdmin
 from .usuario_tipo import UsuarioTipoAdmin
 from .permissao_website import PermissaoWebsiteAdmin
 from .profissao import ProfissaoAdmin
@@ -38,15 +38,15 @@ from .imagem_post import ImagemPostAdmin
 
 
 __all__ = [
-    'CategoriaAdmin', 'TipoPluginAdmin', 'ArtefatoPluginAdmin', 'PluginAdmin',
+    'TipoPluginAdmin', 'ArtefatoPluginAdmin', 'PluginAdmin',
     'TagPluginAdmin', 'DependenciaPluginAdmin', 'HistoricoModificacoesAdmin',
     'PermissaoPluginAdmin', 'TemplatePluginAdmin', 'CustomSiteAdmin',
-    'SubdominioAdmin', 'BlogAdmin', 'PostAdmin', 'CategoryAdmin', 'TagAdmin',
-    'UsuarioTipoAdmin', 'PermissaoWebsiteAdmin', 'ProfissaoAdmin',
-    'PessoaFisicaAdmin', 'PessoaJuridicaAdmin', 'EnderecoAdmin',
-    'VisualizacaoPostAdmin', 'ReacaoComentarioAdmin', 'VotacaoPost',
-    'CompartilhamentoPostAdmin', 'ComentarioPostAdmin','ReacaoDetalheAdmin',
-    'ImagemPostAdmin', 
+    'SubdominioAdmin', 'BlogAdmin', 'PostAdmin', 'CategoriaPostAdmin', 
+    'TagPostAdmin', 'UsuarioTipoAdmin', 'PermissaoWebsiteAdmin',
+    'ProfissaoAdmin', 'PessoaFisicaAdmin', 'PessoaJuridicaAdmin', 
+    'EnderecoAdmin', 'VisualizacaoPostAdmin', 'ReacaoComentarioAdmin',
+    'VotacaoPost', 'CompartilhamentoPostAdmin', 'ComentarioPostAdmin',
+    'ReacaoDetalheAdmin', 'ImagemPostAdmin', 
 
     
     ]

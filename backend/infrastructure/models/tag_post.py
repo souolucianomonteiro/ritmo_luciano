@@ -15,9 +15,7 @@ from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 
 
-
-class Tag(AuditMixin, InactivateMixin,
-          SoftDeleteMixin, models.Model
+class TagPost(AuditMixin, InactivateMixin, SoftDeleteMixin, models.Model
           ):
     """
     Model que representa uma tag de postagens de blog.
@@ -29,8 +27,7 @@ class Tag(AuditMixin, InactivateMixin,
 
     name = models.CharField(max_length=255)
     descricao = models.TextField(null=True, blank=True)
-    blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='tags')
-
+    
     class Meta:
         """
         Metadados para a model Tag.
@@ -39,7 +36,7 @@ class Tag(AuditMixin, InactivateMixin,
         no banco de dados, e nomes legíveis para o Django Admin.
         """
         app_label = 'infrastructure'
-        db_table = 'infrastructure_tag'
+        db_table = 'infrastructure_tag_post'
         verbose_name = 'Tag de Blog'
         verbose_name_plural = 'Tags de Blog'
 

@@ -1,10 +1,10 @@
 
 
 from django.db import models
-from infrastructure.models.blog import Blog
+from infrastructure.mixins.audit import AuditMixin
 
 
-class CategoriaPost(models.Model):
+class CategoriaPost(AuditMixin, models.Model):
     """
     Model que representa uma categoria associada a postagens no blog.
 
@@ -15,8 +15,7 @@ class CategoriaPost(models.Model):
     """
     nome = models.CharField(max_length=255)
     descricao = models.TextField(null=True, blank=True)  # Adicionando a descrição
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='categorias')
-
+    
     class Meta:
         app_label = 'infrastructure'
         db_table = 'infrastructure_categoria_post'

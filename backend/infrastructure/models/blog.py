@@ -16,8 +16,8 @@ from infrastructure.models.pessoa_fisica import PessoaFisicaModel
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
-from infrastructure.models.categoria_post import CategoriaPostModel
-from infrastructure.models.tag_post import Tag
+from infrastructure.models.categoria_post import CategoriaPost
+from infrastructure.models.tag_post import TagPost
 
 
 class Blog(
@@ -45,8 +45,8 @@ class Blog(
     site = models.ForeignKey('CustomSite', on_delete=models.CASCADE, related_name='blogs')
     
     # Relacionamento com categorias e tags
-    categorias = models.ManyToManyField(CategoriaPostModel, related_name='blogs', blank=True)
-    tags = models.ManyToManyField(Tag, related_name='blogs', blank=True)
+    categorias = models.ManyToManyField(CategoriaPost, related_name='blogs', blank=True)
+    tags = models.ManyToManyField(TagPost, related_name='blogs', blank=True)
 
     class Meta:
         """

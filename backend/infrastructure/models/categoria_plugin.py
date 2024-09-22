@@ -19,7 +19,7 @@ class CategoriaPlugin(models.Model):
         Define o nome da tabela no banco de dados e outros comportamentos.
         """
         app_label = 'infrastructure'  # Nome do aplicativo onde a model está
-        db_table = 'categoria_plugin'  # Nome da tabela no banco de dados
+        db_table = 'infrastructure_categoria_plugin'  # Nome da tabela no banco de dados
         verbose_name = 'Categoria de Plugin'
         verbose_name_plural = 'Categorias de Plugin'
 
