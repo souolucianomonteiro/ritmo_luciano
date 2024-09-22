@@ -13,11 +13,11 @@ from django.db import models
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
-from infrastructure.mixins.status import StatusMixin
+
 
 
 class Tag(AuditMixin, InactivateMixin,
-          SoftDeleteMixin, StatusMixin, models.Model
+          SoftDeleteMixin, models.Model
           ):
     """
     Model que representa uma tag de postagens de blog.
@@ -28,6 +28,7 @@ class Tag(AuditMixin, InactivateMixin,
     """
 
     name = models.CharField(max_length=255)
+    descricao = models.TextField(null=True, blank=True)
     blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='tags')
 
     class Meta:

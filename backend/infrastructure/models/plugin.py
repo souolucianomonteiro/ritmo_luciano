@@ -17,7 +17,7 @@ from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.status import StatusMixin
-from infrastructure.models.categoria import CategoriaModel
+from infrastructure.models.categoria_post import CategoriaModel
 from infrastructure.models.tipo_plugin import TipoPluginModel
 from infrastructure.models.artefato_plugin import ArtefatoPluginModel
 from infrastructure.models.permissao_plugin import PermissaoPluginModel

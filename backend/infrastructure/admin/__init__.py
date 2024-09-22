@@ -20,7 +20,7 @@ from .site import CustomSiteAdmin
 from .subdomínio import SubdominioAdmin
 from .blog import BlogAdmin
 from .post import PostAdmin
-from .categoria_blog import CategoryAdmin
+from .categoria_post import CategoryAdmin
 from .tag_post import TagAdmin
 from .usuario_tipo import UsuarioTipoAdmin
 from .permissao_website import PermissaoWebsiteAdmin

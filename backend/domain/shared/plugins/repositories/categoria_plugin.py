@@ -2,10 +2,11 @@
 
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from domain.shared.plugins.entities.categoria import Categoria
+from domain.shared.plugins.entities.categoria_plugin import (
+                                        CategoriaPluginDomain)
 
 
-class CategoriaRepository(ABC):
+class CategoriaPluginRepository(ABC):
     """
     Interface do repositório para manipulação de categorias
     no domínio.
@@ -15,14 +16,14 @@ class CategoriaRepository(ABC):
     """
 
     @abstractmethod
-    def obter_todas(self) -> List[Categoria]:
+    def obter_todas(self) -> List[CategoriaPluginDomain]:
         """
         Retorna uma lista com todas as categorias.
 
         :return: Lista de objetos Categoria.
         """
     @abstractmethod
-    def salvar(self, categoria: Categoria) -> None:
+    def salvar(self, categoria: CategoriaPluginDomain) -> None:
         """
         Salva ou atualiza uma categoria no repositório.
 
@@ -30,7 +31,7 @@ class CategoriaRepository(ABC):
         """
 
     @abstractmethod
-    def remover(self, categoria: Categoria) -> None:
+    def remover(self, categoria: CategoriaPluginDomain) -> None:
         """
         Remove uma categoria do repositório.
 
@@ -38,7 +39,7 @@ class CategoriaRepository(ABC):
         """
       
     @abstractmethod
-    def obter_por_nome(self, nome: str) -> Optional[Categoria]:
+    def obter_por_nome(self, nome: str) -> Optional[CategoriaPluginDomain]:
         """
         Retorna uma categoria com base no nome.
 

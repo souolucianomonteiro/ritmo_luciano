@@ -16,12 +16,13 @@ from infrastructure.models.pessoa_fisica import PessoaFisicaModel
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
-from infrastructure.mixins.status import StatusMixin
+from infrastructure.models.categoria_post import CategoriaPostModel
+from infrastructure.models.tag_post import Tag
 
 
 class Blog(
             AuditMixin, InactivateMixin, SoftDeleteMixin,
-            StatusMixin, models.Model
+            models.Model
         ):
     """
     Model que representa um blog no sistema.
@@ -32,14 +33,20 @@ class Blog(
     Atributos:
         title (CharField): O título do blog.
         description (TextField): Uma breve descrição do blog.
-        owner (ForeignKey): O proprietário do blog, relacionado ao User.
+        proprietario (ForeignKey): O proprietário do blog, relacionado à PessoaFisicaModel.
         site (ForeignKey): O site ao qual este blog pertence.
+        categorias (ManyToManyField): As categorias associadas ao blog.
+        tags (ManyToManyField): As tags associadas ao blog.
     """
 
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     proprietario = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE, related_name='blogs')
     site = models.ForeignKey('CustomSite', on_delete=models.CASCADE, related_name='blogs')
+    
+    # Relacionamento com categorias e tags
+    categorias = models.ManyToManyField(CategoriaPostModel, related_name='blogs', blank=True)
+    tags = models.ManyToManyField(Tag, related_name='blogs', blank=True)
 
     class Meta:
         """

@@ -79,3 +79,10 @@ class Post(
 
     def __str__(self):
         return str(self.title)
+
+    def get_status_choices(self):
+        """
+        Retorna as opções de status definidas na model Post.
+        Isso é necessário para o funcionamento correto do StatusMixin.
+        """
+        return self.STATUS_CHOICES
