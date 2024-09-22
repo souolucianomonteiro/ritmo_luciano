@@ -9,10 +9,14 @@ Classes:
     - PessoaFisicaDomain: Classe de domínio que modela os dados e comportamento de uma pessoa física, 
     incluindo seus endereços e outras informações pessoais.
 """
+from cgitb import text
+from email.mime import image
 from typing import List
 from typing import Optional, Literal
 from dataclasses import dataclass
 from datetime import date
+
+from django.forms import ImageField
 from domain.website.entities.endereco import EnderecoDomain
 from domain.website.entities.usuario_tipo import UsuarioTipoDomain
 
@@ -56,4 +60,6 @@ class PessoaFisicaDomain:
     conta_pessoa: bool
     iniciador_conta_empresa: bool
     enderecos: List[EnderecoDomain] = []
-    usuario_tipo: List[UsuarioTipoDomain] 
+    usuario_tipo: List[UsuarioTipoDomain]
+    foto = Optional[str] = None
+    bios = Optional[str] = None

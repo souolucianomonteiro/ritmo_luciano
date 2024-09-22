@@ -1,5 +1,7 @@
 from django.contrib import admin
 from infrastructure.models.pessoa_fisica import PessoaFisicaModel
+from domain.website.domain_service.calcular_idade_titular import (
+                                CalcularIdadePessoaFisicaService)
 
 @admin.register(PessoaFisicaModel)
 class PessoaFisicaAdmin(admin.ModelAdmin):
@@ -8,14 +10,18 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
     Organiza os campos da pessoa física em seções no formulário.
     """
 
-    list_display = ('primeiro_nome', 'sobrenome', 'email', 'cpf', 'genero', 'idade_em_anos', 'idade_em_meses', 'conta_pessoa', 'iniciador_conta_empresa')
+    list_display = (
+        'primeiro_nome', 'sobrenome', 'email', 'cpf', 'genero', 
+        'idade_em_anos', 'idade_em_meses', 'conta_pessoa', 
+        'iniciador_conta_empresa', 'foto', 'bios', 'situacao'
+    )
     search_fields = ('primeiro_nome', 'sobrenome', 'email', 'cpf')
-    list_filter = ('genero', 'conta_pessoa', 'iniciador_conta_empresa')
+    list_filter = ('genero', 'conta_pessoa', 'iniciador_conta_empresa', 'situacao')
     ordering = ('primeiro_nome','sobrenome')
 
     fieldsets = (
         ('Informações Pessoais', {
-            'fields': ('primeiro_nome', 'sobrenome','email', 'cpf', 'data_nascimento', 'genero'),
+            'fields': ('primeiro_nome', 'sobrenome', 'email', 'cpf', 'data_nascimento', 'genero', 'foto', 'bios', 'situacao'),
             'description': 'Preencha as informações pessoais da pessoa física.',
         }),
         ('Contato', {
@@ -32,19 +38,17 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Calcular e exibir idade em anos
     def idade_em_anos(self, obj):
         if obj.data_nascimento:
-            hoje = date.today()
-            idade_anos = hoje.year - obj.data_nascimento.year - ((hoje.month, hoje.day) < (obj.data_nascimento.month, obj.data_nascimento.day))
+            service = CalcularIdadePessoaFisicaService()
+            idade_anos, _ = service.execute(obj)
             return idade_anos
         return None
 
-    # Calcular e exibir idade em meses
     def idade_em_meses(self, obj):
         if obj.data_nascimento:
-            hoje = date.today()
-            idade_meses = (hoje.year - obj.data_nascimento.year) * 12 + hoje.month - obj.data_nascimento.month
+            service = CalcularIdadePessoaFisicaService()
+            _, idade_meses = service.execute(obj)
             return idade_meses
         return None
 

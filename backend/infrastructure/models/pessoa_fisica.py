@@ -18,7 +18,7 @@ Classes:
     PessoaFisicaModel: Model que representa uma pessoa física no banco
     de dados.
 """
-from datetime import date
+from typing import List, Tuple
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -58,12 +58,21 @@ class PessoaFisicaModel(
         conta de pessoa jurídica.
         usuario_tipo: Associações entre Pessoa Física e tipos de usuários.
     """
+    STATUS_CHOICES: List[Tuple[str, str]] = [
+        ('adimplente', 'Adimplente'),
+        ('atraso', 'Pagamento em Atraso'),
+        ('suspenso', 'Suspenso'),
+        ('renegociacao', 'Com Renegociação'),
+    ]        
+
     conta_pessoa = models.BooleanField(default=True)
     primeiro_nome = models.CharField(max_length=255)
     sobrenome = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     data_nascimento = models.DateField(null=True, blank=True)
     nome = models.CharField(max_length=255)
+    foto = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    bios = models.TextField(max_length=500, null=True, blank=True)
     profissao = models.ForeignKey(ProfissaoModel, on_delete=models.SET_NULL, null=True, blank=True, related_name='pessoas_fisicas')
     ocupacao = models.CharField(max_length=255, null=True, blank=True)
     whatsapp = models.CharField(max_length=20, null=True, blank=True)
@@ -101,33 +110,10 @@ class PessoaFisicaModel(
         help_text='Permissões específicas deste usuário.',
         verbose_name='Permissões de usuário'
     )
-    
-    @property
-    def idade_anos_e_meses(self):
-        """Calcula a idade em anos e meses"""
-        if isinstance(self.data_nascimento, date):
-            today = date.today()
 
-            # Calcula a idade em anos
-            years = today.year - self.data_nascimento.year
+    def get_status_choices(self):
+        return self.STATUS_CHOICES
 
-            # Verifica se já passou o aniversário deste ano
-            if (today.month, today.day) < (self.data_nascimento.month, self.data_nascimento.day):
-                years -= 1
-
-            # Calcula os meses de diferença
-            months = today.month - self.data_nascimento.month
-            if today.day < self.data_nascimento.day:
-                months -= 1
-
-            # Ajusta o cálculo dos meses se necessário
-            if months < 0:
-                months += 12
-
-            return f"{years} anos e {months} meses"
-        
-        return None  # Caso não haja data de nascimento
-    
     def __str__(self):
         return f'{self.primeiro_nome} {self.sobrenome}'
 

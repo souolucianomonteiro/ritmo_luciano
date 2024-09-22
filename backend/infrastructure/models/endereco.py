@@ -1,7 +1,6 @@
 from django.db import models
 
 
-
 class EnderecoModel(models.Model):
     """
     Model que representa um endereço associado a uma pessoa física ou jurídica.

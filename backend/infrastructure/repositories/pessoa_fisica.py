@@ -8,7 +8,6 @@ e recuperação de dados relacionados à entidade PessoaFisica no banco de dados
 Agora também inclui a relação de endereços associados à PessoaFisica.
 """
 from typing import Optional, List
-from datetime import date
 from domain.website.entities.pessoa_fisica import PessoaFisicaDomain
 from domain.website.repositories.pessoa_fisica import PessoaFisicaRepository
 from infrastructure.models.pessoa_fisica import PessoaFisicaModel
@@ -39,7 +38,9 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
             cpf=pessoa_fisica.cpf,
             genero=pessoa_fisica.genero,
             conta_pessoa=pessoa_fisica.conta_pessoa,
-            iniciador_conta_empresa=pessoa_fisica.iniciador_conta_empresa
+            iniciador_conta_empresa=pessoa_fisica.iniciador_conta_empresa,
+            foto=pessoa_fisica.foto,  
+            bios=pessoa_fisica.bios, 
         )
         pessoa_fisica_model.save()
         pessoa_fisica.id = pessoa_fisica_model.id
@@ -55,7 +56,9 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
                     cidade=endereco.cidade,
                     estado=endereco.estado,
                     cep=endereco.cep,
-                    pais=endereco.pais
+                    pais=endereco.pais,
+                    pessoa_fisica_id=pessoa_fisica_model.id,  # Correção aplicada: agora é um argumento de palavra-chave
+                    is_active=endereco.is_active
                 )[0]
                 for endereco in pessoa_fisica.enderecos
             ]
@@ -95,9 +98,11 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
             conta_pessoa=pessoa_fisica_model.conta_pessoa,
             iniciador_conta_empresa=pessoa_fisica_model.iniciador_conta_empresa,
             enderecos=pessoa_fisica.enderecos,  # Inclui os endereços
-            usuario_tipos=tipos_usuario  # Inclui os tipos de usuário
+            usuario_tipos=tipos_usuario,  # Inclui os tipos de usuário
+            foto=pessoa_fisica_model.foto,  # Novo campo
+            bios=pessoa_fisica_model.bios,
         )
-        
+
     def get_by_id(self, pessoa_fisica_id: int) -> Optional[PessoaFisicaDomain]:
         try:
             pessoa_fisica_model = PessoaFisicaModel.objects.get(id=pessoa_fisica_id)
@@ -141,7 +146,9 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
                 conta_pessoa=pessoa_fisica_model.conta_pessoa,
                 iniciador_conta_empresa=pessoa_fisica_model.iniciador_conta_empresa,
                 enderecos=enderecos,
-                usuario_tipos=tipos_usuario
+                usuario_tipos=tipos_usuario,
+                foto=pessoa_fisica_model.foto,  # Novo campo
+                bios=pessoa_fisica_model.bios,
             )
         except PessoaFisicaModel.DoesNotExist:
             return None
@@ -188,22 +195,9 @@ class DjangoPessoaFisicaRepository(PessoaFisicaRepository):
                         descricao=tipo_usuario.descricao
                     )
                     for tipo_usuario in UsuarioTipo.objects.filter(pessoas_fisicas=pessoa)
-                ]
+                ],
+                foto=pessoa.foto,  # Novo campo
+                bios=pessoa.bios,
             )
             for pessoa in pessoas_fisicas
         ]
-
-    def calcular_idade(self, pessoa_fisica: PessoaFisicaDomain) -> PessoaFisicaDomain:
-        """
-        Método que calcula a idade da pessoa física em anos e meses com base na data de nascimento.
-        """
-        if pessoa_fisica.data_nascimento:
-            hoje = date.today()
-            idade_anos = hoje.year - pessoa_fisica.data_nascimento.year
-            idade_meses = hoje.month - pessoa_fisica.data_nascimento.month
-            if idade_meses < 0:
-                idade_anos -= 1
-                idade_meses += 12
-            pessoa_fisica.idade_anos = idade_anos
-            pessoa_fisica.idade_meses = idade_meses
-        return pessoa_fisica
