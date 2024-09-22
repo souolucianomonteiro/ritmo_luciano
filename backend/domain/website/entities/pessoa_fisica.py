@@ -9,18 +9,9 @@ Classes:
     - PessoaFisicaDomain: Classe de domínio que modela os dados e comportamento de uma pessoa física, 
     incluindo seus endereços e outras informações pessoais.
 """
-from cgitb import text
-from email.mime import image
-from typing import List
-from typing import Optional, Literal
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
-
-from django.forms import ImageField
-from domain.website.entities.endereco import EnderecoDomain
-from domain.website.entities.usuario_tipo import UsuarioTipoDomain
-
-
+from typing import List, Optional
 @dataclass
 class PessoaFisicaDomain:
     """
@@ -44,22 +35,23 @@ class PessoaFisicaDomain:
         conta_pessoa (bool): Indica se essa pessoa física é também uma conta no sistema.
         iniciador_conta_empresa (bool): Indica se essa pessoa física iniciou uma conta de pessoa jurídica.
     """
-    id: Optional[int]
-    primeiro_nome: str
-    sobrenome: str
-    email: str
-    data_nascimento: Optional[date]
-    idade_anos: Optional[int]
-    idade_meses: Optional[int]
-    cpf: str
-    genero: Literal['homem', 'mulher', 'homem bissexual', 'homem trans', 'mulher bissexual', 'mulher trans']
-    profissao: Optional[str]
-    ocupacao: Optional[str]
-    whatsapp: Optional[str]
-    redes_sociais: Optional[str]
-    conta_pessoa: bool
-    iniciador_conta_empresa: bool
-    enderecos: List[EnderecoDomain] = []
-    usuario_tipo: List[UsuarioTipoDomain]
-    foto = Optional[str] = None
-    bios = Optional[str] = None
+    id: Optional[int] = None
+    primeiro_nome: str = ''
+    sobrenome: str = ''
+    email: str = ''
+    data_nascimento: Optional[date] = None
+    idade_anos: Optional[int] = None
+    idade_meses: Optional[int] = None
+    cpf: str = ''
+    genero: str = ''
+    profissao: Optional[str] = None
+    ocupacao: str = ''
+    whatsapp: str = ''
+    redes_sociais: str = ''
+    conta_pessoa: Optional[bool] = None
+    iniciador_conta_empresa: Optional[bool] = None
+    foto: Optional[str] = None
+    bios: Optional[str] = None
+    situacao: Optional[str] = None
+    enderecos: List[str] = field(default_factory=list)  # Use default_factory para listas
+    usuario_tipos: List[str] = field(default_factory=list)  # Também use para tipos de usuário

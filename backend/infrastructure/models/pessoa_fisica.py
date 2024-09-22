@@ -66,11 +66,11 @@ class PessoaFisicaModel(
     ]        
 
     conta_pessoa = models.BooleanField(default=True)
-    primeiro_nome = models.CharField(max_length=255)
-    sobrenome = models.CharField(max_length=255)
+    situacao = models.CharField(max_length=255, choices=STATUS_CHOICES, default='adimplente')
+    first_name = models.CharField('Primeiro Nome', max_length=150, blank=True)
+    last_name = models.CharField('Sobrenome', max_length=150, blank=True)
     email = models.EmailField(unique=True)
     data_nascimento = models.DateField(null=True, blank=True)
-    nome = models.CharField(max_length=255)
     foto = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     bios = models.TextField(max_length=500, null=True, blank=True)
     profissao = models.ForeignKey(ProfissaoModel, on_delete=models.SET_NULL, null=True, blank=True, related_name='pessoas_fisicas')
@@ -86,6 +86,10 @@ class PessoaFisicaModel(
         ('mulher bissexual', 'Mulher Bissexual'),
         ('mulher trans', 'Mulher Trans')
     ])
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'cpf']  # Campos obrigatórios para o cadastro
+
     iniciador_conta_empresa = models.BooleanField(default=False)
     enderecos = models.ManyToManyField(EnderecoModel, related_name='pessoas_fisicas', blank=True)
     tipos_de_usuario = models.ManyToManyField(

@@ -1,7 +1,6 @@
+from datetime import date
 from django.contrib import admin
 from infrastructure.models.pessoa_fisica import PessoaFisicaModel
-from domain.website.domain_service.calcular_idade_titular import (
-                                CalcularIdadePessoaFisicaService)
 
 @admin.register(PessoaFisicaModel)
 class PessoaFisicaAdmin(admin.ModelAdmin):
@@ -11,17 +10,17 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
     """
 
     list_display = (
-        'primeiro_nome', 'sobrenome', 'email', 'cpf', 'genero', 
+        'first_name', 'last_name', 'email', 'cpf', 'genero', 
         'idade_em_anos', 'idade_em_meses', 'conta_pessoa', 
         'iniciador_conta_empresa', 'foto', 'bios', 'situacao'
     )
-    search_fields = ('primeiro_nome', 'sobrenome', 'email', 'cpf')
+    search_fields = ('first_name', 'last_name', 'email', 'cpf')
     list_filter = ('genero', 'conta_pessoa', 'iniciador_conta_empresa', 'situacao')
-    ordering = ('primeiro_nome','sobrenome')
+    ordering = ('first_name','last_name')
 
     fieldsets = (
         ('Informações Pessoais', {
-            'fields': ('primeiro_nome', 'sobrenome', 'email', 'cpf', 'data_nascimento', 'genero', 'foto', 'bios', 'situacao'),
+            'fields': ('first_name', 'last_name', 'email', 'cpf', 'data_nascimento', 'genero', 'foto', 'bios', 'situacao'),
             'description': 'Preencha as informações pessoais da pessoa física.',
         }),
         ('Contato', {
@@ -38,17 +37,19 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
         }),
     )
 
+    # Calcular e exibir idade em anos
     def idade_em_anos(self, obj):
         if obj.data_nascimento:
-            service = CalcularIdadePessoaFisicaService()
-            idade_anos, _ = service.execute(obj)
+            hoje = date.today()
+            idade_anos = hoje.year - obj.data_nascimento.year - ((hoje.month, hoje.day) < (obj.data_nascimento.month, obj.data_nascimento.day))
             return idade_anos
         return None
 
+    # Calcular e exibir idade em meses
     def idade_em_meses(self, obj):
         if obj.data_nascimento:
-            service = CalcularIdadePessoaFisicaService()
-            _, idade_meses = service.execute(obj)
+            hoje = date.today()
+            idade_meses = (hoje.year - obj.data_nascimento.year) * 12 + hoje.month - obj.data_nascimento.month
             return idade_meses
         return None
 
