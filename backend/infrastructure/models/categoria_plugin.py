@@ -1,7 +1,8 @@
 from django.db import models
+from infrastructure.mixins.audit import AuditMixin
+from infrastructure.mixins.inactivate import InactivateMixin
 
-
-class CategoriaPlugin(models.Model):
+class CategoriaPlugin(AuditMixin, InactivateMixin, models.Model):
     """
     Model que representa uma categoria de plugin.
     

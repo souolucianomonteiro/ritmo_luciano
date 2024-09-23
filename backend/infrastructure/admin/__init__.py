@@ -8,6 +8,7 @@ Classes:
     EnderecoAdmin: Classe que configura a interface de administração
     de EnderecoModel.
 """
+from .categoria_plugin import CategoriaPluginAdmin
 from .tipo_plugin import TipoPluginAdmin
 from .artefato_plugin import ArtefatoPluginAdmin
 from .plugin import PluginAdmin
@@ -38,15 +39,14 @@ from .imagem_post import ImagemPostAdmin
 
 
 __all__ = [
-    'TipoPluginAdmin', 'ArtefatoPluginAdmin', 'PluginAdmin',
-    'TagPluginAdmin', 'DependenciaPluginAdmin', 'HistoricoModificacoesAdmin',
-    'PermissaoPluginAdmin', 'TemplatePluginAdmin', 'CustomSiteAdmin',
-    'SubdominioAdmin', 'BlogAdmin', 'PostAdmin', 'CategoriaPostAdmin', 
-    'TagPostAdmin', 'UsuarioTipoAdmin', 'PermissaoWebsiteAdmin',
-    'ProfissaoAdmin', 'PessoaFisicaAdmin', 'PessoaJuridicaAdmin', 
-    'EnderecoAdmin', 'VisualizacaoPostAdmin', 'ReacaoComentarioAdmin',
-    'VotacaoPost', 'CompartilhamentoPostAdmin', 'ComentarioPostAdmin',
-    'ReacaoDetalheAdmin', 'ImagemPostAdmin', 
+    'CategoriaPluginAdmin', 'TipoPluginAdmin', 'ArtefatoPluginAdmin',
+    'PluginAdmin', 'TagPluginAdmin', 'DependenciaPluginAdmin',
+    'HistoricoModificacoesAdmin', 'PermissaoPluginAdmin', 'TemplatePluginAdmin', 'CustomSiteAdmin', 'SubdominioAdmin', 'BlogAdmin', 'PostAdmin',
+    'CategoriaPostAdmin', 'TagPostAdmin', 'UsuarioTipoAdmin',
+    'PermissaoWebsiteAdmin', 'ProfissaoAdmin', 'PessoaFisicaAdmin',
+    'PessoaJuridicaAdmin', 'EnderecoAdmin', 'VisualizacaoPostAdmin',
+    'ReacaoComentarioAdmin', 'VotacaoPost', 'CompartilhamentoPostAdmin',
+    'ComentarioPostAdmin', 'ReacaoDetalheAdmin', 'ImagemPostAdmin',
 
     
     ]
