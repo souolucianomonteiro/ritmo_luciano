@@ -1,36 +1,21 @@
 from django.db import models
-from infrastructure.models.comentario_post import ComentarioPost
-from infrastructure.models.pessoa_fisica_tipo import PessoaFisicaTipo
-from infrastructure.models.reacao_detalhe import ReacaoDetalhe
 
 
-class ComentarioReacao(models.Model):
+class ComentarioReacaoModel(models.Model):
     """
-    Model que representa a reação de um usuário a um comentário em um post.
-
-    Atributos:
-        comentario (ForeignKey): Referência ao comentário associado à reação.
-        autor (ForeignKey): Referência ao autor (PessoaFisicaTipo) que realizou a reação.
-        reacao (ForeignKey): Referência ao tipo de reação (detalhada em ReacaoDetalhe).
-        data_reacao (DateTimeField): Data e hora da reação.
+    Model que representa as reações feitas aos comentários de um post.
     """
-    comentario = models.ForeignKey(ComentarioPost, on_delete=models.CASCADE, related_name='reacoes')
-    autor = models.ForeignKey(PessoaFisicaTipo, on_delete=models.CASCADE, related_name='reacoes_comentario')
-    reacao = models.ForeignKey(ReacaoDetalhe, on_delete=models.CASCADE, related_name='reacoes_comentario')
+    reacao_tipo = models.CharField(max_length=20)  # Tipo de reação (curtir, não curtir, etc.)
+    ip_origem = models.GenericIPAddressField(null=True, blank=True)
+    localizacao = models.CharField(max_length=100, null=True, blank=True)
     data_reacao = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        """
-        Metadados para a model ComentarioReacao.
-
-        Define o comportamento da model no Django, incluindo o nome da tabela
-        e a ordenação padrão.
-        """
         app_label = 'infrastructure'
-        db_table = 'infrastructure_comentario_reacao'
+        db_table = 'infrastructure_reacao_comentario'
         verbose_name = 'Reação ao Comentário'
         verbose_name_plural = 'Reações aos Comentários'
         ordering = ['-data_reacao']
 
     def __str__(self):
-        return f"{self.autor} reagiu com {self.reacao} no comentário {self.comentario}"
+        return f"Reação {self.reacao_tipo} no comentário"

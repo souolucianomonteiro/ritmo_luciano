@@ -4,22 +4,32 @@ from infrastructure.models.comentario_post import ComentarioPost
 @admin.register(ComentarioPost)
 class ComentarioPostAdmin(admin.ModelAdmin):
     """
-    Configuração do Django Admin para ComentarioPost.
-    Organiza a exibição dos campos em seções no formulário de administração.
+    Configuração do admin para ComentarioPost, sem o campo autor.
     """
-    list_display = ('post', 'autor', 'data_comentario', 'status')
-    list_filter = ('status', 'data_comentario', 'post')
-    search_fields = ('post__title', 'autor__primeiro_nome', 'autor__sobrenome', 'comentario')
+    list_display = ('comentario_resumido', 'post', 'data_comentario', 'status')
+    list_filter = ('status', 'data_comentario')
+    search_fields = ('comentario', 'post__title')
     readonly_fields = ('data_comentario',)
 
     fieldsets = (
-        ('Informações do Post', {
-            'fields': ('post', 'comentario')
+        (None, {
+            'fields': ('post', 'comentario', 'status')
         }),
-        ('Autor', {
-            'fields': ('autor',)
-        }),
-        ('Status e Data do Comentário', {
-            'fields': ('status', 'data_comentario')
+        ('Informações Adicionais', {
+            'fields': ('data_comentario',),
+            'classes': ('collapse',),
         }),
     )
+
+    def comentario_resumido(self, obj):
+        """
+        Retorna uma versão resumida do comentário para exibição na listagem do admin.
+        """
+        return obj.comentario[:50] + '...' if len(obj.comentario) > 50 else obj.comentario
+    comentario_resumido.short_description = 'Comentário'
+
+    def get_status_choices(self, obj=None):
+        """
+        Retorna as opções de status específicas para esta model no admin.
+        """
+        return ComentarioPost.STATUS_CHOICES

@@ -5,6 +5,7 @@ from typing import List, Optional
 from uuid import UUID
 from domain.shared.plugins.entities.template_plugin import TemplatePlugin
 
+
 class TemplatePluginRepository(ABC):
     """
     Repositório abstrato para operações relacionadas a Templates de Plugins.

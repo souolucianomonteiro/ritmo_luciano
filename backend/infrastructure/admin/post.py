@@ -15,36 +15,24 @@ from infrastructure.models.post import Post
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     """
-    Configurações de exibição e administração do modelo Post no Django Admin.
-    As informações são organizadas em seções para facilitar a visualização.
+    Configuração do admin para Post.
     """
-    list_display = ('title', 'slug', 'published_date', 'autor', 'blog', 'status', 'numero_compartilhamentos')
-    search_fields = ('title', 'slug', 'autor__primeiro_nome', 'autor__sobrenome', 'blog__title')
-    list_filter = ('status', 'published_date', 'blog', 'autor')
-    ordering = ('-published_date',)
+    list_display = ('title', 'slug', 'autor', 'published_date', 'status')
+    list_filter = ('status', 'published_date', 'autor')
+    search_fields = ('title', 'slug', 'content', 'autor__first_name', 'autor__last_name')
+    prepopulated_fields = {'slug': ('title',)}
+    readonly_fields = ('published_date',)
 
     fieldsets = (
-        ('Informações Gerais', {
-            'fields': ('title', 'slug', 'content', 'status')
+        (None, {
+            'fields': ('title', 'slug', 'content', 'autor', 'blog', 'status', 'tags')
         }),
-        ('Autor e Blog', {
-            'fields': ('autor', 'blog')
-        }),
-        ('Datas', {
-            'fields': ('published_date',)
-        }),
-        ('Relacionamentos', {
-            'fields': ('comentarios', 'reacoes')
-        }),
-        ('Compartilhamento', {
-            'fields': ('compartilhado', 'numero_compartilhamentos')
+        ('Informações Adicionais', {
+            'fields': ('published_date', 'numero_compartilhamentos', 'compartilhado'),
+            'classes': ('collapse',),
         }),
     )
-
-    # Apenas campos ManyToManyField no filter_horizontal
-    filter_horizontal = ('comentarios', 'reacoes')
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, change, **kwargs)
         return form
-

@@ -1,46 +1,32 @@
 
 from abc import ABC, abstractmethod
-from typing import List
-from domain.website.entities.pessoa_fisica import PessoaFisicaDomain
-from domain.website.entities.usuario_tipo import UsuarioTipoDomain
+from typing import List, Optional
+from domain.website.entities.pessoa_fisica_tipo import PessoaFisicaTipoDomain
 
 
 class PessoaFisicaTipoRepository(ABC):
     """
-    Repositório abstrato para a associação entre PessoaFisica e UsuarioTipo.
+    Interface para o repositório de PessoaFisicaTipo no domínio.
+    Define os métodos que devem ser implementados pelos repositórios concretos.
     """
 
     @abstractmethod
-    def save(self, pessoa_fisica_tipo: PessoaFisicaDomain) -> PessoaFisicaDomain:
-        """
-        Salva a associação entre pessoa física e tipo de usuário no repositório.
-        """
-        raise NotImplementedError
+    def find_by_id(self, pessoa_fisica_tipo_id: int) -> Optional[PessoaFisicaTipoDomain]:
+        """Busca uma instância de PessoaFisicaTipo pelo ID."""
+        pass
 
     @abstractmethod
-    def get_by_id(self, pessoa_fisica_tipo_id: int) -> PessoaFisicaDomain:
-        """
-        Busca uma associação entre pessoa física e tipo de usuário pelo ID.
-        """
-        raise NotImplementedError
+    def save(self, pessoa_fisica_tipo: PessoaFisicaTipoDomain) -> PessoaFisicaTipoDomain:
+        """Salva uma instância de PessoaFisicaTipo."""
+        pass
 
     @abstractmethod
-    def delete(self, pessoa_fisica_tipo: PessoaFisicaDomain) -> None:
-        """
-        Exclui uma associação entre pessoa física e tipo de usuário do repositório.
-        """
-        raise NotImplementedError
+    def delete(self, pessoa_fisica_tipo_id: int) -> None:
+        """Deleta uma instância de PessoaFisicaTipo pelo ID."""
+        pass
 
     @abstractmethod
-    def list_all(self) -> List[PessoaFisicaDomain]:
-        """
-        Lista todas as associações entre pessoas físicas e tipos de usuário.
-        """
-        raise NotImplementedError
+    def find_all(self) -> List[PessoaFisicaTipoDomain]:
+        """Retorna todas as instâncias de PessoaFisicaTipo."""
+        pass
 
-    @abstractmethod
-    def associate_usuario_tipo(self, pessoa_fisica: PessoaFisicaDomain, usuario_tipos: List[UsuarioTipoDomain]) -> None:
-        """
-        Associa uma lista de tipos de usuário à pessoa física.
-        """
-        raise NotImplementedError

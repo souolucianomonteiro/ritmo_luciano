@@ -1,8 +1,8 @@
 from django.contrib import admin
-from infrastructure.models.reacao_detalhe import ReacaoDetalhe
+from infrastructure.models.reacao_tipo import ReacaoTipo
 
-@admin.register(ReacaoDetalhe)
-class ReacaoDetalheAdmin(admin.ModelAdmin):
+@admin.register(ReacaoTipo)
+class ReacaoTipoAdmin(admin.ModelAdmin):
     """
     Configuração do Django Admin para ReacaoDetalhe.
     Organiza a exibição dos campos em seções no formulário de administração.

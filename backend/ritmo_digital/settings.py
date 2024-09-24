@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'backend.orchestration',
     'backend.apis',
     'backend.infrastructure',
+    'backend.domain.projects'
 ]
 
 MIDDLEWARE = [

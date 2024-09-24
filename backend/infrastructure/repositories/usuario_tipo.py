@@ -35,7 +35,7 @@ class DjangoUsuarioTipoRepository(UsuarioTipoRepository):
             UsuarioTipoDomain: A instância salva ou atualizada.
         """
         usuario_tipo_model = UsuarioTipo(
-            id=usuario_tipo.id,
+            usuario_tipo_id= usuario_tipo.id,
             nome=usuario_tipo.nome,
             descricao=usuario_tipo.descricao
         )
@@ -56,7 +56,7 @@ class DjangoUsuarioTipoRepository(UsuarioTipoRepository):
         try:
             usuario_tipo_model = UsuarioTipo.objects.get(id=usuario_tipo_id)
             return UsuarioTipoDomain(
-                id=usuario_tipo_model.id,
+                usuario_tipo_id=usuario_tipo_model.id,
                 nome=usuario_tipo_model.nome,
                 descricao=usuario_tipo_model.descricao
             )
@@ -82,7 +82,7 @@ class DjangoUsuarioTipoRepository(UsuarioTipoRepository):
         usuario_tipos = UsuarioTipo.objects.all()
         return [
             UsuarioTipoDomain(
-                id=usuario_tipo.id,
+                usuario_tipo_id=usuario_tipo.id,
                 nome=usuario_tipo.nome,
                 descricao=usuario_tipo.descricao
             )

@@ -30,11 +30,11 @@ from .pessoa_fisica import PessoaFisicaAdmin
 from .pessoa_juridica import PessoaJuridicaAdmin
 from .endereco import EnderecoAdmin
 from .visualizacao_post import VisualizacaoPostAdmin
-from .reacao_comentario import ReacaoComentarioAdmin
+from .comentario_reacao import ComentarioReacaoAdmin
 from .votacao_post import VotacaoPost
 from .compartilhamento_post import CompartilhamentoPostAdmin
 from .comentario_post import ComentarioPostAdmin
-from .reacao_detalhe import ReacaoDetalheAdmin
+from .reacao_tipo import ReacaoTipoAdmin
 from .imagem_post import ImagemPostAdmin
 
 
@@ -45,8 +45,8 @@ __all__ = [
     'CategoriaPostAdmin', 'TagPostAdmin', 'UsuarioTipoAdmin',
     'PermissaoWebsiteAdmin', 'ProfissaoAdmin', 'PessoaFisicaAdmin',
     'PessoaJuridicaAdmin', 'EnderecoAdmin', 'VisualizacaoPostAdmin',
-    'ReacaoComentarioAdmin', 'VotacaoPost', 'CompartilhamentoPostAdmin',
-    'ComentarioPostAdmin', 'ReacaoDetalheAdmin', 'ImagemPostAdmin',
+    'ComentarioReacaoAdmin', 'VotacaoPost', 'CompartilhamentoPostAdmin',
+    'ComentarioPostAdmin', 'ReacaoTipoAdmin', 'ImagemPostAdmin',
 
     
     ]

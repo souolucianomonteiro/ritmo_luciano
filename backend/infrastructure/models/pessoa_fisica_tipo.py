@@ -1,14 +1,14 @@
 """Módulo que implementa a model da relação pessoa física X usuario tipo"""
 
 from django.db import models
-from infrastructure.models.pessoa_fisica import PessoaFisicaModel
-from infrastructure.models.usuario_tipo import UsuarioTipo
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
+from infrastructure.models.pessoa_fisica import PessoaFisicaModel
+from infrastructure.models.usuario_tipo import UsuarioTipo
 
 
-class PessoaFisicaTipo( 
+class PessoaFisicaTipoModel( 
                        AuditMixin, InactivateMixin,
                        SoftDeleteMixin, models.Model
                     ):
@@ -23,8 +23,9 @@ class PessoaFisicaTipo(
         usuario_tipo (ForeignKey): Referência ao tipo de usuário.
     """
     
-    pessoa_fisica = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE)
-    usuario_tipo = models.ForeignKey(UsuarioTipo, on_delete=models.CASCADE)
+    pessoa_fisica_tipo_id = models.AutoField(primary_key=True) 
+    pessoa_fisica_tipo_id = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE)
+    usuario_tipo_tipo = models.ForeignKey(UsuarioTipo, on_delete=models.CASCADE)
 
     class Meta:
         """
@@ -41,4 +42,4 @@ class PessoaFisicaTipo(
         # Garante que a mesma pessoa não tenha o mesmo tipo mais de uma vez.
 
     def __str__(self):
-        return f'{self.pessoa_fisica} - {self.usuario_tipo}'
+        return f"PessoaFisicaTipo(pessoa_fisica_tipo_id={self.pessoa_fisica_tipo_id}, pessoa_fisica_id={self.pessoa_fisica}, usuario_tipo_id={self.usuario_tipo})"

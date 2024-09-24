@@ -11,6 +11,6 @@ class UsuarioTipoDomain:
         nome (str): O nome do tipo de usuário (ex: Administrador, Editor).
         descricao (Optional[str]): Uma breve descrição do tipo de usuário.
     """
-    id: Optional[int]
+    usuario_tipo_id: Optional[int]
     nome: str
     descricao: Optional[str]

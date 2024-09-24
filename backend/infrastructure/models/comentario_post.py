@@ -9,44 +9,22 @@
 """
 
 from django.db import models
-from infrastructure.models.pessoa_fisica import PessoaFisicaModel
-from infrastructure.mixins.audit import AuditMixin
-from infrastructure.mixins.softdelete import SoftDeleteMixin
-from infrastructure.mixins.inactivate import InactivateMixin
-from infrastructure.mixins.status import StatusMixin
+from infrastructure.models.localizacao import Localizacao  
 
 
-class ComentarioPost(AuditMixin, SoftDeleteMixin, InactivateMixin, StatusMixin, models.Model):
+class ComentarioPost(models.Model):
     """
     Model que representa um comentário em uma postagem de blog.
-
-    Atributos:
-        post (ForeignKey): Referência ao post associado ao comentário.
-        autor (ForeignKey): Referência ao autor do comentário (presumidamente uma pessoa física).
-        texto (TextField): O conteúdo do comentário.
-        data_comentario (DateTimeField): Data e hora do comentário.
-        status (CharField): Estado do comentário (aguardando, aprovado, publicado).
     """
 
-    STATUS_CHOICES = [
-        ('aguardando', 'Aguardando Aprovação'),
-        ('aprovado', 'Aprovado'),
-        ('publicado', 'Publicado'),
-    ]
-
-    post = models.ForeignKey('Post', on_delete=models.CASCADE)
-    autor = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='comentarios')
     comentario = models.TextField()
     data_comentario = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='aguardando')
+    ip_origem = models.GenericIPAddressField(null=True, blank=True)  # Armazena o IP de origem do comentário
+    localizacao = models.ForeignKey(Localizacao, on_delete=models.SET_NULL, null=True, blank=True, related_name='comentarios')
+    status = models.CharField(max_length=20, default='aguardando')
 
     class Meta:
-        """
-        Metadados para a model ComentarioPost.
-
-        Define o comportamento da model no Django, incluindo o nome da tabela
-        e as opções de ordenação padrão.
-        """
         app_label = 'infrastructure'
         db_table = 'infrastructure_comentario_post'
         verbose_name = 'Comentário do Post'
@@ -54,7 +32,4 @@ class ComentarioPost(AuditMixin, SoftDeleteMixin, InactivateMixin, StatusMixin, 
         ordering = ['-data_comentario']
 
     def __str__(self):
-        """
-        Retorna a representação do comentário em formato de string.
-        """
-        return f"Comentário por {self.autor} em {self.post}"
+        return f"Comentário {str(self.comentario)[:50]} no post {getattr(self.post, 'title', 'Título não disponível')}"

@@ -2,7 +2,7 @@
 
 from domain.website.entities.pessoa_fisica_tipo import PessoaFisicaTipoDomain
 from domain.website.repositories.pessoa_fisica_tipo import (
-    PessoaFisicaTipoRepository)
+                                PessoaFisicaTipoRepository)
 from infrastructure.models.pessoa_fisica_tipo import PessoaFisicaTipo
 from infrastructure.models.pessoa_fisica import PessoaFisicaModel
 from infrastructure.models.usuario_tipo import UsuarioTipo

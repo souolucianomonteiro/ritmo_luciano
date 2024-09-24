@@ -35,7 +35,7 @@ class PessoaFisicaDomain:
         conta_pessoa (bool): Indica se essa pessoa física é também uma conta no sistema.
         iniciador_conta_empresa (bool): Indica se essa pessoa física iniciou uma conta de pessoa jurídica.
     """
-    id: Optional[int] = None
+    pessoa_fisica_id: Optional[int] = None
     primeiro_nome: str = ''
     sobrenome: str = ''
     email: str = ''

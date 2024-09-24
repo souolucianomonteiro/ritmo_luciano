@@ -19,6 +19,7 @@ Classes:
     de dados.
 """
 from typing import List, Tuple
+import re
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -31,7 +32,6 @@ from infrastructure.models.usuario_tipo import UsuarioTipo
 from domain.shared.validations.valida_email import validar_email
 from domain.shared.validations.valida_data import validar_data_nascimento
 from domain.shared.validations.valida_cpf import validar_cpf
-from .profissao import ProfissaoModel
 
 
 class PessoaFisicaModel(
@@ -64,7 +64,7 @@ class PessoaFisicaModel(
         ('suspenso', 'Suspenso'),
         ('renegociacao', 'Com Renegociação'),
     ]        
-
+    pessoa_fisica_id = models.AutoField(primary_key=True)
     conta_pessoa = models.BooleanField(default=True)
     situacao = models.CharField(max_length=255, choices=STATUS_CHOICES, default='adimplente')
     first_name = models.CharField('Primeiro Nome', max_length=150, blank=True)
@@ -73,7 +73,7 @@ class PessoaFisicaModel(
     data_nascimento = models.DateField(null=True, blank=True)
     foto = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     bios = models.TextField(max_length=500, null=True, blank=True)
-    profissao = models.ForeignKey(ProfissaoModel, on_delete=models.SET_NULL, null=True, blank=True, related_name='pessoas_fisicas')
+    profissao = models.ForeignKey('ProfissaoModel', on_delete=models.SET_NULL, null=True, blank=True, related_name='pessoas_fisicas')
     ocupacao = models.CharField(max_length=255, null=True, blank=True)
     whatsapp = models.CharField(max_length=20, null=True, blank=True)
     redes_sociais = models.CharField(max_length=500, null=True, blank=True)
@@ -119,7 +119,7 @@ class PessoaFisicaModel(
         return self.STATUS_CHOICES
 
     def __str__(self):
-        return f'{self.primeiro_nome} {self.sobrenome}'
+        return f'{self.first_name} {self.last_name}'
 
     def clean(self):
         """
@@ -127,9 +127,11 @@ class PessoaFisicaModel(
 
         Este método valida o CPF, email, e data de nascimento.
         """
-        # Valida o CPF usando a função personalizada
+         # Remover caracteres não numéricos (como pontos e traço)
+        self.cpf = re.sub(r'[^0-9]', '', self.cpf)
+
         try:
-            validar_cpf(self.cpf)
+            validar_cpf(self.cpf)  # Chamada da função de validação do CPF
         except ValidationError as exc:
             raise ValidationError({"cpf": "CPF inválido."}) from exc
 

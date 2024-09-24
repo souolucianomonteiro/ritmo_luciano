@@ -43,7 +43,6 @@ class Blog(
     description = models.TextField(null=True, blank=True)
     proprietario = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE, related_name='blogs')
     site = models.ForeignKey('CustomSite', on_delete=models.CASCADE, related_name='blogs')
-    
     # Relacionamento com categorias e tags
     categorias = models.ManyToManyField(CategoriaPost, related_name='blogs', blank=True)
     tags = models.ManyToManyField(TagPost, related_name='blogs', blank=True)

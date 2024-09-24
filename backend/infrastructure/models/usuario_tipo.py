@@ -16,7 +16,7 @@ class UsuarioTipo(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin, mod
         nome (CharField): O nome do tipo de usuário (ex: Administrador, Editor).
         descricao (TextField): Uma breve descrição do tipo de usuário.
     """
-
+    usuario_tipo_id = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=255, unique=True)
     descricao = models.TextField(null=True, blank=True)
 
