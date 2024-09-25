@@ -10,7 +10,7 @@ Classes:
     para a entidade Atividade Econômica utilizando o Django ORM.
 """
 from typing import List, Optional
-from domain.website.entities.atividade_economica import (
+from domain.marketing.entities.atividade_economica import (
                                 AtividadeEconomicaDomain)
 from domain.website.repositories.atividade_economica import (
                                 AtividadeEconomicaRepository)

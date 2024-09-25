@@ -8,8 +8,8 @@ fornecer a lógica específica para a interação com o banco de dados.
 """
 from abc import ABC, abstractmethod
 from typing import Optional, List
-from domain.website.entities.pessoa_fisica import PessoaFisicaDomain
-from domain.website.entities.endereco import EnderecoDomain
+from domain.marketing.entities.pessoa_fisica import PessoaFisicaDomain
+from domain.marketing.entities.endereco import EnderecoDomain
 
 
 class PessoaFisicaRepository(ABC):
@@ -37,7 +37,7 @@ class PessoaFisicaRepository(ABC):
         pass
 
     @abstractmethod
-    def delete(self, pessoa_fisica: PessoaFisicaDomain) -> None:
+    def delete(self, pessoa_fisica_id: PessoaFisicaDomain) -> None:
         """
         Exclui uma instância de PessoaFisica do repositório.
         """

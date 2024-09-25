@@ -30,7 +30,7 @@ class ArtefatoPluginModel(AuditMixin, SoftDeleteMixin, InactivateMixin,
     Inclui informações sobre o nome, versão, tipo de arquivo, 
     caminho do arquivo, e estado de ativação.
     """
-
+    artefato_plugin_id = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=255)
     descricao = models.TextField(null=True, blank=True)
     versao = models.CharField(max_length=50)

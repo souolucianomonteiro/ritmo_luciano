@@ -1,7 +1,7 @@
 """Módulo que implementa o caso de uso exibir bios do titular"""
-from domain.website.repositories.pessoa_fisica import PessoaFisicaRepository
-from domain.website.domain_service.calcular_idade_titular import CalcularIdadePessoaFisicaService
-from domain.website.entities.pessoa_fisica import PessoaFisicaDomain
+from domain.marketing.repositories.pessoa_fisica import PessoaFisicaRepository
+from domain.marketing.domain_service.calcular_idade_titular import                              (CalcularIdadePessoaFisicaService)
+from domain.marketing.entities.pessoa_fisica import PessoaFisicaDomain
 
 
 class ExibirPerfilPessoaFisicaUseCase:

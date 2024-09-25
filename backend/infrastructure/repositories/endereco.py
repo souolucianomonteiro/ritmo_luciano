@@ -11,36 +11,50 @@ Classes:
       para a entidade EnderecoDomain.
 """
 from typing import List, Optional
-from domain.website.entities.endereco import EnderecoDomain
-from domain.website.repositories.endereco import EnderecoRepository
+from domain.marketing.entities.endereco import EnderecoDomain
+from domain.marketing.repositories.endereco import EnderecoRepository
 from infrastructure.models.endereco import EnderecoModel
+from infrastructure.repositories.pessoa_fisica import (
+                            PessoaFisicaRepositoryConcrete)
+
 
 class DjangoEnderecoRepository(EnderecoRepository):
     """
     Repositório concreto para manipular a model EnderecoModel no Django ORM.
     """
 
+    def __init__(self, pessoa_fisica_repo: PessoaFisicaRepositoryConcrete):
+        self.pessoa_fisica_repo = pessoa_fisica_repo
+
     def save(self, endereco: EnderecoDomain) -> EnderecoDomain:
         """
         Salva ou atualiza um endereço no banco de dados.
         """
 
-        # Se houver um endereço_id, tentamos encontrar um objeto existente. Caso contrário, cria-se um novo.
+        # Tenta buscar a pessoa física, se existir
+        pessoa_fisica = None
+        if endereco.pessoa_fisica_id:
+            pessoa_fisica = self.pessoa_fisica_repo.get_by_id(endereco.pessoa_fisica_id)
+
         if endereco.endereco_id:
-            endereco_model = EnderecoModel.objects.get(id=endereco.endereco_id)
-            endereco_model.rua = endereco.rua
-            endereco_model.numero = endereco.numero
-            endereco_model.complemento = endereco.complemento
-            endereco_model.bairro = endereco.bairro
-            endereco_model.cidade = endereco.cidade
-            endereco_model.estado = endereco.estado
-            endereco_model.cep = endereco.cep
-            endereco_model.pais = endereco.pais
-            endereco_model.tipo = endereco.tipo
-            endereco_model.pessoa_fisica_id = endereco.pessoa_fisica_id
-            endereco_model.pessoa_juridica_id = endereco.pessoa_juridica_id
-            endereco_model.is_active = endereco.is_active
-            endereco_model.data_fim = endereco.data_fim
+            try:
+                endereco_model = EnderecoModel.objects.get(id=endereco.endereco_id)
+                endereco_model.rua = endereco.rua
+                endereco_model.numero = endereco.numero
+                endereco_model.complemento = endereco.complemento
+                endereco_model.bairro = endereco.bairro
+                endereco_model.cidade = endereco.cidade
+                endereco_model.estado = endereco.estado
+                endereco_model.cep = endereco.cep
+                endereco_model.pais = endereco.pais
+                endereco_model.tipo = endereco.tipo
+                endereco_model.pessoa_fisica = pessoa_fisica  
+                endereco_model.pessoa_juridica = endereco.pessoa_juridica_id
+                endereco_model.is_active = endereco.is_active
+                endereco_model.data_fim = endereco.data_fim
+            except EnderecoModel.DoesNotExist:
+                # Tratar caso o endereço não exista
+                return None
         else:
             endereco_model = EnderecoModel(
                 rua=endereco.rua,
@@ -52,7 +66,7 @@ class DjangoEnderecoRepository(EnderecoRepository):
                 cep=endereco.cep,
                 pais=endereco.pais,
                 tipo=endereco.tipo,
-                pessoa_fisica_id=endereco.pessoa_fisica_id,
+                pessoa_fisica=pessoa_fisica,  # Trabalhe com o objeto em vez de `_id`
                 pessoa_juridica_id=endereco.pessoa_juridica_id,
                 is_active=endereco.is_active,
                 data_inicio=endereco.data_inicio,
@@ -72,8 +86,8 @@ class DjangoEnderecoRepository(EnderecoRepository):
             cep=endereco_model.cep,
             pais=endereco_model.pais,
             tipo=endereco_model.tipo,
-            pessoa_fisica_id=endereco_model.pessoa_fisica_id,
-            pessoa_juridica_id=endereco_model.pessoa_juridica_id,
+            pessoa_fisica_id=endereco_model.pessoa_fisica,  # Retorna o ID diretamente
+            pessoa_juridica_id=endereco_model.pessoa_juridica,
             is_active=endereco_model.is_active,
             data_inicio=endereco_model.data_inicio,
             data_fim=endereco_model.data_fim
@@ -96,8 +110,8 @@ class DjangoEnderecoRepository(EnderecoRepository):
                 cep=endereco_model.cep,
                 pais=endereco_model.pais,
                 tipo=endereco_model.tipo,
-                pessoa_fisica_id=endereco_model.pessoa_fisica_id,
-                pessoa_juridica_id=endereco_model.pessoa_juridica_id,
+                pessoa_fisica_id=endereco_model.pessoa_fisica,  # ID da pessoa física
+                pessoa_juridica_id=endereco_model.pessoa_juridica,
                 is_active=endereco_model.is_active,
                 data_inicio=endereco_model.data_inicio,
                 data_fim=endereco_model.data_fim
@@ -122,8 +136,8 @@ class DjangoEnderecoRepository(EnderecoRepository):
                 cep=endereco_model.cep,
                 pais=endereco_model.pais,
                 tipo=endereco_model.tipo,
-                pessoa_fisica_id=endereco_model.pessoa_fisica_id,
-                pessoa_juridica_id=endereco_model.pessoa_juridica_id,
+                pessoa_fisica_id=endereco_model.pessoa_fisica,  # ID da pessoa física
+                pessoa_juridica_id=endereco_model.pessoa_juridica,
                 is_active=endereco_model.is_active,
                 data_inicio=endereco_model.data_inicio,
                 data_fim=endereco_model.data_fim

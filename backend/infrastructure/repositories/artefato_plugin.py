@@ -7,76 +7,88 @@ Este módulo contém a classe `ArtefatoPluginRepositoryConcrete`, que provê
 os métodos para interação com o banco de dados, permitindo operações de
 CRUD (Create, Read, Update, Delete) para a entidade `ArtefatoPlugin`.
 """
-from typing import List, Optional
-from domain.shared.plugins.entities.artefato_plugin import ArtefatoPlugin
+from typing import Optional, List
 from domain.shared.plugins.repositories.artefato_plugin import (
                                         ArtefatoPluginRepository)
+from domain.shared.plugins.entities.artefato_plugin import ArtefatoPluginDomain
 from infrastructure.models.artefato_plugin import ArtefatoPluginModel
 
 
 class ArtefatoPluginRepositoryConcrete(ArtefatoPluginRepository):
-    """Implementação concreta do repositório de ArtefatoPlugin na camada 
-    de infraestrutura."""
+    """
+    Implementação concreta do repositório de ArtefatoPlugin.
+    Faz a conversão entre o ArtefatoPluginDomain e ArtefatoPluginModel,
+    garantindo
+    que as operações sejam abstraídas e interajam corretamente com
+    o banco de dados.
+    """
 
-    def obter_por_id(self, artefato_plugin_id: int) -> Optional[ArtefatoPlugin]:
+    def get_by_id(self, artefato_plugin_id: int) -> Optional[
+                                        ArtefatoPluginDomain]:
+        """
+        Busca um ArtefatoPluginDomain pelo seu ID no banco de dados.
+        """
         try:
-            artefato_plugin_model = ArtefatoPluginModel.objects.get(
-                                    id=artefato_plugin_id, ativo=True)
-            return ArtefatoPlugin(
-                id=artefato_plugin_model.id,
-                nome=artefato_plugin_model.nome,
-                descricao=artefato_plugin_model.descricao,
-                versao=artefato_plugin_model.versao,
-                tipo_arquivo=artefato_plugin_model.tipo_arquivo,
-                caminho_arquivo=artefato_plugin_model.caminho_arquivo,
-                criado_em=artefato_plugin_model.created_at,
-                atualizado_em=artefato_plugin_model.updated_at,
-                criado_por=artefato_plugin_model.created_by,
-                atualizado_por=artefato_plugin_model.updated_by,
-                ativo=artefato_plugin_model.ativo,
-            )
+            model = ArtefatoPluginModel.objects.get(id=artefato_plugin_id)
+            return self._model_to_domain(model)
         except ArtefatoPluginModel.DoesNotExist:
             return None
 
-    def listar(self) -> List[ArtefatoPlugin]:
-        artefato_plugins = ArtefatoPluginModel.objects.filter(ativo=True)
-        return [
-            ArtefatoPlugin(
-                id=artefato_plugin.id,
-                nome=artefato_plugin.nome,
-                descricao=artefato_plugin.descricao,
-                versao=artefato_plugin.versao,
-                tipo_arquivo=artefato_plugin.tipo_arquivo,
-                caminho_arquivo=artefato_plugin.caminho_arquivo,
-                criado_em=artefato_plugin.created_at,
-                atualizado_em=artefato_plugin.updated_at,
-                criado_por=artefato_plugin.created_by,
-                atualizado_por=artefato_plugin.updated_by,
-                ativo=artefato_plugin.ativo,
-            ) for artefato_plugin in artefato_plugins
-        ]
+    def get_all(self) -> List[ArtefatoPluginDomain]:
+        """
+        Busca todos os artefatos de plugin no banco de dados.
+        """
+        models = ArtefatoPluginModel.objects.all()
+        return [self._model_to_domain(model) for model in models]
 
-    def salvar(self, artefato_plugin: ArtefatoPlugin) -> None:
-        ArtefatoPluginModel.objects.update_or_create(
-            id=artefato_plugin.id,
-            defaults={
-                'nome': artefato_plugin.nome,
-                'descricao': artefato_plugin.descricao,
-                'versao': artefato_plugin.versao,
-                'tipo_arquivo': artefato_plugin.tipo_arquivo,
-                'caminho_arquivo': artefato_plugin.caminho_arquivo,
-                'criado_em': artefato_plugin.criado_em,
-                'atualizado_em': artefato_plugin.atualizado_em,
-                'criado_por': artefato_plugin.criado_por,
-                'atualizado_por': artefato_plugin.atualizado_por,
-                'ativo': artefato_plugin.ativo,
-            }
+    def save(self, artefato_plugin: ArtefatoPluginDomain) -> ArtefatoPluginDomain:
+        """
+        Salva ou atualiza um ArtefatoPluginDomain no banco de dados.
+        """
+        model = self._domain_to_model(artefato_plugin)
+        model.save()
+        return self._model_to_domain(model)
+
+    def delete(self, artefato_plugin_id: int) -> None:
+        """
+        Remove um ArtefatoPluginDomain do banco de dados pelo seu ID.
+        """
+        ArtefatoPluginModel.objects.filter(id=artefato_plugin_id).delete()
+
+    def _model_to_domain(self, model: ArtefatoPluginModel) -> (
+                                            ArtefatoPluginDomain):
+        """
+        Converte um ArtefatoPluginModel para ArtefatoPluginDomain.
+        """
+        return ArtefatoPluginDomain(
+            artefato_plugin_id=model.artefato_plugin_id,
+            nome=model.nome,
+            descricao=model.descricao,
+            versao=model.versao,
+            tipo_arquivo=model.tipo_arquivo,
+            caminho_arquivo=model.caminho_arquivo,
+            criado_em=model.created_at,
+            atualizado_em=model.updated_at,
+            criado_por=model.created_by,
+            atualizado_por=model.updated_by,
+            ativo=model.ativo
         )
 
-    def remover(self, artefato_plugin_id: int) -> None:
-        try:
-            artefato_plugin = ArtefatoPluginModel.objects.get(
-                                        id=artefato_plugin_id)
-            artefato_plugin.soft_delete()
-        except ArtefatoPluginModel.DoesNotExist:
-            pass  # Ou trate o erro conforme necessário
+    def _domain_to_model(self, domain: ArtefatoPluginDomain) -> (
+                                                ArtefatoPluginModel):
+        """
+        Converte um ArtefatoPluginDomain para ArtefatoPluginModel.
+        """
+        return ArtefatoPluginModel(
+            artefato_plugin_id=domain.artefato_plugin_id,
+            nome=domain.nome,
+            descricao=domain.descricao,
+            versao=domain.versao,
+            tipo_arquivo=domain.tipo_arquivo,
+            caminho_arquivo=domain.caminho_arquivo,
+            created_at=domain.criado_em,
+            updated_at=domain.atualizado_em,
+            created_by=domain.criado_por,
+            updated_by=domain.atualizado_por,
+            ativo=domain.ativo
+        )

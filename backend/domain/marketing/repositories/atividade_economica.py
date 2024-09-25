@@ -1,16 +1,22 @@
 """
-Módulo responsável pela definição da interface do repositório AtividadeEconomicaRepository.
+Módulo responsável pela definição da interface do repositório
+AtividadeEconomicaRepository.
 
-Este módulo define a interface do repositório abstrato para a entidade Atividade Econômica.
-A interface descreve os métodos que devem ser implementados pelos repositórios concretos
+Este módulo define a interface do repositório abstrato para a entidade
+Atividade Econômica.
+A interface descreve os métodos que devem ser implementados pelos repositórios
+concretos
 para persistência e recuperação de dados relacionados à atividade econômica.
 
 Classes:
-    AtividadeEconomicaRepository: Interface que define os métodos do repositório de Atividade Econômica.
+    AtividadeEconomicaRepository: Interface que define os métodos do
+    repositório de Atividade Econômica.
 """
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from domain.website.entities.atividade_economica import AtividadeEconomicaDomain
+from domain.marketing.entities.atividade_economica import (
+                                    AtividadeEconomicaDomain)
+
 
 class AtividadeEconomicaRepository(ABC):
     """
@@ -20,7 +26,8 @@ class AtividadeEconomicaRepository(ABC):
     """
 
     @abstractmethod
-    def save(self, atividade_economica: AtividadeEconomicaDomain) -> AtividadeEconomicaDomain:
+    def save(self, atividade_economica: AtividadeEconomicaDomain) -> (
+                                            AtividadeEconomicaDomain):
         pass
 
     @abstractmethod

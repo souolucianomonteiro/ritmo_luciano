@@ -3,7 +3,7 @@ calcular idade da pessoa física.
 """
 
 from datetime import date
-from domain.website.entities.pessoa_fisica import PessoaFisicaDomain
+from domain.marketing.entities.pessoa_fisica import PessoaFisicaDomain
 
 
 class CalcularIdadePessoaFisicaService:

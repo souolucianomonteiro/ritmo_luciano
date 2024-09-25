@@ -13,52 +13,62 @@ Classes:
     de `ArtefatoPlugin` utilizando o Django ORM.
 """
 from abc import ABC, abstractmethod
-from typing import List, Optional
-from domain.shared.plugins.entities.artefato_plugin import ArtefatoPlugin
-
+from typing import Optional, List
+from domain.shared.plugins.entities.artefato_plugin import ArtefatoPluginDomain
 
 class ArtefatoPluginRepository(ABC):
     """
-    Interface de repositório para ArtefatoPlugin.
+    Repositório abstrato para gerenciamento de ArtefatoPlugin no domínio.
 
-    Define os métodos que qualquer implementação concreta de um repositório de
-    ArtefatoPlugin deve possuir.
+    Define as operações essenciais sobre o objeto de domínio ArtefatoPluginDomain.
     """
 
     @abstractmethod
-    def obter_por_id(self, artefato_plugin_id: int) -> Optional[ArtefatoPlugin]:
+    def get_by_id(self, artefato_plugin_id: int) -> Optional[ArtefatoPluginDomain]:
         """
-        Obtém um ArtefatoPlugin pelo seu ID.
+        Busca um ArtefatoPluginDomain pelo seu ID.
 
-        :param artefato_plugin_id: O ID do ArtefatoPlugin a ser obtido.
-        :return: O ArtefatoPlugin correspondente, ou None se não encontrado.
-        """
-        pass
+        Parâmetros:
+            artefato_plugin_id (int): O ID do artefato plugin a ser buscado.
 
-    @abstractmethod
-    def listar(self) -> List[ArtefatoPlugin]:
-        """
-        Lista todos os ArtefatoPlugins ativos.
-
-        :return: Uma lista de ArtefatoPlugins.
+        Retorna:
+            Optional[ArtefatoPluginDomain]: O objeto de domínio se encontrado, 
+            ou None caso não exista.
         """
         pass
 
     @abstractmethod
-    def salvar(self, artefato_plugin: ArtefatoPlugin) -> None:
+    def get_all(self) -> List[ArtefatoPluginDomain]:
         """
-        Salva ou atualiza um ArtefatoPlugin.
+        Busca todos os artefatos de plugin.
 
-        :param artefato_plugin: O ArtefatoPlugin a ser salvo ou atualizado.
+        Retorna:
+            List[ArtefatoPluginDomain]: Lista contendo todos os artefatos de plugin.
         """
         pass
 
     @abstractmethod
-    def remover(self, artefato_plugin_id: int) -> None:
+    def save(self, artefato_plugin: ArtefatoPluginDomain) -> ArtefatoPluginDomain:
         """
-        Remove um ArtefatoPlugin logicamente (soft delete).
+        Salva ou atualiza um ArtefatoPluginDomain.
 
-        :param artefato_plugin_id: O ID do ArtefatoPlugin a ser removido.
+        Parâmetros:
+            artefato_plugin (ArtefatoPluginDomain): O objeto de domínio a ser salvo ou atualizado.
+
+        Retorna:
+            ArtefatoPluginDomain: O objeto de domínio salvo ou atualizado.
         """
         pass
 
+    @abstractmethod
+    def delete(self, artefato_plugin_id: int) -> None:
+        """
+        Remove um ArtefatoPluginDomain com base no seu ID.
+
+        Parâmetros:
+            artefato_plugin_id (int): O ID do artefato a ser removido.
+
+        Retorna:
+            None
+        """
+        pass

@@ -1,7 +1,8 @@
-from domain.website.domain_service.calcular_idade_titular import (
+"""Módulo implementa o caso de uso calcular idade do titular"""
+from domain.marketing.domain_service.calcular_idade_titular import (
                                 CalcularIdadePessoaFisicaService)
-from domain.website.entities.pessoa_fisica import PessoaFisicaDomain
-from domain.website.repositories.pessoa_fisica import PessoaFisicaRepository
+from domain.marketing.entities.pessoa_fisica import PessoaFisicaDomain
+from domain.marketing.repositories.pessoa_fisica import PessoaFisicaRepository
 
 
 class CalcularIdadePessoaFisicaUseCase:

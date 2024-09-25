@@ -12,8 +12,8 @@ Classes:
     UsuarioTipo.
 """
 from typing import Optional, List
-from domain.website.entities.usuario_tipo import UsuarioTipoDomain
-from domain.website.repositories.usuario_tipo import UsuarioTipoRepository
+from domain.marketing.entities.usuario_tipo import UsuarioTipoDomain
+from domain.marketing.repositories.usuario_tipo import UsuarioTipoRepository
 from infrastructure.models.usuario_tipo import UsuarioTipo
 
 
