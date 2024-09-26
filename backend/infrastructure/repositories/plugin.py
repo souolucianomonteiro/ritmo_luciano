@@ -31,7 +31,6 @@ class DjangoPluginRepository(PluginRepository):
                 tipo_plugin_id=plugin.tipo_plugin_id,
                 versao=plugin.versao,
                 descricao=plugin.descricao,
-                artefato_plugin_id=plugin.artefato_plugin_id,
                 documentacao=plugin.documentacao,
                 caminho_arquivo=plugin.caminho_arquivo
             )
@@ -48,7 +47,6 @@ class DjangoPluginRepository(PluginRepository):
                 tipo_plugin_id=plugin_model.tipo_plugin_id,
                 versao=plugin_model.versao,
                 descricao=plugin_model.descricao,
-                artefato_plugin_id=plugin_model.artefato_plugin_id,
                 documentacao=plugin_model.documentacao,
                 caminho_arquivo=plugin_model.caminho_arquivo,
                 permissoes=list(plugin_model.permissoes.all()),
@@ -70,7 +68,6 @@ class DjangoPluginRepository(PluginRepository):
             plugin_model.tipo_plugin_id = plugin.tipo_plugin_id
             plugin_model.versao = plugin.versao
             plugin_model.descricao = plugin.descricao
-            plugin_model.artefato_plugin_id = plugin.artefato_plugin_id
             plugin_model.documentacao = plugin.documentacao
             plugin_model.caminho_arquivo = plugin.caminho_arquivo
             
@@ -103,7 +100,6 @@ class DjangoPluginRepository(PluginRepository):
                     tipo_plugin_id=plugin_model.tipo_plugin_id,
                     versao=plugin_model.versao,
                     descricao=plugin_model.descricao,
-                    artefato_plugin_id=plugin_model.artefato_plugin_id,
                     documentacao=plugin_model.documentacao,
                     caminho_arquivo=plugin_model.caminho_arquivo,
                     permissoes=list(plugin_model.permissoes.all()),
@@ -128,7 +124,6 @@ class DjangoPluginRepository(PluginRepository):
                     tipo_plugin_id=plugin_model.tipo_plugin_id,
                     versao=plugin_model.versao,
                     descricao=plugin_model.descricao,
-                    artefato_plugin_id=plugin_model.artefato_plugin_id,
                     documentacao=plugin_model.documentacao,
                     caminho_arquivo=plugin_model.caminho_arquivo,
                     permissoes=list(plugin_model.permissoes.all()),
@@ -153,7 +148,6 @@ class DjangoPluginRepository(PluginRepository):
                     tipo_plugin_id=plugin_model.tipo_plugin_id,
                     versao=plugin_model.versao,
                     descricao=plugin_model.descricao,
-                    artefato_plugin_id=plugin_model.artefato_plugin_id,
                     documentacao=plugin_model.documentacao,
                     caminho_arquivo=plugin_model.caminho_arquivo,
                     permissoes=list(plugin_model.permissoes.all()),

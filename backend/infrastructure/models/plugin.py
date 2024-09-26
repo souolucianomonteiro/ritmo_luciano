@@ -18,7 +18,6 @@ from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.models.categoria_plugin import CategoriaPlugin
 from infrastructure.models.tipo_plugin import TipoPluginModel
-from infrastructure.models.artefato_plugin import ArtefatoPluginModel
 from infrastructure.models.permissao_plugin import PermissaoPluginModel
 from infrastructure.models.historico_modificacoes import (
                             HistoricoModificacoesModel)
@@ -45,7 +44,6 @@ class PluginModel(
     tipo_plugin = models.ForeignKey(TipoPluginModel, on_delete=models.CASCADE)
     versao = models.CharField(max_length=50)
     descricao = models.TextField(null=True, blank=True)
-    artefato_plugin = models.ForeignKey(ArtefatoPluginModel, on_delete=models.CASCADE, null=True, blank=True)
     documentacao = models.TextField(null=True, blank=True)
     caminho_arquivo = models.CharField(max_length=500)
     permissoes = models.ManyToManyField(PermissaoPluginModel, related_name='plugins')

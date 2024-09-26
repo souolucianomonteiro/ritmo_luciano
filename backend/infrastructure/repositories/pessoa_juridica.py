@@ -1,9 +1,9 @@
 # pylint: disable=no-member
 
 from typing import Optional, List
-from domain.website.entities.pessoa_juridica import PessoaJuridicaDomain
-from domain.website.repositories.pessoa_juridica import (
-    PessoaJuridicaRepository)
+from domain.marketing.entities.pessoa_juridica import PessoaJuridicaDomain
+from domain.marketing.repositories.pessoa_juridica import (
+                                    PessoaJuridicaRepository)
 from infrastructure.models.pessoa_juridica import PessoaJuridicaModel
 from infrastructure.models.endereco import EnderecoModel
 from infrastructure.models.pessoa_fisica import PessoaFisicaModel

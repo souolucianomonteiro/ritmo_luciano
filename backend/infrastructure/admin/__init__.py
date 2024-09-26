@@ -10,7 +10,6 @@ Classes:
 """
 from .categoria_plugin import CategoriaPluginAdmin
 from .tipo_plugin import TipoPluginAdmin
-from .artefato_plugin import ArtefatoPluginAdmin
 from .plugin import PluginAdmin
 from .tag_plugin import TagPluginAdmin
 from .dependencia_plugin import DependenciaPluginAdmin
@@ -41,12 +40,12 @@ from .imagem_post import ImagemPostAdmin
 __all__ = [
     'CategoriaPluginAdmin', 'TipoPluginAdmin', 'ArtefatoPluginAdmin',
     'PluginAdmin', 'TagPluginAdmin', 'DependenciaPluginAdmin',
-    'HistoricoModificacoesAdmin', 'PermissaoPluginAdmin', 'TemplatePluginAdmin', 'CustomSiteAdmin', 'SubdominioAdmin', 'BlogAdmin', 'PostAdmin',
-    'CategoriaPostAdmin', 'TagPostAdmin', 'UsuarioTipoAdmin',
+    'HistoricoModificacoesAdmin', 'PermissaoPluginAdmin', 
+    'TemplatePluginAdmin', 'CustomSiteAdmin', 'SubdominioAdmin', 'BlogAdmin',
+    'PostAdmin', 'CategoriaPostAdmin', 'TagPostAdmin', 'UsuarioTipoAdmin',
     'PermissaoWebsiteAdmin', 'ProfissaoAdmin', 'PessoaFisicaAdmin',
     'PessoaJuridicaAdmin', 'EnderecoAdmin', 'VisualizacaoPostAdmin',
     'ComentarioReacaoAdmin', 'VotacaoPost', 'CompartilhamentoPostAdmin',
     'ComentarioPostAdmin', 'ReacaoTipoAdmin', 'ImagemPostAdmin',
-
     
     ]

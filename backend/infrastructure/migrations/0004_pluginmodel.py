@@ -33,7 +33,6 @@ class Migration(migrations.Migration):
                 ('historico_modificacoes', models.JSONField(default=list)),
                 ('tags', models.JSONField(default=list)),
                 ('dependencias', models.JSONField(default=list)),
-                ('artefato_plugin', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='infrastructure.artefatopluginmodel')),
                 ('categoria', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='infrastructure.categoriamodel')),
                 ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_%(class)s_set', to=settings.AUTH_USER_MODEL)),
                 ('tipo_plugin', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='infrastructure.tipopluginmodel')),

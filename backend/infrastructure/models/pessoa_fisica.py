@@ -28,7 +28,6 @@ from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.status import StatusMixin
 from infrastructure.models.endereco import EnderecoModel
-from infrastructure.models.usuario_tipo import UsuarioTipo
 from domain.shared.validations.valida_email import validar_email
 from domain.shared.validations.valida_data import validar_data_nascimento
 from domain.shared.validations.valida_cpf import validar_cpf
@@ -64,7 +63,7 @@ class PessoaFisicaModel(
         ('suspenso', 'Suspenso'),
         ('renegociacao', 'Com Renegociação'),
     ]        
-    pessoa_fisica_id = models.AutoField(primary_key=True)
+    pessoa_fisica_id = models.BigAutoField(primary_key=True)
     conta_pessoa = models.BooleanField(default=True)
     situacao = models.CharField(max_length=255, choices=STATUS_CHOICES, default='adimplente')
     first_name = models.CharField('Primeiro Nome', max_length=150, blank=True)
@@ -92,11 +91,7 @@ class PessoaFisicaModel(
 
     iniciador_conta_empresa = models.BooleanField(default=False)
     enderecos = models.ManyToManyField(EnderecoModel, related_name='pessoas_fisicas', blank=True)
-    tipos_de_usuario = models.ManyToManyField(
-        UsuarioTipo,
-        through='PessoaFisicaTipo',  # Model intermediária
-        related_name='pessoas_fisicas'
-    )
+    
 
     # Adicionando related_name exclusivos para evitar conflitos
     groups = models.ManyToManyField(

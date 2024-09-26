@@ -10,10 +10,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelTable(
-            name='artefatopluginmodel',
-            table='infrastructure_artefato_plugin',
-        ),
+       
         migrations.AlterModelTable(
             name='categoriamodel',
             table='infrastructure_categoria_plugin',

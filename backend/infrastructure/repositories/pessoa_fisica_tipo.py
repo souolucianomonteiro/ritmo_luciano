@@ -1,88 +1,87 @@
 # pylint: disable=no-member
 
-from domain.website.entities.pessoa_fisica_tipo import PessoaFisicaTipoDomain
-from domain.website.repositories.pessoa_fisica_tipo import (
-                                PessoaFisicaTipoRepository)
-from infrastructure.models.pessoa_fisica_tipo import PessoaFisicaTipo
-from infrastructure.models.pessoa_fisica import PessoaFisicaModel
-from infrastructure.models.usuario_tipo import UsuarioTipo
+"""
+Repositório concreto para a entidade PessoaFisicaTipoDomain.
+
+Este repositório implementa os métodos definidos no repositório abstrato,
+utilizando o Django ORM para manipular a persistência de dados da model
+PessoaFisicaTipoModel.
+"""
+from typing import Optional, List
+from domain.marketing.entities.pessoa_fisica_tipo import PessoaFisicaTipoDomain
+from domain.marketing.repositories.pessoa_fisica_tipo import (
+                                        PessoaFisicaTipoRepository)
+from infrastructure.models.pessoa_fisica_tipo import PessoaFisicaTipoModel
+from infrastructure.repositories.pessoa_fisica import (
+                            PessoaFisicaRepositoryConcrete)
+from infrastructure.repositories.usuario_tipo import (
+                    DjangoUsuarioTipoRepositoryConcrete)
 
 
 class DjangoPessoaFisicaTipoRepository(PessoaFisicaTipoRepository):
     """
-    Repositório concreto para a entidade PessoaFisicaTipo.
-    Interage com as models PessoaFisicaModel, UsuarioTipo e PessoaFisicaTipoModel
-    para realizar as operações de persistência.
+    Repositório concreto para a entidade PessoaFisicaTipoDomain.
     """
+
+    def __init__(self, pessoa_fisica_repo: PessoaFisicaRepositoryConcrete, usuario_tipo_repo: DjangoUsuarioTipoRepositoryConcrete):
+        self.pessoa_fisica_repo = pessoa_fisica_repo
+        self.usuario_tipo_repo = usuario_tipo_repo
+
+    def get_by_id(self, pessoa_fisica_tipo_id: int) -> Optional[PessoaFisicaTipoDomain]:
+        """
+        Busca uma associação PessoaFisicaTipo pelo seu ID.
+        """
+        try:
+            model = PessoaFisicaTipoModel.objects.get(id=pessoa_fisica_tipo_id)
+            return self._model_to_domain(model)
+        except PessoaFisicaTipoModel.DoesNotExist:
+            return None
+
+    def list_all(self) -> List[PessoaFisicaTipoDomain]:
+        """
+        Retorna todas as associações entre Pessoa Física e Tipos de Usuário.
+        """
+        models = PessoaFisicaTipoModel.objects.all()
+        return [
+            self._model_to_domain(model)
+            for model in models
+        ]
 
     def save(self, pessoa_fisica_tipo: PessoaFisicaTipoDomain) -> PessoaFisicaTipoDomain:
         """
-        Salva a associação entre uma pessoa física e seus tipos de usuário no banco de dados.
+        Salva ou atualiza uma associação no banco de dados.
         """
-        pessoa_fisica_model = PessoaFisicaModel.objects.get(id=pessoa_fisica_tipo.pessoa_fisica.id)
-        usuario_tipo_model = UsuarioTipo.objects.get(id=pessoa_fisica_tipo.usuario_tipo.id)
+        pessoa_fisica = self.pessoa_fisica_repo.get_by_id(pessoa_fisica_tipo.pessoa_fisica_id)
+        usuario_tipo = self.usuario_tipo_repo.get_by_id(pessoa_fisica_tipo.usuario_tipo_id)
 
-        pessoa_fisica_tipo_model = PessoaFisicaTipo(
-            pessoa_fisica=pessoa_fisica_model,
-            usuario_tipo=usuario_tipo_model
+        if not pessoa_fisica or not usuario_tipo:
+            raise ValueError("Pessoa Física ou Tipo de Usuário inválido.")
+
+        model = self._domain_to_model(pessoa_fisica_tipo)
+        model.pessoa_fisica_id = pessoa_fisica.pessoa_fisica_id
+        model.usuario_tipo_id = usuario_tipo.usuario_tipo_id
+        model.save()
+
+        return self._model_to_domain(model)
+
+    def _model_to_domain(self, model: PessoaFisicaTipoModel) -> PessoaFisicaTipoDomain:
+        """
+        Converte o model de infraestrutura para a entidade de domínio.
+        """
+        return PessoaFisicaTipoDomain(
+            pessoa_fisica_tipo_id=model.id,
+            pessoa_fisica_id=model.pessoa_fisica_id,
+            usuario_tipo_id=model.usuario_tipo_id,
+            data_criacao=model.data_criacao
         )
-        pessoa_fisica_tipo_model.save()
 
-        pessoa_fisica_tipo.id = pessoa_fisica_tipo_model.id
-        return pessoa_fisica_tipo
-
-    def get_by_id(self, pessoa_fisica_tipo_id: int) -> PessoaFisicaTipoDomain:
+    def _domain_to_model(self, domain: PessoaFisicaTipoDomain) -> PessoaFisicaTipoModel:
         """
-        Retorna a associação entre pessoa física e tipo de usuário com base no ID.
+        Converte a entidade de domínio para o model de infraestrutura.
         """
-        try:
-            pessoa_fisica_tipo_model = PessoaFisicaTipo.objects.get(id=pessoa_fisica_tipo_id)
-            return PessoaFisicaTipoDomain(
-                id=pessoa_fisica_tipo_model.id,
-                pessoa_fisica=PessoaFisicaModel(
-                    id=pessoa_fisica_tipo_model.pessoa_fisica.id,
-                    primeiro_nome=pessoa_fisica_tipo_model.pessoa_fisica.first_name,
-                    sobrenome=pessoa_fisica_tipo_model.pessoa_fisica.last_name,
-                    email=pessoa_fisica_tipo_model.pessoa_fisica.email,
-                    cpf=pessoa_fisica_tipo_model.pessoa_fisica.cpf,
-                    genero=pessoa_fisica_tipo_model.pessoa_fisica.genero
-                ),
-                usuario_tipo=UsuarioTipo(
-                    id=pessoa_fisica_tipo_model.usuario_tipo.id,
-                    nome=pessoa_fisica_tipo_model.usuario_tipo.nome,
-                    descricao=pessoa_fisica_tipo_model.usuario_tipo.descricao
-                )
-            )
-        except PessoaFisicaTipo.DoesNotExist:
-            return None
-
-    def list_all(self) -> list[PessoaFisicaTipoDomain]:
-        """
-        Lista todas as associações entre pessoa física e tipos de usuário.
-        """
-        pessoa_fisica_tipos = PessoaFisicaTipo.objects.all()
-        return [
-            PessoaFisicaTipoDomain(
-                id=pessoa_fisica_tipo.id,
-                pessoa_fisica=PessoaFisicaModel(
-                    id=pessoa_fisica_tipo.pessoa_fisica.id,
-                    primeiro_nome=pessoa_fisica_tipo.pessoa_fisica.first_name,
-                    sobrenome=pessoa_fisica_tipo.pessoa_fisica.last_name,
-                    email=pessoa_fisica_tipo.pessoa_fisica.email,
-                    cpf=pessoa_fisica_tipo.pessoa_fisica.cpf,
-                    genero=pessoa_fisica_tipo.pessoa_fisica.genero
-                ),
-                usuario_tipo=UsuarioTipo(
-                    id=pessoa_fisica_tipo.usuario_tipo.id,
-                    nome=pessoa_fisica_tipo.usuario_tipo.nome,
-                    descricao=pessoa_fisica_tipo.usuario_tipo.descricao
-                )
-            )
-            for pessoa_fisica_tipo in pessoa_fisica_tipos
-        ]
-    
-    def delete(self, pessoa_fisica_tipo: PessoaFisicaTipoDomain) -> None:
-        """
-        Exclui uma associação entre pessoa física e tipo de usuário.
-        """
-        PessoaFisicaTipo.objects.filter(id=pessoa_fisica_tipo.id).delete()
+        return PessoaFisicaTipoModel(
+            id=domain.pessoa_fisica_tipo_id,
+            pessoa_fisica_id=domain.pessoa_fisica_id,
+            usuario_tipo_id=domain.usuario_tipo_id,
+            data_criacao=domain.data_criacao
+        )

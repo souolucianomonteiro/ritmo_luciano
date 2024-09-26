@@ -17,7 +17,7 @@ from domain.marketing.repositories.usuario_tipo import UsuarioTipoRepository
 from infrastructure.models.usuario_tipo import UsuarioTipo
 
 
-class DjangoUsuarioTipoRepository(UsuarioTipoRepository):
+class DjangoUsuarioTipoRepositoryConcrete(UsuarioTipoRepository):
     """
     Repositório concreto para a entidade UsuarioTipo.
 

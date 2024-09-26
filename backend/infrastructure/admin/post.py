@@ -17,15 +17,15 @@ class PostAdmin(admin.ModelAdmin):
     """
     Configuração do admin para Post.
     """
-    list_display = ('title', 'slug', 'autor', 'published_date', 'status')
-    list_filter = ('status', 'published_date', 'autor')
-    search_fields = ('title', 'slug', 'content', 'autor__first_name', 'autor__last_name')
+    list_display = ('title', 'slug', 'published_date', 'status')
+    list_filter = ('status', 'published_date')
+    search_fields = ('title', 'slug', 'content')
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ('published_date',)
 
     fieldsets = (
         (None, {
-            'fields': ('title', 'slug', 'content', 'autor', 'blog', 'status', 'tags')
+            'fields': ('title', 'slug', 'content', 'blog', 'status', 'tags')
         }),
         ('Informações Adicionais', {
             'fields': ('published_date', 'numero_compartilhamentos', 'compartilhado'),

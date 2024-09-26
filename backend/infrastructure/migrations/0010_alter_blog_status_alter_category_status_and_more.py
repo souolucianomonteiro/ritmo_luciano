@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('infrastructure', '0009_usuariotipo_titular'),
+        ('infrastructure', '0008_enderecomodel_localizacao_profissaomodel_and_more'),
     ]
 
     operations = [
@@ -42,11 +42,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='tag',
-            name='status',
-            field=models.CharField(blank=True, choices=[], default=None, max_length=20, null=True),
-        ),
-        migrations.AlterField(
-            model_name='usuariotipo',
             name='status',
             field=models.CharField(blank=True, choices=[], default=None, max_length=20, null=True),
         ),

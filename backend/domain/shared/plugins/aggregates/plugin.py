@@ -31,8 +31,6 @@ class Plugin:
         tipo_plugin_id (UUID): Identificador do tipo do plugin.
         versao (str): Versão do plugin.
         descricao (str, opcional): Descrição do plugin.
-        artefato_plugin_id (UUID, opcional): Identificador do artefato 
-        associado ao plugin.
         documentacao (str, opcional): Documentação do plugin.
         caminho_arquivo (str): Caminho do arquivo principal do plugin.
         permissoes (List[UUID], opcional): Lista de identificadores das
@@ -53,7 +51,6 @@ class Plugin:
     tipo_plugin_id: UUID
     versao: str
     descricao: Optional[str] = None
-    artefato_plugin_id: Optional[UUID] = None
     documentacao: Optional[str] = None
     caminho_arquivo: str
     permissoes: Optional[List[UUID]] = None

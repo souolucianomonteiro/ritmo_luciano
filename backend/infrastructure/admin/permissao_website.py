@@ -19,14 +19,14 @@ class PermissaoWebsiteAdmin(admin.ModelAdmin):
     Configurações de exibição e administração do modelo PermissaoWebsite no Django Admin.
     """
 
-    list_display = ('usuario_tipo', 'permission', 'site', 'is_active', 'created_at', 'updated_at')
-    search_fields = ('usuario_tipo__nome', 'permission__codename', 'site__name')
-    list_filter = ('site', 'usuario_tipo', 'is_active')
+    list_display = ('permission', 'site', 'is_active', 'created_at', 'updated_at')
+    search_fields = ('permission__codename', 'site__name')
+    list_filter = ('site', 'is_active')
     readonly_fields = ('created_at', 'updated_at')
 
     fieldsets = (
         ('Informações da Permissão', {
-            'fields': ('usuario_tipo', 'permission', 'site', 'is_active')
+            'fields': ('permission', 'site', 'is_active')
         }),
         ('Datas e Auditoria', {
             'fields': ('created_at', 'updated_at')

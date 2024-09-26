@@ -28,7 +28,7 @@ class PluginAdmin(admin.ModelAdmin):
     # Organizando campos em seções com títulos
     fieldsets = (
         ('Informações do Plugin', {
-            'fields': ('nome', 'categoria', 'tipo_plugin', 'versao', 'descricao', 'artefato_plugin', 'documentacao', 'caminho_arquivo')
+            'fields': ('nome', 'categoria', 'tipo_plugin', 'versao', 'descricao', 'documentacao', 'caminho_arquivo')
         }),
         ('Associações', {
             'fields': ('tags', 'permissoes', 'historico_modificacoes', 'dependencias', 'templates')

@@ -15,7 +15,6 @@ from djangocms_text_ckeditor.fields import HTMLField
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.status import StatusMixin
-from infrastructure.models.pessoa_fisica_tipo import PessoaFisicaTipoModel
 from infrastructure.models.tag_post import TagPost
 
 
@@ -38,7 +37,6 @@ class Post(
     slug = models.SlugField(max_length=255, unique=True)
     content = HTMLField()
     published_date = models.DateTimeField(auto_now_add=True)
-    autor = models.ForeignKey(PessoaFisicaTipoModel, on_delete=models.CASCADE, related_name='posts')
     blog = models.ForeignKey('Blog', on_delete=models.CASCADE, related_name='posts')
     numero_compartilhamentos = models.IntegerField(default=0)
     compartilhado = models.BooleanField(default=False)

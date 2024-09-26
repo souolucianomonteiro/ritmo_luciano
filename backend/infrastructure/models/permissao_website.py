@@ -21,7 +21,7 @@ class PermissaoWebsite(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin
 
     permission = models.ForeignKey(Permission, on_delete=models.CASCADE, related_name='website_permissions')
     site = models.ForeignKey('CustomSite', on_delete=models.CASCADE, related_name='site_permissions')
-    usuario_tipo = models.ForeignKey('UsuarioTipo', on_delete=models.CASCADE, related_name='tipo_permissions')
+    
 
     class Meta:
         """
@@ -36,4 +36,4 @@ class PermissaoWebsite(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin
         verbose_name_plural = 'Permissões de Website'
 
     def __str__(self):
-        return f"{self.usuario_tipo.nome} - {self.permission.codename} - {self.site.name}"
+        return f"{self.permission.codename} - {self.site.name}"

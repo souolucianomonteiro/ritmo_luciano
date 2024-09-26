@@ -85,13 +85,15 @@ INSTALLED_APPS = [
     'djangocms_picture',
     'djangocms_video',
     'djangocms_snippet',
+    'backend.apis',
     'backend.domain.website',
     'backend.domain.shared',
     'backend.domain.blog',
+    'backend.domain.projects',
+    'backend.domain.marketing',
     'backend.orchestration',
-    'backend.apis',
     'backend.infrastructure',
-    'backend.domain.projects'
+    
 ]
 
 MIDDLEWARE = [

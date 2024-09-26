@@ -255,27 +255,7 @@ class Migration(migrations.Migration):
             model_name='blog',
             name='proprietario',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blogs', to='infrastructure.pessoafisicamodel'),
-        ),
-        migrations.CreateModel(
-            name='PessoaFisicaTipo',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('is_deleted', models.BooleanField(default=False)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
-                ('is_active', models.BooleanField(default=True)),
-                ('inactivated_at', models.DateTimeField(blank=True, null=True)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_%(class)s_set', to=settings.AUTH_USER_MODEL)),
-                ('pessoa_fisica', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='infrastructure.pessoafisicamodel')),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='updated_%(class)s_set', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name': 'Tipo de Usuário da Pessoa Física',
-                'verbose_name_plural': 'Tipos de Usuário das Pessoas Físicas',
-                'db_table': 'infrastructure_pessoa_fisica_tipo',
-            },
-        ),
+        ),        
         migrations.CreateModel(
             name='PessoaJuridicaModel',
             fields=[
@@ -322,7 +302,6 @@ class Migration(migrations.Migration):
                 ('numero_compartilhamentos', models.IntegerField(default=0)),
                 ('compartilhado', models.BooleanField(default=False)),
                 ('status', models.CharField(choices=[('rascunho', 'Rascunho'), ('concluido', 'Concluído'), ('publicado', 'Publicado'), ('removido', 'Removido')], default='rascunho', max_length=20)),
-                ('autor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='posts', to='infrastructure.pessoafisicatipo')),
                 ('blog', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='posts', to='infrastructure.blog')),
                 ('comentarios', models.ManyToManyField(blank=True, related_name='posts', to='infrastructure.comentariopost')),
                 ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_%(class)s_set', to=settings.AUTH_USER_MODEL)),
@@ -429,38 +408,6 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(blank=True, related_name='posts', to='infrastructure.tag'),
         ),
         migrations.CreateModel(
-            name='UsuarioTipo',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('is_deleted', models.BooleanField(default=False)),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
-                ('is_active', models.BooleanField(default=True)),
-                ('inactivated_at', models.DateTimeField(blank=True, null=True)),
-                ('status', models.CharField(default=None, max_length=20)),
-                ('nome', models.CharField(max_length=255, unique=True)),
-                ('descricao', models.TextField(blank=True, null=True)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_%(class)s_set', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='updated_%(class)s_set', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name': 'Tipo de Usuário',
-                'verbose_name_plural': 'Tipos de Usuário',
-                'db_table': 'infrastructure_usuario_tipo',
-            },
-        ),
-        migrations.AddField(
-            model_name='pessoafisicatipo',
-            name='usuario_tipo',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='infrastructure.usuariotipo'),
-        ),
-        migrations.AddField(
-            model_name='pessoafisicamodel',
-            name='tipos_de_usuario',
-            field=models.ManyToManyField(related_name='pessoas_fisicas', through='infrastructure.PessoaFisicaTipo', to='infrastructure.usuariotipo'),
-        ),
-        migrations.CreateModel(
             name='PermissaoWebsite',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -475,7 +422,7 @@ class Migration(migrations.Migration):
                 ('permission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='website_permissions', to='auth.permission')),
                 ('site', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='site_permissions', to='infrastructure.customsite')),
                 ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='updated_%(class)s_set', to=settings.AUTH_USER_MODEL)),
-                ('usuario_tipo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tipo_permissions', to='infrastructure.usuariotipo')),
+               
             ],
             options={
                 'verbose_name': 'Permissão de Website',
@@ -517,9 +464,5 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='subdominio',
             constraint=models.UniqueConstraint(fields=('site', 'nome'), name='unique_site_nome'),
-        ),
-        migrations.AlterUniqueTogether(
-            name='pessoafisicatipo',
-            unique_together={('pessoa_fisica', 'usuario_tipo')},
         ),
     ]
