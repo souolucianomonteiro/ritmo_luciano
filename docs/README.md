@@ -113,12 +113,16 @@ git branch -vv
 
 
 ====================
-
 Convenções de codificação
+====================
 
 # Visão Geral das Convenções
 
-# Convenção para nomeação de classes
+====================
+# Convenção quanto as classes 
+====================
+
+1. nomeação de classes
 Os módulos são nomeados em português e as classes com os conceitos em portugues e a camada em inglês.  
 
 # DOMINIO
@@ -144,8 +148,9 @@ Classes de modelo
 # módulo - produto.py
 # classe - ProdutoModel
 
+==================================
 # Convenção para importação de classes:
-
+==================================
 # Domínio:
 As classes de domínio não importam outras classes dos relacionamentos.
 Os atributos oriundos dos relacionamentos são declarados sem id.
@@ -159,17 +164,25 @@ Importa a classe de domínio relacionada e o repositório concreto correspondent
 # Models:
 Interagem, com o seu repositório e as models relacionadas diretamente.
 
-# Convenção de Identificação (ID):
+================
+# Convenção de Identificação (ID), validação, acesso e modificação:
+================
 
 Domínio: Utilizar apenas id nas classes de domínio.
 Infraestrutura: Utilizar objeto_id 
 Ex.: pessoa_fisica_id nas models e repositórios.
 
+================
 # Convenção para Chave Primária:
+================
+
 Utilizar models.BigAutoField(primary_key=True) em todas as models para garantir consistência nas chaves primárias.
 Ex: id = models.BigAutoField(primary_key=True)
 
+=================
 # Convenção para as validações pertinentes a cada conceito
+=================
+
 São realizadas na camada de domínio. Ela é responsável por conter a lógica de negócio, incluindo todas as regras e restrições que devem ser aplicadas às entidades e objetos de valor.
 A camada de domínio tem a responsabilidade de garantir a integridade e consistência das operações relacionadas às regras de negócio. Portanto, qualquer validação ou lógica que se relacione com o comportamento de uma entidade ou com as regras do negócio está no escopo da classe Domain garantir que esses conceitos estejam sempre coerentes, independentemente da interface ou infraestrutura utilizada.
 
@@ -184,8 +197,107 @@ Validações de Consistência de Entidade: Validações que asseguram a integrid
 No app shared, temos a pasta validations. Os módulos de validação estão centralizados nela. 
 em 27/09/2024 são os seguintes 
 
+![/shared/validations](image.png)
 
+![exemplo valida_cnpj](image-1.png)
+
+===========
+# Convenção para acesso e modificação:
+=========== 
+
+Atributos Privados, sempre:
+
+A classe usa atributos privados (_pessoa_fisica_tipo_id, _pessoa_fisica_id, etc.) para armazenar os dados.
+Isso permite que as propriedades sejam acessadas e modificadas apenas através de métodos específicos (getters e setters).
+
+# Getters:
+Métodos como get_pessoa_fisica_id() são usados para acessar os atributos privados.
+Retornam o valor atual dos atributos da instância.
+
+# Setters:
+Métodos como set_pessoa_fisica_id() são usados para modificar os valores dos atributos privados.
+Aceitam um novo valor para o atributo e o definem na instância.
+
+# Método __str__():
+Retorna uma representação amigável da instância da classe quando convertida para uma string (ex: ao imprimir a instância).
+
+# Considerações:
+A classe encapsula seus atributos para garantir um controle melhor de como os valores são acessados e alterados.
+Métodos de validação e lógica de negócio podem ser facilmente adicionados dentro dos getters e setters, como, por exemplo, verificações antes de atribuir novos valores.
+
+=====================================================
+# Como Implementar Setters e Getters de Forma Correta:
+=====================================================
+
+1. Use Métodos com Intenção Clara
+Em vez de usar set_nome(), prefira algo como alterar_nome(), que pode conter regras de validação para alterar o nome, garantindo que o domínio esteja sempre em um estado consistente.
+
+2. Métodos que Respeitam a Lógica de Negócio
+Se um atributo puder ser alterado apenas sob certas condições, o método que modifica esse atributo deve incluir essa lógica.
+
+![exemplo de setter alterando valor com lógica](image.png)
+
+3. Propriedades em Python (Property Decorator)
+O Python tem uma maneira muito prática de definir getters e setters utilizando @property. Isso permite criar acesso controlado a atributos sem expor diretamente os métodos get e set, mantendo a interface mais limpa.
+
+![exemplo de uso do decorador property](image-1.png)
+
+Vantagens de Usar o @property:
+Simplicidade: O código parece um acesso direto ao atributo, mas ainda assim está encapsulado.
+Controle: Você pode controlar o comportamento ao acessar ou modificar atributos, aplicando regras ou validações.
+Flexibilidade: Facilita a refatoração. Se precisar adicionar validação mais tarde, o código que acessa o atributo não precisa ser alterado.
+
+Quando Usar Getters e Setters Simples?
+Na maioria das vezes, é desnecessário. Se você não precisa aplicar nenhuma lógica de validação ou transformação, pode expor diretamente o atributo (mas tenha cuidado para não violar o encapsulamento).
+Usar getters e setters simples pode ser adequado em camadas mais simples ou DTOs (Data Transfer Objects), onde o comportamento é mínimo e os objetos são apenas "bolsões de dados".
+
+================================
+Aplicações do decorador de acesso
+===============================
+
+O @property não é restrito apenas para busca (leitura) de atributos. Ele também pode ser usado para modificar (escrita) um atributo por meio de um setter, controlando tanto o acesso quanto a modificação dos valores de um atributo de forma encapsulada e segura.
+
+O decorador @property permite que você transforme um método em uma propriedade de leitura, ou seja, ele permite que o método seja acessado como se fosse um atributo, sem a necessidade de chamá-lo diretamente com parênteses.
+
+No entanto, você pode combinar o getter com o setter e até um deleter, caso deseje controlar o comportamento de leitura, escrita e exclusão de um atributo.
+
+Como Usar o @property para Leitura e Escrita
+
+1. Getter (Leitura)
+O @property é usado para definir o comportamento de leitura de um atributo.
+
+![Exemplo 1](image-2.png)
+
+![Exemplo 2](image-3.png)
+
+2. Setter (Escrita)
+Além do getter, você pode usar o @<propriedade>.setter para definir o comportamento de escrita de um atributo. Ele permite controlar como o valor do atributo é modificado, aplicando validações ou transformações.
+
+![exemplo 1](image-4.png)
+
+![exemplo 2](image-5.png)
+
+3. Deleter (Remoção - Opcional)
+Você também pode adicionar um deleter para definir o comportamento quando o atributo for excluído.
+
+![exemplo 1](image-6.png)
+
+![exemplo 2](image-7.png)
+
+Conclusão:
+O @property oferece uma maneira conveniente de ler e modificar atributos de forma encapsulada. A combinação de getter e setter permite controlar como os atributos são acessados e alterados. Isso mantém as entidades e objetos mais consistentes, seguras e alinhadas com as regras de negócio.
+
+===============================================================
+Em resumo:
+
+@property: Controla a leitura de um atributo.
+@propriedade.setter: Controla a escrita de um atributo.
+@propriedade.deleter (opcional): Controla a remoção de um atributo.
+================================================================
+
+===========================================
 # Convenção para implementação do modelo ER:
+===========================================
 
 # Um-para-Muitos:
 Contexto: uma entidade (ou registro) em uma tabela pode estar relacionada a várias entidades (ou registros) em outra tabela, mas a segunda entidade só pode estar relacionada a uma única entidade na primeira tabela.
@@ -222,7 +334,6 @@ class Curso(models.Model):
 # Django cria uma tabela intermediária automaticamente para armazenar as relações entre Aluno e Curso.
 
 Ex 2. Se a model da tabela associativa for explicitada e ou receber atributos. 
-
 
 class Aluno(models.Model):
     nome = models.CharField(max_length=100)
