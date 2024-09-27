@@ -30,7 +30,7 @@ from infrastructure.mixins.status import StatusMixin
 from infrastructure.models.endereco import EnderecoModel
 from infrastructure.models.usuario_tipo import UsuarioTipo
 from domain.shared.validations.valida_email import validar_email
-from domain.shared.validations.valida_data import validar_data_nascimento
+from domain.shared.validations.valida_nascimento import validar_data_nascimento
 from domain.shared.validations.valida_cpf import validar_cpf
 
 

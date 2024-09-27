@@ -208,21 +208,36 @@ DATABASES = {
     }
 }
 
-# Password validation
+# Validação de senhas
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        # Validador que verifica a similaridade da senha 
+        # com atributos do usuário (ex.: nome de usuário)
+        'NAME': 'django.contrib.auth.password_validation.'
+                        'UserAttributeSimilarityValidator',
+        
     },
     {
+        # Validador que define o comprimento mínimo da senha
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+            # Comprimento mínimo da senha (neste caso, 8 caracteres)
+        }
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        # Validador que proíbe senhas comuns ou fáceis de adivinhar
+        'NAME': 'django.contrib.auth.password_validation.'
+                                    'CommonPasswordValidator',
+        
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    {   
+        # Validador que proíbe senhas que contenham apenas números
+        'NAME': 'django.contrib.auth.password_validation.'
+                                'NumericPasswordValidator',
+        
     },
 ]
 
