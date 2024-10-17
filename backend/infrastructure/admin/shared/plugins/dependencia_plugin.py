@@ -10,7 +10,8 @@ Classes:
     modelo DependenciaModel no Django Admin.
 """
 from django.contrib import admin
-from infrastructure.models.shared.plugins.dependencia_plugin import DependenciaModel
+from infrastructure.models.shared.plugins.dependencia_plugin import (
+                                                    DependenciaModel)
 
 @admin.register(DependenciaModel)
 class DependenciaPluginAdmin(admin.ModelAdmin):

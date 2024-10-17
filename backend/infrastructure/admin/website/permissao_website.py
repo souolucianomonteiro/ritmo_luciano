@@ -11,7 +11,7 @@ Classes:
     para a model PermissaoWebsite.
 """
 from django.contrib import admin
-from infrastructure.models.blog.permissao_website import PermissaoWebsite
+from infrastructure.models.website.permissao_website import PermissaoWebsite
 
 @admin.register(PermissaoWebsite)
 class PermissaoWebsiteAdmin(admin.ModelAdmin):

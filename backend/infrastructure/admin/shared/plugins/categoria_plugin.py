@@ -1,5 +1,6 @@
 from django.contrib import admin
-from infrastructure.models.shared.plugins.categoria_plugin import CategoriaPlugin
+from infrastructure.models.shared.plugins.categoria_plugin import (
+                                                    CategoriaPlugin)
 
 @admin.register(CategoriaPlugin)
 class CategoriaPluginAdmin(admin.ModelAdmin):

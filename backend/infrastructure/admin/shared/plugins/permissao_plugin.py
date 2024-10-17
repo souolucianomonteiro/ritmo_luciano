@@ -10,7 +10,8 @@ Classes:
     PermissaoPluginAdmin: Configurações de exibição e administração do modelo PermissaoPluginModel no Django Admin.
 """
 from django.contrib import admin
-from infrastructure.models.shared.plugins.permissao_plugin import PermissaoPluginModel
+from infrastructure.models.shared.plugins.permissao_plugin import (
+                                                PermissaoPluginModel)
 
 @admin.register(PermissaoPluginModel)
 class PermissaoPluginAdmin(admin.ModelAdmin):

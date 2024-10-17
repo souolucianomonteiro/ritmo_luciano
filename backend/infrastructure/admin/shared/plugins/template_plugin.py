@@ -11,7 +11,8 @@ Classes:
 
 
 from django.contrib import admin
-from infrastructure.models.shared.plugins.template_plugin import TemplatePluginModel
+from infrastructure.models.shared.plugins.template_plugin import (
+                                                TemplatePluginModel)
 
 @admin.register(TemplatePluginModel)
 class TemplatePluginAdmin(admin.ModelAdmin):

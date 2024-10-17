@@ -11,7 +11,7 @@ Classes:
     Blog.
 """
 from django.contrib import admin
-from infrastructure.models.blog import Blog
+from infrastructure.models.blog.blog import Blog
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):

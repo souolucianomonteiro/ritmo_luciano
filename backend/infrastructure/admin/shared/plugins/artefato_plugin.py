@@ -9,7 +9,8 @@ gráfica amigável.
 """
 
 from django.contrib import admin
-from infrastructure.models.shared.plugins.artefato_plugin import ArtefatoPluginModel
+from infrastructure.models.shared.plugins.artefato_plugin import (
+                                                ArtefatoPluginModel)
 
 @admin.register(ArtefatoPluginModel)
 class ArtefatoPluginAdmin(admin.ModelAdmin):
