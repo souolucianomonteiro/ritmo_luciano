@@ -1,7 +1,7 @@
 
 from domain.blog.repositories.post_reacao import PostReacaoRepository
 from domain.blog.repositories.reacao_tipo import ReacaoTipoRepository
-from infrastructure.models.post import Post
+from infrastructure.models.blog.post import Post
 from django.utils import timezone
 
 class RegistrarReacaoPostUseCase:

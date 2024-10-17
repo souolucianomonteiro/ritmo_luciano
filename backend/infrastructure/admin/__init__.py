@@ -8,34 +8,34 @@ Classes:
     EnderecoAdmin: Classe que configura a interface de administração
     de EnderecoModel.
 """
-from .categoria_plugin import CategoriaPluginAdmin
-from .tipo_plugin import TipoPluginAdmin
-from .artefato_plugin import ArtefatoPluginAdmin
-from .plugin import PluginAdmin
-from .tag_plugin import TagPluginAdmin
-from .dependencia_plugin import DependenciaPluginAdmin
-from .historico_modificacoes import HistoricoModificacoesAdmin
-from .permissao_plugin import PermissaoPluginAdmin
-from .template_plugin import TemplatePluginAdmin
-from .site import CustomSiteAdmin
-from .subdomínio import SubdominioAdmin
+from .shared.plugins.categoria_plugin import CategoriaPluginAdmin
+from .shared.plugins.tipo_plugin import TipoPluginAdmin
+from .shared.plugins.artefato_plugin import ArtefatoPluginAdmin
+from .shared.plugins.plugin import PluginAdmin
+from .shared.plugins.tag_plugin import TagPluginAdmin
+from .shared.plugins.dependencia_plugin import DependenciaPluginAdmin
+from .shared.plugins.historico_modificacoes import HistoricoModificacoesAdmin
+from .shared.plugins.permissao_plugin import PermissaoPluginAdmin
+from .shared.plugins.template_plugin import TemplatePluginAdmin
+from .website.site import CustomSiteAdmin
+from .website.subdomínio import SubdominioAdmin
 from .blog import BlogAdmin
-from .post import PostAdmin
-from .categoria_post import CategoriaPostAdmin
-from .tag_post import TagPostAdmin
-from .usuario_tipo import UsuarioTipoAdmin
-from .permissao_website import PermissaoWebsiteAdmin
-from .profissao import ProfissaoAdmin
-from .pessoa_fisica import PessoaFisicaAdmin
-from .pessoa_juridica import PessoaJuridicaAdmin
-from .endereco import EnderecoAdmin
-from .visualizacao_post import VisualizacaoPostAdmin
-from .comentario_reacao import ComentarioReacaoAdmin
-from .votacao_post import VotacaoPost
-from .compartilhamento_post import CompartilhamentoPostAdmin
-from .comentario_post import ComentarioPostAdmin
-from .reacao_tipo import ReacaoTipoAdmin
-from .imagem_post import ImagemPostAdmin
+from .blog.post import PostAdmin
+from .blog.categoria_post import CategoriaPostAdmin
+from .blog.tag_post import TagPostAdmin
+from .marketing.usuario_tipo import UsuarioTipoAdmin
+from .website.permissao_website import PermissaoWebsiteAdmin
+from .marketing.profissao import ProfissaoAdmin
+from .marketing.pessoa_fisica import PessoaFisicaAdmin
+from .marketing.pessoa_juridica import PessoaJuridicaAdmin
+from .marketing.endereco import EnderecoAdmin
+from .blog.visualizacao_post import VisualizacaoPostAdmin
+from .blog.comentario_reacao import ComentarioReacaoAdmin
+from .blog.votacao_post import VotacaoPost
+from .blog.compartilhamento_post import CompartilhamentoPostAdmin
+from .blog.comentario_post import ComentarioPostAdmin
+from .blog.reacao_tipo import ReacaoTipoAdmin
+from .blog.imagem_post import ImagemPostAdmin
 
 
 __all__ = [
