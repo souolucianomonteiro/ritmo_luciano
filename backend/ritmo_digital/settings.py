@@ -16,8 +16,6 @@ https://docs.django-cms.org/en/release-4.1.x/reference/configuration.html
 from datetime import timedelta
 import os
 from pathlib import Path
-
-
 from django.utils.translation import gettext_lazy as _
 
 # BASE_DIR apontando para o diretório `backend`
@@ -359,3 +357,51 @@ INTERNAL_IPS = [
 
 # Add project-wide static files directory
 # https://docs.djangoproject.com/en/5.1/ref/settings/#media-root
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',  # Usa RotatingFileHandler para rotação automática
+            'filename': (r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
+                         r'\backend\infrastructure\logs\django_errors.log'),
+            'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * 5,  # Limite de 5 MB por arquivo
+            'backupCount': 3,  # Mantém até 3 arquivos de backup
+        },
+        'file_ocorrencias': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',  # Usa RotatingFileHandler para rotação automática
+            'filename': (r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
+                         r'\backend\infrastructure\logs\django_errors.log'),
+            'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * 5,  # Limite de 5 MB por arquivo
+            'backupCount': 3,  # Mantém até 3 arquivos de backup
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file_errors'],
+            'level': 'ERROR',
+            'propagate': True,  # Propaga os logs de erros para outros loggers
+        },
+        'ocorrencias': {
+            'handlers': ['console', 'file_ocorrencias'],
+            'level': 'INFO',
+            'propagate': False,  # Não propaga os logs de ocorrências
+        },
+    },
+}
