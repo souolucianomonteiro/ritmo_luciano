@@ -26,7 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hpt4v(%1w%jv4h@%gnt$sna)9t^07#bkpr^o(2_t53s#x$nz0a'
+SECRET_KEY = 'django-insecure-hpt4v(%1w%jv4h@%gnt$sna)9t^07#bkpr^o'
+'(2_t53s#x$nz0a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -61,7 +62,7 @@ INSTALLED_APPS = [
     'filer',
     'easy_thumbnails',
     'material',
-    'material.admin', 
+    'material.admin',
     'djangocms_frontend',
     'djangocms_frontend.contrib.accordion',
     'djangocms_frontend.contrib.alert',
@@ -118,13 +119,20 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Tempo de vida do token de acesso
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Tempo de vida do token de atualização
-    'ROTATE_REFRESH_TOKENS': True,                  # Gira os tokens de atualização
-    'BLACKLIST_AFTER_ROTATION': True,               # Lista negra após rotação de tokens
-    'ALGORITHM': 'HS256',                           # Algoritmo de assinatura do JWT
-    'SIGNING_KEY': 'sua-chave-secreta',             # Chave secreta usada para assinar os tokens
-    'AUTH_HEADER_TYPES': ('Bearer',),               # Tipo de cabeçalho usado para enviar o token
+    # Tempo de vida do token de acesso
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    # Tempo de vida do token de atualização
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    # Gira os tokens de atualização
+    'ROTATE_REFRESH_TOKENS': True,
+    # Lista negra após rotação de tokens
+    'BLACKLIST_AFTER_ROTATION': True,
+    # Algoritmo de assinatura do JWT
+    'ALGORITHM': 'HS256',
+    # Chave secreta usada para assinar os tokens
+    'SIGNING_KEY': 'sua-chave-secreta',
+    # Tipo de cabeçalho usado para enviar o token
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 
@@ -161,7 +169,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital\backend\website\templates',
+            r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
+            r'\backend\website\templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -211,15 +220,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        # Validador que verifica a similaridade da senha 
+        # Validador que verifica a similaridade da senha
         # com atributos do usuário (ex.: nome de usuário)
         'NAME': 'django.contrib.auth.password_validation.'
-                        'UserAttributeSimilarityValidator',
-        
+        'UserAttributeSimilarityValidator',
+
     },
     {
         # Validador que define o comprimento mínimo da senha
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.'
+        'MinimumLengthValidator',
         'OPTIONS': {
             'min_length': 8,
             # Comprimento mínimo da senha (neste caso, 8 caracteres)
@@ -228,14 +238,14 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         # Validador que proíbe senhas comuns ou fáceis de adivinhar
         'NAME': 'django.contrib.auth.password_validation.'
-                                    'CommonPasswordValidator',
-        
+        'CommonPasswordValidator',
+
     },
-    {   
+    {
         # Validador que proíbe senhas que contenham apenas números
         'NAME': 'django.contrib.auth.password_validation.'
-                                'NumericPasswordValidator',
-        
+        'NumericPasswordValidator',
+
     },
 ]
 
@@ -315,7 +325,7 @@ CMS_LANGUAGES = {
             'hide_untranslated': False,
             'redirect_on_fallback': True,
         },
-             
+
     ],
     'default': {
         'fallbacks': ['pt-br', 'en'],
@@ -375,7 +385,8 @@ LOGGING = {
         },
         'file_errors': {
             'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',  # Usa RotatingFileHandler para rotação automática
+            # Usa RotatingFileHandler para rotação automática
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': (r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
                          r'\backend\infrastructure\logs\django_errors.log'),
             'formatter': 'verbose',
@@ -384,7 +395,8 @@ LOGGING = {
         },
         'file_ocorrencias': {
             'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',  # Usa RotatingFileHandler para rotação automática
+            # Usa RotatingFileHandler para rotação automática
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': (r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
                          r'\backend\infrastructure\logs\django_errors.log'),
             'formatter': 'verbose',

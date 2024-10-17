@@ -22,6 +22,7 @@ media//*
 staticfiles/
 *.sqlite3
 *.sqlite3-journal
+backend/infrastructure/logs/
 
 # Node.js (para o frontend com Vue.js)
 node_modules/
