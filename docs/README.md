@@ -357,7 +357,14 @@ class Matricula(models.Model):
     status = models.CharField(max_length=50)
 
     class Meta:
-        unique_together = ('aluno', 'curso')  # Define a chave composta
+        constraints = [
+        models.UniqueConstraint(fields=['aluno', 'curso'], name='unique_matricula')
+    ] #define chave composta
+
+# Comentários sobre a definição da chave composta
+
+fields: Define os campos que compõem a chave composta. Neste caso, a combinação dos campos aluno e curso precisa ser única. Isso significa que, por exemplo, um aluno não pode se matricular duas vezes no mesmo curso.
+name: Define o nome da restrição de unicidade no banco de dados. Nesse exemplo, a restrição se chamará unique_matricula.
 
     def __str__(self):
         return f'{self.aluno} matriculado em {self.curso}'
@@ -428,3 +435,14 @@ class ClienteContract:
     def search_by_cidade(self, cidade: str) -> List[Cliente]:
     """Busca clientes por cidade"""
 
+# Convenção para lançamento de exceções. 
+
+# Tipos de Exceções
+As exceções devem ser consistentes e claras, utilizando classes específicas que refletem os diferentes tipos de erros possíveis. Abaixo estão exemplos de exceções recomendadas para uso nos contratos:
+
+EntityNotFoundException: Quando uma entidade solicitada não é encontrada no repositório.
+BusinessRuleViolationException: Quando uma regra de negócio é violada.
+DataIntegrityException: Quando há uma violação de integridade de dados (como restrições de chave).
+OperationNotAllowedException: Quando uma operação não é permitida em um determinado estado da entidade.
+ValidationException: Quando uma validação de domínio falha ao tentar salvar ou modificar uma entidade.
+Essas exceções devem ser definidas no módulo de exceções personalizadas e capturadas no nível de contrato para garantir um comportamento previsível e rastreável.

@@ -372,12 +372,15 @@ INTERNAL_IPS = [
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
+            # Formato dos logs incluindo nível, data, módulo, função e linha
+            'format': '{levelname} {asctime} {module} {funcName} {lineno} {message}',
             'style': '{',
         },
     },
+    
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
@@ -385,35 +388,41 @@ LOGGING = {
         },
         'file_errors': {
             'level': 'ERROR',
-            # Usa RotatingFileHandler para rotação automática
+            # Usa RotatingFileHandler para rotação automática de logs de erro
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': (r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
                          r'\backend\infrastructure\logs\django_errors.log'),
             'formatter': 'verbose',
-            'maxBytes': 1024 * 1024 * 5,  # Limite de 5 MB por arquivo
+            'maxBytes': 1024 * 1024 * 5,  # Limite de 5 MB por arquivo de log
             'backupCount': 3,  # Mantém até 3 arquivos de backup
         },
         'file_ocorrencias': {
             'level': 'INFO',
-            # Usa RotatingFileHandler para rotação automática
+            # Usa RotatingFileHandler para rotação automática de logs de ocorrências
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': (r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
-                         r'\backend\infrastructure\logs\django_errors.log'),
+                         r'\backend\infrastructure\logs\ocorrencias.log'),  # Novo arquivo para logs de ocorrências
             'formatter': 'verbose',
-            'maxBytes': 1024 * 1024 * 5,  # Limite de 5 MB por arquivo
+            'maxBytes': 1024 * 1024 * 5,  # Limite de 5 MB por arquivo de log
             'backupCount': 3,  # Mantém até 3 arquivos de backup
         },
     },
+    
     'loggers': {
         'django': {
             'handlers': ['console', 'file_errors'],
-            'level': 'ERROR',
-            'propagate': True,  # Propaga os logs de erros para outros loggers
+            'level': 'WARNING',  # Agora captura também logs de WARNING
+            'propagate': True,  # Propaga os logs de erro e warning
         },
         'ocorrencias': {
             'handlers': ['console', 'file_ocorrencias'],
-            'level': 'INFO',
-            'propagate': False,  # Não propaga os logs de ocorrências
+            'level': 'INFO',  # Captura logs de nível INFO
+            'propagate': False,  # Não propaga logs informacionais para outros loggers
+        },
+        'excecoes_personalizadas': {
+            'handlers': ['file_errors'],
+            'level': 'ERROR',  # Captura erros de exceções personalizadas
+            'propagate': False,  # Não propaga os logs de exceções personalizadas
         },
     },
 }
