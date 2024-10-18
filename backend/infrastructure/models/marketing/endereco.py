@@ -51,4 +51,4 @@ class EnderecoModel(models.Model):
         verbose_name_plural = 'Endereços'
 
     def __str__(self):
-         return f"{self.rua}, {self.numero} - {self.cidade}, {self.estado}, {self.pais}"
+        return f"{self.rua}, {self.numero} - {self.cidade}, {self.estado}, {self.pais}"
