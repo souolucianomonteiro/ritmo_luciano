@@ -1,4 +1,4 @@
 
 class OperationFailedException(Exception):
-    """Exceção lançada quando a operação de um caso de uso falha."""
+    """Exceção lançada quando a operação falha."""
     pass

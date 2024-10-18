@@ -34,7 +34,7 @@ class AtividadeEconomicaModel(AuditMixin, SoftDeleteMixin, InactivateMixin, mode
         Metadados da Model AtividadeEconomicaModel.
         """
         app_label = 'infrastructure'
-        db_table = 'infrastructur_atividade_economica'
+        db_table = 'marketing_atividade_economica'
         verbose_name = 'Atividade Econômica'
         verbose_name_plural = 'Atividades Econômicas'
 

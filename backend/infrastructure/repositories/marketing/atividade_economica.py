@@ -1,62 +1,136 @@
 """
-Módulo responsável pela implementação do repositório concreto DjangoAtividadeEconomicaRepository.
+Módulo responsável pela implementação do repositório concreto para a entidade
+AtividadeEconomicaModel.
 
-Este módulo define o repositório concreto para manipulação da model AtividadeEconomicaModel
-utilizando o Django ORM. Ele implementa as operações de CRUD (Create, Read, Update, Delete)
-e outras funcionalidades necessárias para a persistência da entidade Atividade Econômica no banco de dados.
+Este módulo implementa as operações de persistência e recuperação de dados
+relacionados à entidade AtividadeEconomicaModel no banco de dados utilizando
+o Django ORM. As operações incluem criação, leitura, atualização e exclusão
+(CRUD), com tratamento adequado de exceções para erros esperados e
+inesperados.
 
-Classes:
-    DjangoAtividadeEconomicaRepository: Repositório concreto que implementa os métodos de persistência
-    para a entidade Atividade Econômica utilizando o Django ORM.
+Exceções lançadas:
+    - EntityNotFoundException: Lançada quando uma entidade não é encontrada no
+    banco de dados.
+    - OperationFailedException: Lançada quando ocorre um erro inesperado ao
+    realizar uma operação no banco de dados.
 """
-from typing import List, Optional
-from domain.marketing.entities.atividade_economica import (
-                                AtividadeEconomicaDomain)
-from domain.website.repositories.atividade_economica import (
-                                AtividadeEconomicaRepository)
-from infrastructure.models.marketing.atividade_economica import AtividadeEconomicaModel
+from django.core.exceptions import ObjectDoesNotExist
+from domain.marketing.repositories.atividade_economica import (
+                                    AtividadeEconomicaContract)
+from domain.shared.exceptions.entity_not_found_exception import (
+                                            EntityNotFoundException)
+from domain.shared.exceptions.operation_failed_exception import (
+                                        OperationFailedException)
+from infrastructure.models.marketing.atividade_economica import (
+                                        AtividadeEconomicaModel)
 
 
-class DjangoAtividadeEconomicaRepository(AtividadeEconomicaRepository):
+class AtividadeEconomicaRepository(AtividadeEconomicaContract):
     """
-    Repositório concreto para manipular a model AtividadeEconomica no Django ORM.
+    Repositório concreto para AtividadeEconomicaDomain.
+
+    Esta classe implementa as operações de persistência e recuperação
+    da entidade AtividadeEconomicaDomain no banco de dados utilizando o Django ORM.
     """
 
-    def save(self, atividade_economica: AtividadeEconomicaDomain) -> (
-        AtividadeEconomicaDomain:)
-        atividade_model = AtividadeEconomicaModel.objects.update_or_create(
-            id=atividade_economica.id,
-            defaults={
-                'atividade_econ_codigo': atividade_economica.atividade_econ_codigo,
-                'atividade_econ_descricao': atividade_economica.atividade_econ_descricao
-            }
-        )[0]
-        return AtividadeEconomicaDomain(
-            id=atividade_model.id,
-            atividade_econ_codigo=atividade_model.atividade_econ_codigo,
-            atividade_econ_descricao=atividade_model.atividade_econ_descricao
-        )
+    def get_by_id(self, atividade_econ_id: int) -> AtividadeEconomicaModel:
+        """
+        Recupera uma entidade AtividadeEconomicaModel pelo seu ID.
 
-    def find_by_id(self, id: int) -> Optional[AtividadeEconomicaDomain]:
+        Args:
+            atividade_econ_id (int): O identificador único da atividade 
+            econômica.
+
+        Returns:
+            AtividadeEconomicaModel: A entidade de atividade econômica 
+            encontrada.
+
+        Raises:
+            EntityNotFoundException: Se a atividade econômica com o ID 
+            fornecido não for encontrada no repositório.
+            OperationFailedException: Se ocorrer um erro inesperado
+            na operação.
+        """
         try:
-            atividade_model = AtividadeEconomicaModel.objects.get(id=id)
-            return AtividadeEconomicaDomain(
-                id=atividade_model.id,
-                atividade_econ_codigo=atividade_model.atividade_econ_codigo,
-                atividade_econ_descricao=atividade_model.atividade_econ_descricao
-            )
-        except AtividadeEconomicaModel.DoesNotExist:
-            return None
+            # Busca a atividade econômica no banco de dados
+            atividade = AtividadeEconomicaModel.objects.get(id=atividade_econ_id)
+            return atividade
 
-    def find_all(self) -> List[AtividadeEconomicaDomain]:
-        atividades = AtividadeEconomicaModel.objects.all()
-        return [
-            AtividadeEconomicaDomain(
-                id=atividade.id,
-                atividade_econ_codigo=atividade.atividade_econ_codigo,
-                atividade_econ_descricao=atividade.atividade_econ_descricao
-            ) for atividade in atividades
-        ]
+        except ObjectDoesNotExist:
+            raise EntityNotFoundException(
+                f"Atividade econômica com ID {atividade_econ_id} 
+                não encontrada."
+            )from e
 
-    def delete(self, id: int) -> None:
-        AtividadeEconomicaModel.objects.filter(id=id).delete()
+        except Exception as e:
+            raise OperationFailedException(
+                f"Erro ao buscar a atividade econômica: {str(e)}"
+            ) from e
+
+    def list_all(self) -> list[AtividadeEconomicaModel]:
+        """
+        Retorna todas as atividades econômicas cadastradas no banco de dados.
+
+        Returns:
+            List[AtividadeEconomicaModel]: Lista de todas as atividades econômicas.
+
+        Raises:
+            OperationFailedException: Se ocorrer um erro inesperado na operação.
+        """
+        try:
+            # Lista todas as atividades econômicas do banco de dados
+            atividades = AtividadeEconomicaModel.objects.all()
+            return list(atividades)
+
+        except Exception as e:
+            raise OperationFailedException(
+                f"Erro ao listar as atividades econômicas: {str(e)}"
+            ) from e
+
+    def save(self, atividade_economica: AtividadeEconomicaModel) -> None:
+        """
+        Salva ou atualiza uma entidade AtividadeEconomicaModel no banco de dados.
+
+        Args:
+            atividade_economica (AtividadeEconomicaModel): A entidade a ser salva ou atualizada.
+
+        Raises:
+            OperationFailedException: Se ocorrer um erro inesperado ao salvar a entidade.
+        """
+        try:
+            # Salva a atividade econômica no banco de dados
+            atividade_economica.save()
+
+        except Exception as e:
+            raise OperationFailedException(
+                f"Erro ao salvar a atividade econômica: {str(e)}"
+            ) from e
+
+    def delete(self, atividade_econ_id: int) -> None:
+        """
+        Remove uma entidade AtividadeEconomicaModel do banco de dados pelo ID.
+
+        Args:
+            atividade_econ_id (int): O identificador único da atividade econômica.
+
+        Raises:
+            EntityNotFoundException: Se a atividade econômica com o ID fornecido
+            não for encontrada no banco de dados.
+            OperationFailedException: Se ocorrer um erro inesperado ao remover a entidade.
+        """
+        try:
+            # Busca a atividade econômica no banco de dados
+            atividade = AtividadeEconomicaModel.objects.get(id=atividade_econ_id)
+            
+            # Remove a entidade
+            atividade.delete()
+
+        except ObjectDoesNotExist:
+            raise EntityNotFoundException(
+                f"Atividade econômica com ID {atividade_econ_id} não encontrada."
+            )from e
+
+        except Exception as e:
+            raise OperationFailedException(
+                f"Erro ao remover a atividade econômica: {str(e)}"
+            ) from e
