@@ -8,6 +8,7 @@ marcar registros como excluídos sem removê-los fisicamente do banco de dados.
 from django.db import models
 from django.utils.timezone import now
 from .mixin_base import MixinBase
+from .manager import SoftDeleteManager
 
 
 class SoftDeleteMixin(MixinBase):
@@ -24,6 +25,8 @@ class SoftDeleteMixin(MixinBase):
 
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
+
+    objects = SoftDeleteManager()
 
     def delete(self, using=None, keep_parents=False):
         """
