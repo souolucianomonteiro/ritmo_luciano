@@ -79,7 +79,7 @@ class EnderecoContract(ABC):
         pass
 
     @abstractmethod
-    def delete(self, endereco_id: int) -> None:
+    def soft_delete(self, endereco_id: int) -> None:
         """
         Remove um endereço do repositório pelo ID.
 

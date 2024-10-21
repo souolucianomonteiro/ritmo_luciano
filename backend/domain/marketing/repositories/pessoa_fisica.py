@@ -9,10 +9,10 @@ fornecer a lógica específica para a interação com o banco de dados.
 from abc import ABC, abstractmethod
 from typing import Optional, List
 from domain.marketing.entities.pessoa_fisica import PessoaFisicaDomain
-from domain.marketing.entities.endereco import EnderecoDomain
+from infrastructure.repositories.marketing.endereco import EnderecoRepository
 
 
-class PessoaFisicaRepository(ABC):
+class PessoaFisicaContract(ABC):
     """
     Repositório abstrato para a entidade PessoaFisica.
 
@@ -21,48 +21,36 @@ class PessoaFisicaRepository(ABC):
     """
 
     @abstractmethod
-    def save(self, pessoa_fisica: PessoaFisicaDomain) -> PessoaFisicaDomain:
-        """
-        Salva ou atualiza uma instância de PessoaFisica no repositório.
-        Deve lidar também com os endereços associados.
-        """
-        pass
-
-    @abstractmethod
     def get_by_id(self, pessoa_fisica_id: int) -> Optional[PessoaFisicaDomain]:
-        """
-        Recupera uma instância de PessoaFisica por seu ID, 
-        incluindo os endereços associados.
-        """
-        pass
-
+        """Recupera uma pessoa física pelo ID."""
+        raise NotImplementedError
+    
     @abstractmethod
-    def delete(self, pessoa_fisica_id: PessoaFisicaDomain) -> None:
-        """
-        Exclui uma instância de PessoaFisica do repositório.
-        """
-        pass
-
+    def save(self, pessoa: PessoaFisicaDomain) -> PessoaFisicaDomain:
+        """Salva ou atualiza uma pessoa física no repositório."""
+        raise NotImplementedError
+    
+    @abstractmethod
+    def delete(self, pessoa_fisica_id: int) -> None:
+        """Exclui uma pessoa física do repositório pelo ID."""
+        raise NotImplementedError
+    
     @abstractmethod
     def list_all(self) -> List[PessoaFisicaDomain]:
-        """
-        Lista todas as instâncias de PessoaFisica no repositório, incluindo
-        seus endereços.
-        """
-        pass
+        """Retorna uma lista de todas as pessoas físicas cadastradas."""
+        raise NotImplementedError
 
     @abstractmethod
-    def add_endereco(self, pessoa_fisica_id: int, endereco: EnderecoDomain) -> None:
-        """
-        Adiciona um endereço a uma pessoa física existente.
-        """
-        pass
-
+    def alterar_status(self, pessoa_fisica_id: int, status: str) -> None:
+        """Altera o status da pessoa física."""
+        raise NotImplementedError
+    
     @abstractmethod
-    def remove_endereco(self, pessoa_fisica_id: int, endereco_id: int) -> None:
-        """
-        Remove um endereço de uma pessoa física.
-        """
-        pass
-
-
+    def adicionar_endereco(self, pessoa_fisica_id: int, endereco: EnderecoRepository) -> None:
+        """Adiciona um novo endereço à pessoa física."""
+        raise NotImplementedError
+    
+    @abstractmethod
+    def remover_endereco(self, pessoa_fisica_id: int, endereco_id: int) -> None:
+        """Remove um endereço da pessoa física usando soft delete."""
+        raise NotImplementedError

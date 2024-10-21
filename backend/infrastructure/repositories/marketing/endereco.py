@@ -6,17 +6,18 @@ EnderecoDomain.
 
 Este módulo implementa as operações de persistência e recuperação de dados
 relacionados à entidade EnderecoDomain no banco de dados, utilizando o Django ORM.
-As operações incluem criação, leitura, atualização e exclusão (CRUD), além de
-consultas específicas para pessoas físicas e jurídicas.
+As operações incluem criação, leitura, atualização e exclusão lógica (soft delete),
+além de consultas específicas para pessoas físicas e jurídicas.
 
 Classes:
     EnderecoRepository: Implementação concreta do contrato EnderecoContract.
 """
+
 from django.core.exceptions import ObjectDoesNotExist
 from domain.shared.exceptions.entity_not_found_exception import (
                                             EntityNotFoundException)
 from domain.shared.exceptions.operation_failed_exception import (
-                                            OperationFailedException)
+                                        OperationFailedException)
 from domain.marketing.entities.endereco import EnderecoDomain
 from domain.marketing.repositories.endereco import EnderecoContract
 from infrastructure.models.marketing.endereco import EnderecoModel
@@ -26,8 +27,9 @@ class EnderecoRepository(EnderecoContract):
     """
     Repositório concreto para EnderecoDomain.
 
-    Esta classe implementa as operações de persistência e consulta para a entidade
-    EnderecoDomain, utilizando o Django ORM para interagir com o banco de dados.
+    Esta classe implementa as operações de persistência e consulta para
+    a entidade EnderecoDomain, utilizando o Django ORM para interagir
+    com o banco de dados. Inclui operações de CRUD e exclusão lógica.
     """
 
     def get_by_id(self, endereco_id: int) -> EnderecoDomain:
@@ -38,7 +40,8 @@ class EnderecoRepository(EnderecoContract):
             endereco_id (int): O identificador único do endereço.
 
         Returns:
-            EnderecoDomain: A entidade de endereço correspondente ao ID fornecido.
+            EnderecoDomain: A entidade de endereço correspondente ao ID
+            fornecido.
 
         Raises:
             EntityNotFoundException: Se o endereço com o ID fornecido não for
@@ -48,10 +51,10 @@ class EnderecoRepository(EnderecoContract):
         """
         try:
             # Busca o endereço no banco de dados
-            endereco = EnderecoModel.objects.get(id=endereco_id)
-            # Converte EnderecoModel para EnderecoDomain (se necessário)
-            return self._from_model_to_domain(endereco)
-        except ObjectDoesNotExist:
+            endereco_model = EnderecoModel.objects.get(id=endereco_id)
+            # Converte o modelo de banco de dados em uma entidade de domínio
+            return self._from_model_to_domain(endereco_model)
+        except ObjectDoesNotExist as e:
             raise EntityNotFoundException(
                 f"Endereço com ID {endereco_id} não encontrado."
             ) from e
@@ -65,22 +68,24 @@ class EnderecoRepository(EnderecoContract):
         Retorna uma lista com todos os endereços cadastrados no banco de dados.
 
         Returns:
-            List[EnderecoDomain]: Lista de todas as entidades de EnderecoDomain.
+            List[EnderecoDomain]: Lista de todas as entidades de
+            EnderecoDomain.
 
         Raises:
-            OperationFailedException: Se ocorrer um erro inesperado ao listar os
-            endereços.
+            OperationFailedException: Se ocorrer um erro inesperado ao listar
+            os endereços.
         """
         try:
             # Lista todos os endereços do banco de dados
             enderecos = EnderecoModel.objects.all()
+            # Converte cada EnderecoModel para EnderecoDomain
             return [self._from_model_to_domain(endereco) for endereco in enderecos]
         except Exception as e:
             raise OperationFailedException(
                 f"Erro ao listar os endereços: {str(e)}"
             ) from e
 
-    def save(self, endereco: EnderecoDomain) -> None:
+    def save(self, endereco: EnderecoDomain) -> EnderecoDomain:
         """
         Salva ou atualiza um endereço no banco de dados.
 
@@ -88,24 +93,30 @@ class EnderecoRepository(EnderecoContract):
             endereco (EnderecoDomain): A entidade de endereço a ser salva ou
             atualizada no repositório.
 
+        Returns:
+            EnderecoDomain: A entidade de endereço salva/atualizada.
+
         Raises:
             OperationFailedException: Se ocorrer um erro inesperado ao salvar o endereço.
         """
         try:
-            # Converte EnderecoDomain para EnderecoModel e salva no banco de dados
+            # Converte EnderecoDomain para EnderecoModel
             endereco_model = self._from_domain_to_model(endereco)
+            # Atualiza ou cria um novo endereço e marca como não excluído logicamente
+            endereco_model.is_deleted = False
             endereco_model.save()
+            return self._from_model_to_domain(endereco_model)
         except Exception as e:
             raise OperationFailedException(
                 f"Erro ao salvar o endereço: {str(e)}"
             ) from e
 
-    def delete(self, endereco_id: int) -> None:
+    def soft_delete(self, endereco_id: int) -> None:
         """
-        Remove um endereço do banco de dados pelo ID.
+        Realiza a exclusão lógica (soft delete) de um endereço pelo ID.
 
         Args:
-            endereco_id (int): O identificador único do endereço a ser removido.
+            endereco_id (int): O identificador único do endereço a ser excluído.
 
         Raises:
             EntityNotFoundException: Se o endereço com o ID fornecido não for
@@ -114,16 +125,18 @@ class EnderecoRepository(EnderecoContract):
             endereço.
         """
         try:
-            # Busca o endereço no banco de dados e o remove
-            endereco = EnderecoModel.objects.get(id=endereco_id)
-            endereco.delete()
-        except ObjectDoesNotExist:
+            # Busca o endereço no banco de dados
+            endereco_model = EnderecoModel.objects.get(id=endereco_id)
+            # Marca o endereço como excluído logicamente
+            endereco_model.is_deleted = True
+            endereco_model.save()
+        except ObjectDoesNotExist as e:
             raise EntityNotFoundException(
                 f"Endereço com ID {endereco_id} não encontrado."
             ) from e
         except Exception as e:
             raise OperationFailedException(
-                f"Erro ao remover o endereço: {str(e)}"
+                f"Erro ao realizar soft delete no endereço: {str(e)}"
             ) from e
 
     def list_by_pessoa_fisica(self, pessoa_fisica_id: int) -> list[EnderecoDomain]:
@@ -141,8 +154,9 @@ class EnderecoRepository(EnderecoContract):
             endereços.
         """
         try:
-            # Busca endereços associados a uma pessoa física no banco de dados
+            # Busca endereços associados a uma pessoa física
             enderecos = EnderecoModel.objects.filter(pessoa_fisica_id=pessoa_fisica_id)
+            # Converte cada EnderecoModel para EnderecoDomain
             return [self._from_model_to_domain(endereco) for endereco in enderecos]
         except Exception as e:
             raise OperationFailedException(
@@ -164,15 +178,16 @@ class EnderecoRepository(EnderecoContract):
             endereços.
         """
         try:
-            # Busca endereços associados a uma pessoa jurídica no banco de dados
+            # Busca endereços associados a uma pessoa jurídica
             enderecos = EnderecoModel.objects.filter(pessoa_juridica_id=pessoa_juridica_id)
+            # Converte cada EnderecoModel para EnderecoDomain
             return [self._from_model_to_domain(endereco) for endereco in enderecos]
         except Exception as e:
             raise OperationFailedException(
                 f"Erro ao listar endereços para pessoa jurídica: {str(e)}"
             ) from e
 
-    # Métodos de conversão (simples placeholders, ajuste conforme sua estrutura)
+    # Métodos privados auxiliares de conversão
 
     def _from_model_to_domain(self, endereco_model: EnderecoModel) -> EnderecoDomain:
         """

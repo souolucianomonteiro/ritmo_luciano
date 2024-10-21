@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Optional
 
 @dataclass
-class Localizacao:
+class LocalizacaoDomain:
     """Classe que implementa o entidade localização"""
     ip_address: str
     latitude: float

@@ -48,6 +48,5 @@ __all__ = [
     'ComentarioReacaoAdmin', 'VotacaoPost', 'CompartilhamentoPostAdmin',
     'ComentarioPostAdmin', 'ReacaoTipoAdmin', 'ImagemPostAdmin',
     'LocalizacaoAdmin'
-
-    
+   
     ]
