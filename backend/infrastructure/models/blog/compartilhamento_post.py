@@ -3,7 +3,7 @@
 
 from django.db import models
 from infrastructure.models.blog.post import Post
-from infrastructure.models.shared.localizacao import Localizacao
+from infrastructure.models.shared.resources.localizacao import Localizacao
 from infrastructure.models.marketing.pessoa_fisica import PessoaFisicaModel
 
 

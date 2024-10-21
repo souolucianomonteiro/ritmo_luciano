@@ -1,68 +1,52 @@
 """
-Módulo responsável pela definição do repositório abstrato de UsuarioTipo.
+Módulo que define o contrato abstrato para o repositório de UsuarioTipo.
 
-Este módulo define a interface para o repositório de UsuarioTipo, especificando
-os métodos que devem ser implementados por repositórios concretos que utilizam
-esta entidade.
-
-Classes:
-    UsuarioTipoRepository: Classe abstrata que define as operações de persistência
-    e recuperação de dados relacionadas à entidade UsuarioTipo.
+Este contrato especifica os métodos que devem ser implementados pelo repositório
+concreto para gerenciar tipos de usuário no sistema.
 """
+
 from abc import ABC, abstractmethod
-from typing import Optional, List
-from domain.website.entities.usuario_tipo import UsuarioTipoDomain
+from typing import List, Optional
+from domain.marketing.entities.usuario_tipo import UsuarioTipoDomain
 
 
-class UsuarioTipoRepository(ABC):
+class UsuarioTipoContract(ABC):
     """
-    Repositório abstrato para a entidade UsuarioTipo.
+    Contrato abstrato para o repositório de UsuarioTipo.
 
-    Define os métodos para persistir e recuperar os dados da entidade UsuarioTipo.
+    Este contrato define as operações que o repositório concreto deve implementar.
     """
 
     @abstractmethod
-    def save(self, usuario_tipo: UsuarioTipoDomain) -> UsuarioTipoDomain:
+    def salvar(self, usuario_tipo: UsuarioTipoDomain) -> None:
         """
-        Salva ou atualiza uma instância de UsuarioTipo no repositório.
-        
+        Salva uma instância de UsuarioTipo no repositório.
+
         Args:
-            usuario_tipo (UsuarioTipoDomain): Instância de dominio a ser salva.
-            
-        Returns:
-            UsuarioTipoDomain: A instância salva ou atualizada.
+            usuario_tipo (UsuarioTipoDomain): A instância de UsuarioTipo a ser salva.
         """
         pass
 
     @abstractmethod
-    def get_by_id(self, usuario_tipo_id: int) -> Optional[UsuarioTipoDomain]:
+    def buscar_por_id(self, usuario_tipo_id: int) -> Optional[UsuarioTipoDomain]:
         """
-        Recupera uma instância de UsuarioTipo por seu ID.
-        
+        Busca uma instância de UsuarioTipo por seu ID.
+
         Args:
-            usuario_tipo_id (int): ID do tipo de usuário a ser recuperado.
-        
+            usuario_tipo_id (int): O identificador único do tipo de usuário.
+
         Returns:
-            Optional[UsuarioTipoDomain]: A instância encontrada ou None.
+            Optional[UsuarioTipoDomain]: A instância de UsuarioTipo, ou None se não encontrada.
         """
         pass
 
     @abstractmethod
-    def delete(self, usuario_tipo: UsuarioTipoDomain) -> None:
+    def listar_todos(self) -> List[UsuarioTipoDomain]:
         """
-        Exclui uma instância de UsuarioTipo do repositório.
-        
-        Args:
-            usuario_tipo (UsuarioTipoDomain): A instância a ser excluída.
+        Lista todos os tipos de usuário.
+
+        Returns:
+            List[UsuarioTipoDomain]: Uma lista com todos os tipos de usuário.
         """
         pass
 
-    @abstractmethod
-    def list_all(self) -> List[UsuarioTipoDomain]:
-        """
-        Lista todas as instâncias de UsuarioTipo no repositório.
-        
-        Returns:
-            List[UsuarioTipoDomain]: Lista de instâncias de tipos de usuários.
-        """
-        pass

@@ -1,28 +1,51 @@
+"""
+Módulo que define o contrato abstrato para o repositório de Profissao.
+
+Este contrato especifica os métodos que devem ser implementados pelo repositório
+concreto para gerenciar profissões no sistema.
+"""
+
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from domain.website.entities.profissao import Profissao
+from domain.marketing.entities.profissao import ProfissaoDomain
 
 
-class ProfissaoRepository(ABC):
+class ProfissaoContract(ABC):
     """
-    Interface para o repositório de Profissão.
+    Contrato abstrato para o repositório de Profissao.
 
-    Define os métodos que devem ser implementados no repositório concreto.
+    Este contrato define as operações que o repositório concreto deve implementar.
     """
 
     @abstractmethod
-    def save(self, profissao: 'Profissao') -> 'Profissao':
+    def salvar(self, profissao: ProfissaoDomain) -> None:
+        """
+        Salva uma instância de Profissao no repositório.
+
+        Args:
+            profissao (ProfissaoDomain): A instância de Profissao a ser salva.
+        """
         pass
 
     @abstractmethod
-    def find_by_id(self, profissao_id: int) -> Optional['Profissao']:
+    def buscar_por_id(self, profissao_id: int) -> Optional[ProfissaoDomain]:
+        """
+        Busca uma instância de Profissao por seu ID.
+
+        Args:
+            profissao_id (int): O identificador único da profissão.
+
+        Returns:
+            Optional[ProfissaoDomain]: A instância de Profissao, ou None se não encontrada.
+        """
         pass
 
     @abstractmethod
-    def find_all(self) -> List['Profissao']:
-        pass
+    def listar_todas(self) -> List[ProfissaoDomain]:
+        """
+        Lista todas as profissões.
 
-    @abstractmethod
-    def delete(self, profissao_id: int) -> None:
+        Returns:
+            List[ProfissaoDomain]: Uma lista com todas as profissões.
+        """
         pass
-

@@ -17,9 +17,9 @@ from .shared.plugins.dependencia_plugin import DependenciaPluginAdmin
 from .shared.plugins.historico_modificacoes import HistoricoModificacoesAdmin
 from .shared.plugins.permissao_plugin import PermissaoPluginAdmin
 from .shared.plugins.template_plugin import TemplatePluginAdmin
+from .shared.resources.localizacao import LocalizacaoAdmin
 from .website.site import CustomSiteAdmin
 from .website.subdomínio import SubdominioAdmin
-from .blog import BlogAdmin
 from .blog.post import PostAdmin
 from .blog.categoria_post import CategoriaPostAdmin
 from .blog.tag_post import TagPostAdmin
@@ -47,6 +47,7 @@ __all__ = [
     'PessoaJuridicaAdmin', 'EnderecoAdmin', 'VisualizacaoPostAdmin',
     'ComentarioReacaoAdmin', 'VotacaoPost', 'CompartilhamentoPostAdmin',
     'ComentarioPostAdmin', 'ReacaoTipoAdmin', 'ImagemPostAdmin',
+    'LocalizacaoAdmin'
 
     
     ]

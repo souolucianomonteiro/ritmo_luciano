@@ -2,7 +2,7 @@
     Módulo que implementa a model de visualização de post com geolocalização. 
 """
 from django.db import models
-from infrastructure.models.shared.localizacao import Localizacao
+from infrastructure.models.shared.resources.localizacao import Localizacao
 from infrastructure.models.marketing.pessoa_fisica import PessoaFisicaModel
 from infrastructure.models.blog.post import Post
 

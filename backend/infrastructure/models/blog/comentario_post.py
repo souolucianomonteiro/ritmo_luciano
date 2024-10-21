@@ -9,7 +9,7 @@
 """
 
 from django.db import models
-from infrastructure.models.shared.localizacao import Localizacao  
+from infrastructure.models.shared.resources.localizacao import Localizacao  
 
 
 class ComentarioPost(models.Model):

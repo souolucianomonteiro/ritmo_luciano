@@ -31,7 +31,7 @@ Classes:
 from django.db import models
 
 
-class Localizacao(models.Model):
+class LocalizacaoModel(models.Model):
     """
     Model para armazenar informações de geolocalização e visitas.
     """

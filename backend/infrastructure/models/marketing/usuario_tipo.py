@@ -1,44 +1,37 @@
+"""
+Módulo responsável pela definição da model UsuarioTipoModel.
+
+Este módulo define a model UsuarioTipoModel, que utiliza mixins para auditoria,
+ordenação, inativação e exclusão lógica, e armazena os tipos de usuário no sistema.
+"""
+
 from django.db import models
 from infrastructure.mixins.audit import AuditMixin
+from infrastructure.mixins.ordering import OrderingMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
-from infrastructure.mixins.status import StatusMixin
 
 
-class UsuarioTipo(AuditMixin, InactivateMixin, SoftDeleteMixin, StatusMixin, models.Model):
+class UsuarioTipoModel(AuditMixin, OrderingMixin, InactivateMixin, SoftDeleteMixin, models.Model):
     """
-    Model que representa o tipo de usuário no sistema.
-
-    Cada tipo de usuário pode estar associado a diferentes permissões 
-    dentro de um site específico, permitindo controle granular de acesso.
+    Model que representa um tipo de usuário no banco de dados.
 
     Atributos:
-        nome (CharField): O nome do tipo de usuário (ex: Administrador, Editor).
-        descricao (TextField): Uma breve descrição do tipo de usuário.
+        nome (str): Nome do tipo de usuário.
+        descricao (Optional[str]): Descrição do tipo de usuário.
     """
-    usuario_tipo_id = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=255, unique=True)
-    descricao = models.TextField(null=True, blank=True)
-
-    STATUS_CHOICES = [
-        ('ativo', 'Ativo'),
-        ('inativo', 'Inativo'),
-    ]
-
-    def get_status_choices(self):
-        return self.STATUS_CHOICES
+    nome = models.CharField(max_length=50, unique=True)
+    descricao = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         """
-        Metadados para a model UsuarioTipo.
-
-        Define o comportamento do modelo no Django, incluindo o nome da tabela 
-        no banco de dados, e nomes legíveis para o Django Admin.
+        Metadados da model UsuarioTipoModel.
         """
         app_label = 'infrastructure'
         db_table = 'infrastructure_usuario_tipo'
         verbose_name = 'Tipo de Usuário'
         verbose_name_plural = 'Tipos de Usuário'
+        ordering = ['order']
 
     def __str__(self):
-        return str(self.nome)
+        return f"{self.nome} - {self.descricao or 'Sem descrição'}"

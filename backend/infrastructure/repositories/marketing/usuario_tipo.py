@@ -1,90 +1,74 @@
 # pylint: disable=no-member
 """
-Módulo responsável pela implementação concreta do repositório de UsuarioTipo.
+Módulo que implementa o repositório concreto para UsuarioTipo.
 
-Este módulo implementa o repositório concreto DjangoUsuarioTipoRepository,
-utilizando o Django ORM para realizar as operações de persistência e
-recuperação de dados relacionadas à entidade UsuarioTipo.
-
-Classes:
-    DjangoUsuarioTipoRepository: Classe concreta que implementa os métodos
-    definidos no repositório abstrato para lidar com a persistência de
-    UsuarioTipo.
+Este repositório interage com o banco de dados através da model UsuarioTipoModel,
+implementando as operações definidas no contrato UsuarioTipoContract.
 """
-from typing import Optional, List
+
+from typing import List, Optional
+from infrastructure.models.marketing.usuario_tipo import UsuarioTipoModel
 from domain.marketing.entities.usuario_tipo import UsuarioTipoDomain
-from domain.marketing.repositories.usuario_tipo import UsuarioTipoRepository
-from infrastructure.models.marketing.usuario_tipo import UsuarioTipo
+from domain.marketing.repositories.usuario_tipo import UsuarioTipoContract
+from django.core.exceptions import ObjectDoesNotExist
 
 
-class DjangoUsuarioTipoRepository(UsuarioTipoRepository):
+class UsuarioTipoRepository(UsuarioTipoContract):
     """
-    Repositório concreto para a entidade UsuarioTipo.
+    Repositório concreto para a entidade de domínio UsuarioTipo.
 
-    Implementa os métodos definidos no repositório abstrato, utilizando o Django ORM.
+    Este repositório implementa o contrato UsuarioTipoContract, interagindo com o banco
+    de dados através da model UsuarioTipoModel.
     """
 
-    def save(self, usuario_tipo: UsuarioTipoDomain) -> UsuarioTipoDomain:
+    def salvar(self, usuario_tipo: UsuarioTipoDomain) -> None:
         """
-        Salva ou atualiza uma instância de UsuarioTipo no repositório.
+        Salva uma instância de UsuarioTipo no banco de dados.
+
+        Converte a entidade de domínio UsuarioTipoDomain para a model UsuarioTipoModel
+        e a salva no banco.
 
         Args:
-            usuario_tipo (UsuarioTipoDomain): Instância de domínio a ser salva.
-
-        Returns:
-            UsuarioTipoDomain: A instância salva ou atualizada.
+            usuario_tipo (UsuarioTipoDomain): A instância de UsuarioTipo a ser salva.
         """
-        usuario_tipo_model = UsuarioTipo(
-            usuario_tipo_id= usuario_tipo.id,
+        usuario_tipo_model = UsuarioTipoModel(
             nome=usuario_tipo.nome,
             descricao=usuario_tipo.descricao
         )
         usuario_tipo_model.save()
-        usuario_tipo.id = usuario_tipo_model.id
-        return usuario_tipo
 
-    def get_by_id(self, usuario_tipo_id: int) -> Optional[UsuarioTipoDomain]:
+    def buscar_por_id(self, usuario_tipo_id: int) -> Optional[UsuarioTipoDomain]:
         """
-        Recupera uma instância de UsuarioTipo por seu ID.
+        Busca uma instância de UsuarioTipo por seu ID no banco de dados.
 
         Args:
-            usuario_tipo_id (int): ID do tipo de usuário a ser recuperado.
+            usuario_tipo_id (int): O identificador único do tipo de usuário.
 
         Returns:
-            Optional[UsuarioTipoDomain]: A instância encontrada ou None.
+            Optional[UsuarioTipoDomain]: A instância de UsuarioTipo, ou None se não encontrada.
         """
         try:
-            usuario_tipo_model = UsuarioTipo.objects.get(id=usuario_tipo_id)
+            usuario_tipo_model = UsuarioTipoModel.objects.get(id=usuario_tipo_id)
             return UsuarioTipoDomain(
                 usuario_tipo_id=usuario_tipo_model.id,
                 nome=usuario_tipo_model.nome,
                 descricao=usuario_tipo_model.descricao
             )
-        except UsuarioTipo.DoesNotExist:
+        except ObjectDoesNotExist:
             return None
 
-    def delete(self, usuario_tipo: UsuarioTipoDomain) -> None:
+    def listar_todos(self) -> List[UsuarioTipoDomain]:
         """
-        Exclui uma instância de UsuarioTipo do repositório.
-
-        Args:
-            usuario_tipo (UsuarioTipoDomain): A instância a ser excluída.
-        """
-        UsuarioTipo.objects.filter(id=usuario_tipo.id).delete()
-
-    def list_all(self) -> List[UsuarioTipoDomain]:
-        """
-        Lista todas as instâncias de UsuarioTipo no repositório.
+        Lista todas as instâncias de UsuarioTipo no banco de dados.
 
         Returns:
-            List[UsuarioTipoDomain]: Lista de instâncias de tipos de usuários.
+            List[UsuarioTipoDomain]: Uma lista com todos os tipos de usuário.
         """
-        usuario_tipos = UsuarioTipo.objects.all()
+        usuario_tipos = UsuarioTipoModel.objects.all()
         return [
             UsuarioTipoDomain(
                 usuario_tipo_id=usuario_tipo.id,
                 nome=usuario_tipo.nome,
                 descricao=usuario_tipo.descricao
-            )
-            for usuario_tipo in usuario_tipos
+            ) for usuario_tipo in usuario_tipos
         ]
