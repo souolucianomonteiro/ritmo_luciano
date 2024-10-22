@@ -54,3 +54,11 @@ class PessoaFisicaContract(ABC):
     def remover_endereco(self, pessoa_fisica_id: int, endereco_id: int) -> None:
         """Remove um endereço da pessoa física usando soft delete."""
         raise NotImplementedError
+
+    @abstractmethod
+    def atualizar_situacao_projeto(self, pessoa_fisica_id: int) -> None:
+        """
+        Atualiza a situação de projeto da pessoa física com base em sua participação
+        em projetos (ativo ou sem projeto).
+        """
+        raise NotImplementedError

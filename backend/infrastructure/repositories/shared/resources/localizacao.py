@@ -14,7 +14,7 @@ Classes:
 """
 
 from typing import List, Optional
-from domain.shared.resources.entities.localizacao import Localizacao
+from domain.shared.resources.entities.localizacao import LocalizacaoDomain
 from domain.shared.resources.repositories.localizacao import LocalizacaoContract
 from infrastructure.models.shared.resources.localizacao import LocalizacaoModel
 from django.core.exceptions import ObjectDoesNotExist
@@ -29,7 +29,7 @@ class LocalizacaoRepository(LocalizacaoContract):
     de dados.
     """
 
-    def salvar(self, localizacao: Localizacao) -> None:
+    def salvar(self, localizacao: LocalizacaoDomain) -> None:
         """
         Salva uma instância de Localizacao no banco de dados.
 
@@ -53,7 +53,7 @@ class LocalizacaoRepository(LocalizacaoContract):
         )
         localizacao_model.save()  # Salva no banco de dados
 
-    def buscar_por_id(self, localizacao_id: int) -> Optional[Localizacao]:
+    def buscar_por_id(self, localizacao_id: int) -> Optional[LocalizacaoDomain]:
         """
         Busca uma instância de Localizacao no banco de dados pelo ID.
 
@@ -73,7 +73,7 @@ class LocalizacaoRepository(LocalizacaoContract):
             
             # Converte a model LocalizacaoModel para a entidade de domínio
             # Localizacao
-            return Localizacao(
+            return LocalizacaoDomain(
                 ip_address=localizacao_model.ip_address,
                 latitude=localizacao_model.latitude,
                 longitude=localizacao_model.longitude,
@@ -87,7 +87,7 @@ class LocalizacaoRepository(LocalizacaoContract):
             # Se a localização não for encontrada, retorna None
             return None
 
-    def listar_todas(self) -> List[Localizacao]:
+    def listar_todas(self) -> List[LocalizacaoDomain]:
         """
         Lista todas as instâncias de Localizacao no banco de dados.
 
@@ -105,7 +105,7 @@ class LocalizacaoRepository(LocalizacaoContract):
         # Converte as instâncias de LocalizacaoModel para a entidade de
         # domínio Localizacao
         return [
-            Localizacao(
+            LocalizacaoDomain(
                 ip_address=localizacao_model.ip_address,
                 latitude=localizacao_model.latitude,
                 longitude=localizacao_model.longitude,

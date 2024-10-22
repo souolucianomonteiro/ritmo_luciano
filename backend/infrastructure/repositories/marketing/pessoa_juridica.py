@@ -1,168 +1,268 @@
 # pylint: disable=no-member
 
 from typing import Optional, List
-from domain.website.entities.pessoa_juridica import PessoaJuridicaDomain
-from domain.website.repositories.pessoa_juridica import (
-    PessoaJuridicaRepository)
+from django.db import transaction
+from domain.shared.exceptions.entity_not_found_exception import (
+                                            EntityNotFoundException)
+from domain.shared.exceptions.operation_failed_exception import (
+                                            OperationFailedException)
+from domain.marketing.repositories.pessoa_juridica import (
+                                            PessoaJuridicaContract)
+from domain.marketing.entities.pessoa_juridica import PessoaJuridicaDomain
 from infrastructure.models.marketing.pessoa_juridica import PessoaJuridicaModel
-from infrastructure.models.marketing.endereco import EnderecoModel
-from infrastructure.models.marketing.pessoa_fisica import PessoaFisicaModel
+from infrastructure.repositories.marketing.pessoa_fisica import (
+                                            PessoaFisicaRepository)
+from infrastructure.repositories.marketing.endereco import EnderecoRepository
+from infrastructure.repositories.shared.resources.rede_social import (
+                                                    RedeSocialRepository)
+from infrastructure.repositories.marketing.atividade_economica import (
+                                            AtividadeEconomicaRepository)
 
 
-class DjangoPessoaJuridicaRepository(PessoaJuridicaRepository):
+class PessoaJuridicaRepository(PessoaJuridicaContract):
     """
-    Repositório concreto para a entidade PessoaJuridica.
-
-    Implementa os métodos definidos no repositório abstrato, utilizando
-    o Django ORM.
+    Repositório concreto para a entidade PessoaJuridica, interagindo apenas com repositórios
+    de relacionamentos, sem acesso direto às models.
     """
 
-    def save(self, pessoa_juridica: PessoaJuridicaDomain) -> PessoaJuridicaDomain:
-        # Verificar se o usuário titular (pessoa física) existe
-        usuario_titular_model = PessoaFisicaModel.objects.get(id=pessoa_juridica.usuario_titular.id)
-        iniciador_model = PessoaFisicaModel.objects.get(id=pessoa_juridica.iniciador_id.id)
+    def __init__(
+        self,
+        pessoa_fisica_repository: PessoaFisicaRepository,
+        atividade_economica_repository: AtividadeEconomicaRepository,
+        endereco_repository: EnderecoRepository,
+        rede_social_repository: RedeSocialRepository
+    ):
+        self.pessoa_fisica_repository = pessoa_fisica_repository
+        self.atividade_economica_repository = atividade_economica_repository
+        self.endereco_repository = endereco_repository
+        self.rede_social_repository = rede_social_repository
 
-        pessoa_juridica_model = PessoaJuridicaModel(
-            id=pessoa_juridica.id,
-            razao_social=pessoa_juridica.razao_social,
-            nome_fantasia=pessoa_juridica.nome_fantasia,
-            cnpj=pessoa_juridica.cnpj,
-            inscricao_estadual=pessoa_juridica.inscricao_estadual,
-            usuario_titular=usuario_titular_model,  # Associar corretamente o usuário titular
-            iniciador=iniciador_model  # Associar o iniciador da conta
-        )
-        pessoa_juridica_model.save()
-
-        # Atualizando os endereços associados
-        self._salvar_enderecos(pessoa_juridica_model, pessoa_juridica.enderecos)
-
-        pessoa_juridica.id = pessoa_juridica_model.id
-        return pessoa_juridica
-
-    def _salvar_enderecos(self, pessoa_juridica_model: PessoaJuridicaModel, enderecos: List[EnderecoModel]) -> None:
-        """
-        Função privada para salvar os endereços associados a uma Pessoa Jurídica.
-        """
-        endereco_models = []
-        for endereco in enderecos:
-            endereco_model, _ = EnderecoModel.objects.get_or_create(
-                rua=endereco.rua,
-                numero=endereco.numero,
-                complemento=endereco.complemento,
-                bairro=endereco.bairro,
-                cidade=endereco.cidade,
-                estado=endereco.estado,
-                cep=endereco.cep,
-                pais=endereco.pais,
-                tipo=endereco.tipo,
-                pessoa_juridica_id=pessoa_juridica_model.id,
-                is_active=endereco.is_active,
-                data_inicio=endereco.data_inicio,
-                data_fim=endereco.data_fim
-            )
-            endereco_models.append(endereco_model)
-
-        pessoa_juridica_model.enderecos.set(endereco_models)
-
+    @transaction.atomic
     def get_by_id(self, pessoa_juridica_id: int) -> Optional[PessoaJuridicaDomain]:
+        """
+        Recupera uma pessoa jurídica pelo ID, utilizando os repositórios de relacionamento.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica.
+
+        Returns:
+            Optional[PessoaJuridicaDomain]: A entidade de domínio correspondente, ou None se não encontrada.
+        """
         try:
             pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            return self._model_to_domain(pessoa_juridica_model)
+        except PessoaJuridicaModel.DoesNotExist as exc:
+            raise EntityNotFoundException(f"Pessoa Jurídica com ID {pessoa_juridica_id} não encontrada.") from exc
 
-            # Mapeando endereços
-            enderecos = [
-                EnderecoModel(
-                    endereco_id=endereco.id,
-                    rua=endereco.rua,
-                    numero=endereco.numero,
-                    complemento=endereco.complemento,
-                    bairro=endereco.bairro,
-                    cidade=endereco.cidade,
-                    estado=endereco.estado,
-                    cep=endereco.cep,
-                    pais=endereco.pais,
-                    tipo=endereco.tipo,
-                    pessoa_juridica_id=endereco.pessoa_juridica_id,
-                    is_active=endereco.is_active,
-                    data_inicio=endereco.data_inicio,
-                    data_fim=endereco.data_fim
-                )
-                for endereco in pessoa_juridica_model.enderecos.all()
-            ]
+    @transaction.atomic
+    def save(self, pessoa_juridica: PessoaJuridicaDomain) -> PessoaJuridicaDomain:
+        """
+        Salva ou atualiza uma pessoa jurídica no repositório.
 
-            return PessoaJuridicaDomain(
-                id=pessoa_juridica_model.id,
-                razao_social=pessoa_juridica_model.razao_social,
-                nome_fantasia=pessoa_juridica_model.nome_fantasia,
-                cnpj=pessoa_juridica_model.cnpj,
-                inscricao_estadual=pessoa_juridica_model.inscricao_estadual,
-                usuario_titular=PessoaFisicaModel(
-                    id=pessoa_juridica_model.usuario_titular.id,
-                    primeiro_nome=pessoa_juridica_model.usuario_titular.first_name,
-                    sobrenome=pessoa_juridica_model.usuario_titular.last_name,
-                    email=pessoa_juridica_model.usuario_titular.email,
-                    cpf=pessoa_juridica_model.usuario_titular.cpf,
-                    genero=pessoa_juridica_model.usuario_titular.genero
-                ),
-                iniciador_id=PessoaFisicaModel(
-                    id=pessoa_juridica_model.iniciador.id,
-                    primeiro_nome=pessoa_juridica_model.iniciador.first_name,
-                    sobrenome=pessoa_juridica_model.iniciador.last_name,
-                    email=pessoa_juridica_model.iniciador.email,
-                    cpf=pessoa_juridica_model.iniciador.cpf,
-                    genero=pessoa_juridica_model.iniciador.genero
-                ),
-                enderecos=enderecos
-            )
-        except PessoaJuridicaModel.DoesNotExist:
-            return None
+        Args:
+            pessoa_juridica (PessoaJuridicaDomain): A entidade de domínio a ser salva.
 
-    def delete(self, pessoa_juridica: PessoaJuridicaDomain) -> None:
-        PessoaJuridicaModel.objects.filter(id=pessoa_juridica.id).delete()
-
-    def list_all(self) -> List[PessoaJuridicaDomain]:
-        pessoas_juridicas = PessoaJuridicaModel.objects.all()
-        return [
-            PessoaJuridicaDomain(
+        Returns:
+            PessoaJuridicaDomain: A entidade de domínio salva ou atualizada.
+        """
+        try:
+            pessoa_juridica_model, created = PessoaJuridicaModel.objects.update_or_create(
                 id=pessoa_juridica.id,
-                razao_social=pessoa_juridica.razao_social,
-                nome_fantasia=pessoa_juridica.nome_fantasia,
-                cnpj=pessoa_juridica.cnpj,
-                inscricao_estadual=pessoa_juridica.inscricao_estadual,
-                usuario_titular=PessoaFisicaModel(
-                    id=pessoa_juridica.usuario_titular.id,
-                    primeiro_nome=pessoa_juridica.usuario_titular.first_name,
-                    sobrenome=pessoa_juridica.usuario_titular.last_name,
-                    email=pessoa_juridica.usuario_titular.email,
-                    cpf=pessoa_juridica.usuario_titular.cpf,
-                    genero=pessoa_juridica.usuario_titular.genero
-                ),
-                iniciador_id=PessoaFisicaModel(
-                    id=pessoa_juridica.iniciador.id,
-                    primeiro_nome=pessoa_juridica.iniciador.first_name,
-                    sobrenome=pessoa_juridica.iniciador.last_name,
-                    email=pessoa_juridica.iniciador.email,
-                    cpf=pessoa_juridica.iniciador.cpf,
-                    genero=pessoa_juridica.iniciador.genero
-                ),
-                enderecos=[
-                    EnderecoModel(
-                        endereco_id=endereco.id,
-                        rua=endereco.rua,
-                        numero=endereco.numero,
-                        complemento=endereco.complemento,
-                        bairro=endereco.bairro,
-                        cidade=endereco.cidade,
-                        estado=endereco.estado,
-                        cep=endereco.cep,
-                        pais=endereco.pais,
-                        tipo=endereco.tipo,
-                        pessoa_juridica_id=endereco.pessoa_juridica_id,
-                        is_active=endereco.is_active,
-                        data_inicio=endereco.data_inicio,
-                        data_fim=endereco.data_fim
-                    )
-                    for endereco in pessoa_juridica.enderecos.all()
-                ]
+                defaults={
+                    'razao_social': pessoa_juridica.razao_social,
+                    'nome_fantasia': pessoa_juridica.nome_fantasia,
+                    'cnpj': pessoa_juridica.cnpj,
+                    'inscricao_estadual': pessoa_juridica.inscricao_estadual,
+                    'website': pessoa_juridica.website,
+                    'iniciador_id': pessoa_juridica.iniciador_id,
+                }
             )
-            for pessoa_juridica in pessoas_juridicas
-        ]
+
+            # Atualizar os relacionamentos usando os repositórios
+            self._atualizar_relacionamentos(pessoa_juridica_model, pessoa_juridica)
+
+            return self._model_to_domain(pessoa_juridica_model)
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao salvar a pessoa jurídica: {str(exc)}") from exc
+
+    @transaction.atomic
+    def delete(self, pessoa_juridica_id: int) -> None:
+        """
+        Exclui uma pessoa jurídica do repositório pelo ID.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica a ser excluída.
+        """
+        try:
+            PessoaJuridicaModel.objects.filter(id=pessoa_juridica_id).delete()
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao excluir a pessoa jurídica com ID {pessoa_juridica_id}: {str(exc)}") from exc
+
+    @transaction.atomic
+    def list_all(self) -> List[PessoaJuridicaDomain]:
+        """
+        Retorna uma lista de todas as pessoas jurídicas cadastradas.
+
+        Returns:
+            List[PessoaJuridicaDomain]: Lista de todas as entidades de domínio PessoaJuridica.
+        """
+        try:
+            pessoas_juridicas = PessoaJuridicaModel.objects.all()
+            return [self._model_to_domain(pessoa) for pessoa in pessoas_juridicas]
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao listar todas as pessoas jurídicas: {str(exc)}") from exc
+
+    @transaction.atomic
+    def adicionar_administrador(self, pessoa_juridica_id: int, administrador_id: int) -> None:
+        """
+        Adiciona um administrador a uma pessoa jurídica.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica.
+            administrador_id (int): O ID do administrador a ser adicionado.
+        """
+        try:
+            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            administrador = self.pessoa_fisica_repository.get_by_id(administrador_id)
+            pessoa_juridica_model.administradores.add(administrador.id)
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao adicionar o administrador à pessoa jurídica: {str(exc)}") from exc
+
+    @transaction.atomic
+    def remover_administrador(self, pessoa_juridica_id: int, administrador_id: int) -> None:
+        """
+        Remove um administrador de uma pessoa jurídica.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica.
+            administrador_id (int): O ID do administrador a ser removido.
+        """
+        try:
+            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            administrador = self.pessoa_fisica_repository.get_by_id(administrador_id)
+            pessoa_juridica_model.administradores.remove(administrador.id)
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao remover o administrador da pessoa jurídica: {str(exc)}") from exc
+
+    @transaction.atomic
+    def adicionar_atividade_economica(self, pessoa_juridica_id: int, atividade_id: int) -> None:
+        """
+        Adiciona uma atividade econômica a uma pessoa jurídica.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica.
+            atividade_id (int): O ID da atividade econômica a ser adicionada.
+        """
+        try:
+            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            atividade = self.atividade_economica_repository.get_by_id(atividade_id)
+            pessoa_juridica_model.atividades_economicas.add(atividade.id)
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao adicionar a atividade econômica: {str(exc)}") from exc
+
+    @transaction.atomic
+    def remover_atividade_economica(self, pessoa_juridica_id: int, atividade_id: int) -> None:
+        """
+        Remove uma atividade econômica de uma pessoa jurídica.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica.
+            atividade_id (int): O ID da atividade econômica a ser removida.
+        """
+        try:
+            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            atividade = self.atividade_economica_repository.get_by_id(atividade_id)
+            pessoa_juridica_model.atividades_economicas.remove(atividade.id)
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao remover a atividade econômica: {str(exc)}") from exc
+
+    @transaction.atomic
+    def adicionar_rede_social(self, pessoa_juridica_id: int, rede_social_id: int) -> None:
+        """
+        Adiciona uma rede social a uma pessoa jurídica.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica.
+            rede_social_id (int): O ID da rede social a ser adicionada.
+        """
+        try:
+            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            rede_social = self.rede_social_repository.get_by_id(rede_social_id)
+            pessoa_juridica_model.redes_sociais.add(rede_social.id)
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao adicionar a rede social: {str(exc)}") from exc
+
+    @transaction.atomic
+    def remover_rede_social(self, pessoa_juridica_id: int, rede_social_id: int) -> None:
+        """
+        Remove uma rede social de uma pessoa jurídica.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica.
+            rede_social_id (int): O ID da rede social a ser removida.
+        """
+        try:
+            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            rede_social = self.rede_social_repository.get_by_id(rede_social_id)
+            pessoa_juridica_model.redes_sociais.remove(rede_social.id)
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao remover a rede social: {str(exc)}") from exc
+
+    def _model_to_domain(self, pessoa_juridica_model: PessoaJuridicaModel) -> PessoaJuridicaDomain:
+        """
+        Converte um modelo de banco de dados em uma entidade de domínio.
+
+        Args:
+            pessoa_juridica_model (PessoaJuridicaModel): A instância do modelo do banco de dados.
+
+        Returns:
+            PessoaJuridicaDomain: A instância da entidade de domínio convertida.
+        """
+        administradores_ids = list(pessoa_juridica_model.administradores.values_list('id', flat=True))
+        atividades_economicas_ids = list(pessoa_juridica_model.atividades_economicas.values_list('id', flat=True))
+        enderecos_ids = list(pessoa_juridica_model.enderecos.values_list('id', flat=True))
+        redes_sociais_ids = list(pessoa_juridica_model.redes_sociais.values_list('id', flat=True))
+
+        return PessoaJuridicaDomain(
+            id=pessoa_juridica_model.id,
+            razao_social=pessoa_juridica_model.razao_social,
+            nome_fantasia=pessoa_juridica_model.nome_fantasia,
+            cnpj=pessoa_juridica_model.cnpj,
+            inscricao_estadual=pessoa_juridica_model.inscricao_estadual,
+            administradores=administradores_ids,
+            iniciador_id=pessoa_juridica_model.iniciador_id,
+            enderecos=enderecos_ids,
+            atividades_economicas=atividades_economicas_ids,
+            website=pessoa_juridica_model.website,
+            redes_sociais=redes_sociais_ids
+        )
+
+    def _atualizar_relacionamentos(self, pessoa_juridica_model: PessoaJuridicaModel, pessoa_juridica: PessoaJuridicaDomain) -> None:
+        """
+        Atualiza os relacionamentos da pessoa jurídica (administradores, atividades econômicas, endereços e redes sociais).
+
+        Args:
+            pessoa_juridica_model (PessoaJuridicaModel): A instância do modelo do banco de dados.
+            pessoa_juridica (PessoaJuridicaDomain): A entidade de domínio da pessoa jurídica.
+        """
+        # Atualizar administradores
+        pessoa_juridica_model.administradores.set(
+            self.pessoa_fisica_repository.get_by_ids(pessoa_juridica.administradores)
+        )
+
+        # Atualizar atividades econômicas
+        pessoa_juridica_model.atividades_economicas.set(
+            self.atividade_economica_repository.get_by_ids(pessoa_juridica.atividades_economicas)
+        )
+
+        # Atualizar endereços
+        pessoa_juridica_model.enderecos.set(
+            self.endereco_repository.get_by_ids(pessoa_juridica.enderecos)
+        )
+
+        # Atualizar redes sociais
+        pessoa_juridica_model.redes_sociais.set(
+            self.rede_social_repository.get_by_ids(pessoa_juridica.redes_sociais)
+        )
+
+        pessoa_juridica_model.save()

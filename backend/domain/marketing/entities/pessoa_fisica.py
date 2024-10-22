@@ -1,9 +1,12 @@
 """
 Módulo de domínio responsável pela entidade PessoaFisicaDomain.
 
-Este módulo define a entidade PessoaFisicaDomain, que representa uma pessoa física
-no sistema. A classe encapsula a lógica de negócio, incluindo validações de CPF,
-e-mail, telefone, data de nascimento, e relacionamentos com endereço e localização.
+Este módulo define a entidade PessoaFisicaDomain, que representa uma pessoa
+física
+no sistema. A classe encapsula a lógica de negócio, incluindo validações de
+CPF,
+e-mail, telefone, data de nascimento, e relacionamentos com endereço e
+localização.
 """
 
 from datetime import date, datetime
@@ -56,7 +59,9 @@ class PessoaFisicaDomain:
         iniciador_conta_empresa: Optional[bool] = None,
         foto: Optional[str] = None,
         bios: Optional[str] = None,
-        situacao: Optional[str] = None
+        situacao: Optional[str] = None,
+        situacao_projeto: str = 'sem_projeto',
+        
     ):
         """
         Inicializa a instância de PessoaFisicaDomain com atributos obrigatórios e opcionais.
@@ -96,7 +101,8 @@ class PessoaFisicaDomain:
         self.foto = foto
         self.bios = bios
         self.situacao = situacao
-
+        self.situacao_projeto = situacao_projeto
+        
     # Getters e Setters com validação e exceções
 
     @property
@@ -159,6 +165,27 @@ class PessoaFisicaDomain:
 
     def set_ultimo_login(self, data_login: Optional[datetime]) -> None:
         self._ultimo_login = data_login
+
+    @property
+    def situacao_projeto(self) -> str:
+        """Retorna a situação da pessoa física em relação a projetos."""
+        return self._situacao_projeto
+
+    @situacao_projeto.setter
+    def situacao_projeto(self, situacao: str) -> None:
+        """Atualiza a situação da pessoa física em relação a projetos."""
+        if situacao not in ['ativo', 'sem_projeto']:
+            raise ValueError("Situação inválida para projetos")
+        self._situacao_projeto = situacao
+
+    def atualizar_situacao_projeto(self, esta_em_projetos: bool) -> None:
+        """
+        Atualiza a situação da pessoa física com base na participação em projetos.
+        
+        Args:
+            esta_em_projetos (bool): Se a pessoa está ou não participando de algum projeto.
+        """
+        self.situacao_projeto = 'ativo' if esta_em_projetos else 'sem_projeto'
 
     def __str__(self) -> str:
         """

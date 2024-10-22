@@ -56,11 +56,11 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
             atividade = AtividadeEconomicaModel.objects.get(id=atividade_econ_id)
             return atividade
 
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist: 
             raise EntityNotFoundException(
-                f"Atividade econômica com ID {atividade_econ_id} 
-                não encontrada."
-            )from e
+                f"Atividade econômica com ID {atividade_econ_id} "
+                f"não encontrada."
+            ) from e
 
         except Exception as e:
             raise OperationFailedException(

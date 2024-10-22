@@ -62,6 +62,13 @@ class PessoaFisicaModel(
         ('renegociacao', 'Com Renegociação'),
     ]        
 
+    PROJETO_STATUS_CHOICES: List[Tuple[str, str]] = [
+    ('ativo', 'Ativo em Projeto'),
+    ('sem_projeto', 'Sem Projeto'),
+    ]
+
+
+
     pessoa_fisica_id = models.AutoField(primary_key=True)
     conta_pessoa = models.BooleanField(default=True)
     situacao = models.CharField(max_length=255, choices=STATUS_CHOICES, default='adimplente')
@@ -88,12 +95,19 @@ class PessoaFisicaModel(
         ('mulher trans', 'Mulher Trans')
     ])
 
+    situacao_projeto = models.CharField(
+        max_length=20,
+        choices=PROJETO_STATUS_CHOICES,
+        default='sem_projeto',
+        help_text='Indica se a pessoa está ativa em algum projeto ou sem projeto.'
+    )
+
     USERNAME_FIELD = 'cpf'  # Usar CPF como campo de login
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']  # Campos obrigatórios
 
     iniciador_conta_empresa = models.BooleanField(default=False)
     enderecos = models.ManyToManyField(EnderecoModel, related_name='pessoas_fisicas', blank=True)
-    tipos_de_usuario = models.ManyToManyField(
+    tipo_de_usuario = models.ManyToManyField(
         UsuarioTipoModel,
         through='PessoaFisicaTipo',  # Model intermediária
         related_name='pessoas_fisicas'
