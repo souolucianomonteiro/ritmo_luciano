@@ -29,6 +29,7 @@ from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.status import StatusMixin
 from infrastructure.models.marketing.endereco import EnderecoModel
 from infrastructure.models.marketing.usuario_tipo import UsuarioTipoModel
+from infrastructure.models.shared.resources.rede_social import RedeSocialModel
 from domain.shared.validations.valida_email import validar_email
 from domain.shared.validations.valida_nascimento import validar_data_nascimento
 from domain.shared.validations.valida_cpf import validar_cpf
@@ -66,8 +67,6 @@ class PessoaFisicaModel(
     ('ativo', 'Ativo em Projeto'),
     ('sem_projeto', 'Sem Projeto'),
     ]
-
-
 
     pessoa_fisica_id = models.AutoField(primary_key=True)
     conta_pessoa = models.BooleanField(default=True)
@@ -128,6 +127,15 @@ class PessoaFisicaModel(
         help_text='Permissões específicas deste usuário.',
         verbose_name='Permissões de usuário'
     )
+
+    # Relacionamento com Redes Sociais (usando tabela associativa intermediária)
+    redes_sociais = models.ManyToManyField(
+        RedeSocialModel,
+        through='PessoaFisicaRedeSocialModel',  # Model associativa intermediária
+        related_name='pessoas_fisicas',
+        blank=True
+    )
+
 
     def get_status_choices(self):
         return self.STATUS_CHOICES

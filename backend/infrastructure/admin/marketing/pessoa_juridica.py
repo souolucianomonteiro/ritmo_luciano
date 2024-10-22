@@ -1,35 +1,48 @@
+"""
+Módulo responsável pela configuração da exibição da model PessoaJuridica
+no Django Admin.
+
+Este módulo define a classe PessoaJuridicaAdmin, que personaliza a forma
+como os dados da pessoa jurídica são exibidos e gerenciados no painel 
+administrativo do Django. Inclui configurações para listagem, filtros,
+campos de busca e gerenciamento de relacionamentos como administradores,
+endereços, atividades econômicas e redes sociais.
+
+Classes:
+    PessoaJuridicaAdmin: Classe que configura o Django Admin para a
+    model PessoaJuridica.
+"""
 from django.contrib import admin
 from infrastructure.models.marketing.pessoa_juridica import PessoaJuridicaModel
 
 @admin.register(PessoaJuridicaModel)
 class PessoaJuridicaAdmin(admin.ModelAdmin):
     """
-    Configurações de exibição e administração do modelo PessoaJuridicaModel no Django Admin.
+    Configurações de exibição da model PessoaJuridica no Django Admin.
     """
 
-    list_display = ('razao_social', 'nome_fantasia', 'cnpj', 'inscricao_estadual', 'usuario_titular', 'iniciador_id')
-    search_fields = ('razao_social', 'nome_fantasia', 'cnpj', 'usuario_titular__first_name', 'iniciador_id__first_name')
-    list_filter = ('usuario_titular', 'iniciador_id')
-    ordering = ('razao_social',)
+    list_display = (
+        'razao_social', 'cnpj', 'website', 'iniciador', 'get_administradores'
+    )
+    search_fields = ('razao_social', 'cnpj', 'nome_fantasia')
+    list_filter = ('atividades_economicas', 'administradores')
+    filter_horizontal = ('enderecos', 'administradores', 'atividades_economicas', 'redes_sociais')
 
     fieldsets = (
-        ('Informações da Empresa', {
-            'fields': ('razao_social', 'nome_fantasia', 'cnpj', 'inscricao_estadual')
+        (None, {
+            'fields': ('razao_social', 'nome_fantasia', 'cnpj', 'inscricao_estadual', 'website')
         }),
-        ('Informações do Usuário', {
-            'fields': ('usuario_titular', 'iniciador_id')
+        ('Relacionamentos', {
+            'fields': ('iniciador', 'administradores', 'enderecos', 'atividades_economicas', 'redes_sociais')
         }),
-        ('Status', {
-            'fields': ('is_active', 'is_deleted', 'created_at', 'updated_at')
+        ('Situação', {
+            'fields': ('deleted', 'active'),
         }),
     )
 
-    readonly_fields = ('created_at', 'updated_at')
-
-    def get_form(self, request, obj=None, **kwargs):
+    def get_administradores(self, obj):
         """
-        Customiza o formulário do admin, se necessário.
+        Exibe os administradores no list_display.
         """
-        form = super().get_form(request, obj, **kwargs)
-        # Lógica adicional pode ser adicionada aqui
-        return form
+        return ", ".join([admin.first_name for admin in obj.administradores.all()])
+    get_administradores.short_description = 'Administradores'

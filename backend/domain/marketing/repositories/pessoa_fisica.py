@@ -62,3 +62,13 @@ class PessoaFisicaContract(ABC):
         em projetos (ativo ou sem projeto).
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def associar_usuario_rede_social(self, pessoa_fisica_id: int, rede_social_id: int, usuario: str) -> None:
+        """Associa um nome de usuário a uma rede social específica para uma pessoa física."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def remover_usuario_rede_social(self, pessoa_fisica_id: int, rede_social_id: int) -> None:
+        """Remove a associação de um nome de usuário de uma rede social."""
+        raise NotImplementedError

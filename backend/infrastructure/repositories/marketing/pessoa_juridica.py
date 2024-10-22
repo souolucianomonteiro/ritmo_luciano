@@ -6,68 +6,55 @@ from domain.shared.exceptions.entity_not_found_exception import (
                                             EntityNotFoundException)
 from domain.shared.exceptions.operation_failed_exception import (
                                             OperationFailedException)
-from domain.marketing.repositories.pessoa_juridica import (
-                                            PessoaJuridicaContract)
 from domain.marketing.entities.pessoa_juridica import PessoaJuridicaDomain
+from domain.marketing.repositories.pessoa_juridica import (
+                                        PessoaJuridicaContract)
 from infrastructure.models.marketing.pessoa_juridica import PessoaJuridicaModel
 from infrastructure.repositories.marketing.pessoa_fisica import (
                                             PessoaFisicaRepository)
 from infrastructure.repositories.marketing.endereco import EnderecoRepository
-from infrastructure.repositories.shared.resources.rede_social import (
-                                                    RedeSocialRepository)
 from infrastructure.repositories.marketing.atividade_economica import (
-                                            AtividadeEconomicaRepository)
+                                                AtividadeEconomicaRepository)
+from infrastructure.repositories.shared.resources.rede_social import (
+                                                        RedeSocialRepository)
 
 
 class PessoaJuridicaRepository(PessoaJuridicaContract):
     """
-    Repositório concreto para a entidade PessoaJuridica, interagindo apenas com repositórios
-    de relacionamentos, sem acesso direto às models.
+    Repositório concreto para a entidade Pessoa Jurídica, gerenciando
+    a persistência e recuperação de dados no banco de dados e interagindo
+    com outros repositórios para lidar com os relacionamentos.
     """
 
     def __init__(
         self,
-        pessoa_fisica_repository: PessoaFisicaRepository,
-        atividade_economica_repository: AtividadeEconomicaRepository,
-        endereco_repository: EnderecoRepository,
-        rede_social_repository: RedeSocialRepository
+        pessoa_fisica_repo: PessoaFisicaRepository,
+        atividade_economica_repo: AtividadeEconomicaRepository,
+        endereco_repo: EnderecoRepository,
+        rede_social_repo: RedeSocialRepository
     ):
-        self.pessoa_fisica_repository = pessoa_fisica_repository
-        self.atividade_economica_repository = atividade_economica_repository
-        self.endereco_repository = endereco_repository
-        self.rede_social_repository = rede_social_repository
+        self.pessoa_fisica_repo = pessoa_fisica_repo
+        self.atividade_economica_repo = atividade_economica_repo
+        self.endereco_repo = endereco_repo
+        self.rede_social_repo = rede_social_repo
 
     @transaction.atomic
-    def get_by_id(self, pessoa_juridica_id: int) -> Optional[PessoaJuridicaDomain]:
+    def save(self, pessoa_juridica: PessoaJuridicaDomain) -> dict:
         """
-        Recupera uma pessoa jurídica pelo ID, utilizando os repositórios de relacionamento.
+        Salva ou atualiza uma pessoa jurídica no banco de dados.
+        Retorna um dicionário contendo o objeto salvo e um booleano
+        que indica se a entidade foi criada ou atualizada.
 
         Args:
-            pessoa_juridica_id (int): O ID da pessoa jurídica.
+            pessoa_juridica (PessoaJuridicaDomain): Entidade de domínio a ser salva.
 
         Returns:
-            Optional[PessoaJuridicaDomain]: A entidade de domínio correspondente, ou None se não encontrada.
+            dict: Um dicionário com a entidade salva e um indicador de criação.
         """
         try:
-            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
-            return self._model_to_domain(pessoa_juridica_model)
-        except PessoaJuridicaModel.DoesNotExist as exc:
-            raise EntityNotFoundException(f"Pessoa Jurídica com ID {pessoa_juridica_id} não encontrada.") from exc
-
-    @transaction.atomic
-    def save(self, pessoa_juridica: PessoaJuridicaDomain) -> PessoaJuridicaDomain:
-        """
-        Salva ou atualiza uma pessoa jurídica no repositório.
-
-        Args:
-            pessoa_juridica (PessoaJuridicaDomain): A entidade de domínio a ser salva.
-
-        Returns:
-            PessoaJuridicaDomain: A entidade de domínio salva ou atualizada.
-        """
-        try:
+            # Criar ou atualizar a entidade de Pessoa Jurídica
             pessoa_juridica_model, created = PessoaJuridicaModel.objects.update_or_create(
-                id=pessoa_juridica.id,
+                id=pessoa_juridica.pessoa_juridica_id,  # Corrigido para pessoa_juridica_id
                 defaults={
                     'razao_social': pessoa_juridica.razao_social,
                     'nome_fantasia': pessoa_juridica.nome_fantasia,
@@ -78,25 +65,51 @@ class PessoaJuridicaRepository(PessoaJuridicaContract):
                 }
             )
 
-            # Atualizar os relacionamentos usando os repositórios
+            # Atualizar os relacionamentos de administradores, atividades econômicas, endereços e redes sociais
             self._atualizar_relacionamentos(pessoa_juridica_model, pessoa_juridica)
 
-            return self._model_to_domain(pessoa_juridica_model)
+            # Retorna o objeto salvo e um indicador se foi criado ou atualizado
+            return {
+                'pessoa_juridica': pessoa_juridica_model,
+                'created': created
+            }
         except Exception as exc:
             raise OperationFailedException(f"Erro ao salvar a pessoa jurídica: {str(exc)}") from exc
 
     @transaction.atomic
-    def delete(self, pessoa_juridica_id: int) -> None:
+    def delete(self, pessoa_juridica_id: int) -> str:
         """
-        Exclui uma pessoa jurídica do repositório pelo ID.
+        Exclui uma pessoa jurídica pelo ID no banco de dados.
+        Retorna uma mensagem de sucesso ou levanta uma exceção em caso de erro.
 
         Args:
             pessoa_juridica_id (int): O ID da pessoa jurídica a ser excluída.
+
+        Returns:
+            str: Mensagem de sucesso.
         """
         try:
             PessoaJuridicaModel.objects.filter(id=pessoa_juridica_id).delete()
+            return "Pessoa Jurídica excluída com sucesso."
         except Exception as exc:
-            raise OperationFailedException(f"Erro ao excluir a pessoa jurídica com ID {pessoa_juridica_id}: {str(exc)}") from exc
+            raise OperationFailedException(f"Erro ao excluir a pessoa jurídica: {str(exc)}") from exc
+
+    @transaction.atomic
+    def get_by_id(self, pessoa_juridica_id: int) -> Optional[PessoaJuridicaDomain]:
+        """
+        Recupera uma pessoa jurídica pelo ID do banco de dados.
+
+        Args:
+            pessoa_juridica_id (int): O ID da pessoa jurídica.
+
+        Returns:
+            Optional[PessoaJuridicaDomain]: A entidade de domínio correspondente ou None.
+        """
+        try:
+            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            return self._model_to_domain(pessoa_juridica_model)
+        except PessoaJuridicaModel.DoesNotExist as exc:
+            raise EntityNotFoundException(f"Pessoa Jurídica com ID {pessoa_juridica_id} não encontrada.") from exc
 
     @transaction.atomic
     def list_all(self) -> List[PessoaJuridicaDomain]:
@@ -112,157 +125,54 @@ class PessoaJuridicaRepository(PessoaJuridicaContract):
         except Exception as exc:
             raise OperationFailedException(f"Erro ao listar todas as pessoas jurídicas: {str(exc)}") from exc
 
-    @transaction.atomic
-    def adicionar_administrador(self, pessoa_juridica_id: int, administrador_id: int) -> None:
+    def _atualizar_relacionamentos(self, pessoa_juridica_model: PessoaJuridicaModel, pessoa_juridica: PessoaJuridicaDomain) -> None:
         """
-        Adiciona um administrador a uma pessoa jurídica.
+        Atualiza os relacionamentos de uma pessoa jurídica usando os repositórios
+        correspondentes de Pessoa Física, Atividades Econômicas, Endereços e Redes Sociais.
 
         Args:
-            pessoa_juridica_id (int): O ID da pessoa jurídica.
-            administrador_id (int): O ID do administrador a ser adicionado.
+            pessoa_juridica_model (PessoaJuridicaModel): A instância do modelo de pessoa jurídica.
+            pessoa_juridica (PessoaJuridicaDomain): A entidade de domínio de pessoa jurídica.
         """
-        try:
-            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
-            administrador = self.pessoa_fisica_repository.get_by_id(administrador_id)
-            pessoa_juridica_model.administradores.add(administrador.id)
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao adicionar o administrador à pessoa jurídica: {str(exc)}") from exc
+        # Atualizar administradores usando o repositório de Pessoa Física
+        administradores = self.pessoa_fisica_repo.get_by_ids(pessoa_juridica.administradores)
+        pessoa_juridica_model.administradores.set(administradores)
 
-    @transaction.atomic
-    def remover_administrador(self, pessoa_juridica_id: int, administrador_id: int) -> None:
-        """
-        Remove um administrador de uma pessoa jurídica.
+        # Atualizar atividades econômicas usando o repositório de Atividades Econômicas
+        atividades = self.atividade_economica_repo.get_by_ids(pessoa_juridica.atividades_economicas)
+        pessoa_juridica_model.atividades_economicas.set(atividades)
 
-        Args:
-            pessoa_juridica_id (int): O ID da pessoa jurídica.
-            administrador_id (int): O ID do administrador a ser removido.
-        """
-        try:
-            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
-            administrador = self.pessoa_fisica_repository.get_by_id(administrador_id)
-            pessoa_juridica_model.administradores.remove(administrador.id)
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao remover o administrador da pessoa jurídica: {str(exc)}") from exc
+        # Atualizar endereços usando o repositório de Endereços
+        enderecos = self.endereco_repo.get_by_ids(pessoa_juridica.enderecos)
+        pessoa_juridica_model.enderecos.set(enderecos)
 
-    @transaction.atomic
-    def adicionar_atividade_economica(self, pessoa_juridica_id: int, atividade_id: int) -> None:
-        """
-        Adiciona uma atividade econômica a uma pessoa jurídica.
+        # Atualizar redes sociais usando o repositório de Redes Sociais
+        redes_sociais = self.rede_social_repo.get_by_ids(pessoa_juridica.redes_sociais)
+        pessoa_juridica_model.redes_sociais.set(redes_sociais)
 
-        Args:
-            pessoa_juridica_id (int): O ID da pessoa jurídica.
-            atividade_id (int): O ID da atividade econômica a ser adicionada.
-        """
-        try:
-            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
-            atividade = self.atividade_economica_repository.get_by_id(atividade_id)
-            pessoa_juridica_model.atividades_economicas.add(atividade.id)
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao adicionar a atividade econômica: {str(exc)}") from exc
-
-    @transaction.atomic
-    def remover_atividade_economica(self, pessoa_juridica_id: int, atividade_id: int) -> None:
-        """
-        Remove uma atividade econômica de uma pessoa jurídica.
-
-        Args:
-            pessoa_juridica_id (int): O ID da pessoa jurídica.
-            atividade_id (int): O ID da atividade econômica a ser removida.
-        """
-        try:
-            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
-            atividade = self.atividade_economica_repository.get_by_id(atividade_id)
-            pessoa_juridica_model.atividades_economicas.remove(atividade.id)
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao remover a atividade econômica: {str(exc)}") from exc
-
-    @transaction.atomic
-    def adicionar_rede_social(self, pessoa_juridica_id: int, rede_social_id: int) -> None:
-        """
-        Adiciona uma rede social a uma pessoa jurídica.
-
-        Args:
-            pessoa_juridica_id (int): O ID da pessoa jurídica.
-            rede_social_id (int): O ID da rede social a ser adicionada.
-        """
-        try:
-            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
-            rede_social = self.rede_social_repository.get_by_id(rede_social_id)
-            pessoa_juridica_model.redes_sociais.add(rede_social.id)
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao adicionar a rede social: {str(exc)}") from exc
-
-    @transaction.atomic
-    def remover_rede_social(self, pessoa_juridica_id: int, rede_social_id: int) -> None:
-        """
-        Remove uma rede social de uma pessoa jurídica.
-
-        Args:
-            pessoa_juridica_id (int): O ID da pessoa jurídica.
-            rede_social_id (int): O ID da rede social a ser removida.
-        """
-        try:
-            pessoa_juridica_model = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
-            rede_social = self.rede_social_repository.get_by_id(rede_social_id)
-            pessoa_juridica_model.redes_sociais.remove(rede_social.id)
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao remover a rede social: {str(exc)}") from exc
+        pessoa_juridica_model.save()
 
     def _model_to_domain(self, pessoa_juridica_model: PessoaJuridicaModel) -> PessoaJuridicaDomain:
         """
-        Converte um modelo de banco de dados em uma entidade de domínio.
+        Converte uma instância do modelo de banco de dados em uma entidade de domínio.
 
         Args:
             pessoa_juridica_model (PessoaJuridicaModel): A instância do modelo do banco de dados.
 
         Returns:
-            PessoaJuridicaDomain: A instância da entidade de domínio convertida.
+            PessoaJuridicaDomain: A entidade de domínio convertida.
         """
-        administradores_ids = list(pessoa_juridica_model.administradores.values_list('id', flat=True))
-        atividades_economicas_ids = list(pessoa_juridica_model.atividades_economicas.values_list('id', flat=True))
-        enderecos_ids = list(pessoa_juridica_model.enderecos.values_list('id', flat=True))
-        redes_sociais_ids = list(pessoa_juridica_model.redes_sociais.values_list('id', flat=True))
-
         return PessoaJuridicaDomain(
-            id=pessoa_juridica_model.id,
+            pessoa_juridica_id=pessoa_juridica_model.id,  # Corrigido para pessoa_juridica_id
             razao_social=pessoa_juridica_model.razao_social,
             nome_fantasia=pessoa_juridica_model.nome_fantasia,
             cnpj=pessoa_juridica_model.cnpj,
             inscricao_estadual=pessoa_juridica_model.inscricao_estadual,
-            administradores=administradores_ids,
-            iniciador_id=pessoa_juridica_model.iniciador_id,
-            enderecos=enderecos_ids,
-            atividades_economicas=atividades_economicas_ids,
+            administradores=list(pessoa_juridica_model.administradores.values_list('id', flat=True)),
+            iniciador_id=pessoa_juridica_model.iniciador_id.id,
+            enderecos=list(pessoa_juridica_model.enderecos.values_list('id', flat=True)),
+            atividades_economicas=list(pessoa_juridica_model.atividades_economicas.values_list('id', flat=True)),
             website=pessoa_juridica_model.website,
-            redes_sociais=redes_sociais_ids
+            redes_sociais=list(pessoa_juridica_model.redes_sociais.values_list('id', flat=True))
         )
 
-    def _atualizar_relacionamentos(self, pessoa_juridica_model: PessoaJuridicaModel, pessoa_juridica: PessoaJuridicaDomain) -> None:
-        """
-        Atualiza os relacionamentos da pessoa jurídica (administradores, atividades econômicas, endereços e redes sociais).
-
-        Args:
-            pessoa_juridica_model (PessoaJuridicaModel): A instância do modelo do banco de dados.
-            pessoa_juridica (PessoaJuridicaDomain): A entidade de domínio da pessoa jurídica.
-        """
-        # Atualizar administradores
-        pessoa_juridica_model.administradores.set(
-            self.pessoa_fisica_repository.get_by_ids(pessoa_juridica.administradores)
-        )
-
-        # Atualizar atividades econômicas
-        pessoa_juridica_model.atividades_economicas.set(
-            self.atividade_economica_repository.get_by_ids(pessoa_juridica.atividades_economicas)
-        )
-
-        # Atualizar endereços
-        pessoa_juridica_model.enderecos.set(
-            self.endereco_repository.get_by_ids(pessoa_juridica.enderecos)
-        )
-
-        # Atualizar redes sociais
-        pessoa_juridica_model.redes_sociais.set(
-            self.rede_social_repository.get_by_ids(pessoa_juridica.redes_sociais)
-        )
-
-        pessoa_juridica_model.save()

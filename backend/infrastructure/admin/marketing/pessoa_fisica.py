@@ -21,6 +21,23 @@ from datetime import date
 from typing import Optional
 from django.contrib import admin
 from infrastructure.models.marketing.pessoa_fisica import PessoaFisicaModel
+from infrastructure.models.marketing.pessoa_fisica_rede_social import (
+                                            PessoaFisicaRedeSocialModel)
+from infrastructure.models.shared.resources.rede_social import (
+                                                    RedeSocialModel)
+
+
+# Inline para gerenciamento de redes sociais associadas
+class PessoaFisicaRedeSocialInline(admin.TabularInline):
+    """
+    Define o inline da tabela associativa PessoaFisicaRedeSocialModel no admin.
+    Permite gerenciar as redes sociais diretamente a partir do cadastro de 
+    PessoaFisicaModel.
+    """
+    model = PessoaFisicaRedeSocialModel
+    extra = 1  # Quantidade de campos vazios para adicionar novas redes sociais
+    autocomplete_fields = ['rede_social']  # Facilita a seleção de redes sociais já cadastradas
+
 
 @admin.register(PessoaFisicaModel)
 class PessoaFisicaAdmin(admin.ModelAdmin):
@@ -35,14 +52,14 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
                     'data_nascimento', 'idade_em_anos', 'idade_em_meses',
                     'genero', 'situacao', 'conta_pessoa',
                     'iniciador_conta_empresa')
-    
+   
     # Campos de busca no painel de admin
     search_fields = ('first_name', 'last_name', 'cpf', 'email', 'whatsapp')
-    
+
     # Filtros para facilitar a navegação
     list_filter = ('genero', 'situacao', 'conta_pessoa', 
                    'iniciador_conta_empresa', 'data_nascimento')
-    
+  
     # Campos de leitura apenas
     readonly_fields = ('cpf', 'email', 'data_nascimento', 'ultimo_login')
 
@@ -63,9 +80,6 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
         ('Profissão e Ocupação', {
             'fields': ('profissao', 'ocupacao'),
         }),
-        ('Redes Sociais', {
-            'fields': ('redes_sociais',),
-        }),
         ('Permissões', {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups',
                        'user_permissions'),
@@ -78,8 +92,10 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
     # Adicionando um filtro lateral baseado em data de nascimento
     date_hierarchy = 'data_nascimento'
 
-# Calcular e exibir idade em anos
-   
+    # Adiciona as redes sociais como inline para edição no admin
+    inlines = [PessoaFisicaRedeSocialInline]  # Adiciona inline para redes sociais associadas
+
+    # Calcular e exibir idade em anos
     def idade_em_anos(self, obj: PessoaFisicaModel) -> Optional[int]:
         """Calcula a idade em anos com base na data de nascimento."""
         if obj.data_nascimento:
@@ -101,3 +117,12 @@ class PessoaFisicaAdmin(admin.ModelAdmin):
 
     idade_em_anos.short_description = 'Idade (Anos)'
     idade_em_meses.short_description = 'Idade (Meses)'
+
+
+@admin.register(RedeSocialModel)
+class RedeSocialAdmin(admin.ModelAdmin):
+    """
+    Configuração do Django Admin para o gerenciamento das redes sociais.
+    """
+    list_display = ('nome', 'icone')  # Exibe o nome e ícone da rede social
+    search_fields = ('nome',)  # Permite buscar redes sociais pelo nome

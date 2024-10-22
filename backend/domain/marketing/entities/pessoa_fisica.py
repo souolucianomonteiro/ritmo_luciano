@@ -17,6 +17,7 @@ from domain.shared.validations.valida_nascimento import validar_data_nascimento
 from domain.shared.validations.valida_telefone import validar_telefone
 from domain.marketing.entities.endereco import EnderecoDomain
 from domain.shared.resources.entities.localizacao import LocalizacaoDomain
+from domain.shared.resources.entities.rede_social import RedeSocialDomain
 from domain.shared.exceptions.exception_account_person import (
     InvalidCPFException, InvalidEmailException, InvalidDateException,
     InvalidPhoneException)
@@ -61,6 +62,7 @@ class PessoaFisicaDomain:
         bios: Optional[str] = None,
         situacao: Optional[str] = None,
         situacao_projeto: str = 'sem_projeto',
+        redes_sociais: Optional[List[RedeSocialDomain]] = None 
         
     ):
         """
@@ -102,6 +104,8 @@ class PessoaFisicaDomain:
         self.bios = bios
         self.situacao = situacao
         self.situacao_projeto = situacao_projeto
+        self.redes_sociais = redes_sociais or []
+        
         
     # Getters e Setters com validação e exceções
 
@@ -186,6 +190,24 @@ class PessoaFisicaDomain:
             esta_em_projetos (bool): Se a pessoa está ou não participando de algum projeto.
         """
         self.situacao_projeto = 'ativo' if esta_em_projetos else 'sem_projeto'
+
+    def associar_usuario_rede_social(self, rede_social: RedeSocialDomain, usuario: str) -> None:
+        """
+        Associa um nome de usuário à rede social selecionada.
+        Args:
+            rede_social (RedeSocialDomain): A rede social selecionada.
+            usuario (str): O nome de usuário associado a essa rede social.
+        """
+        self.redes_sociais[rede_social] = usuario  # Associa a rede social ao nome de usuário
+
+    def remover_usuario_rede_social(self, rede_social: RedeSocialDomain) -> None:
+        """
+        Remove o nome de usuário associado a uma rede social.
+        Args:
+            rede_social (RedeSocialDomain): A rede social a ser removida.
+        """
+        if rede_social in self.redes_sociais:
+            del self.redes_sociais[rede_social]
 
     def __str__(self) -> str:
         """
