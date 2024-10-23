@@ -5,7 +5,7 @@ from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.models.marketing.pessoa_fisica import PessoaFisicaModel
-from infrastructure.models.marketing.usuario_tipo import UsuarioTipo
+from infrastructure.models.marketing.usuario_tipo import UsuarioTipoModel
 
 
 class PessoaFisicaTipoModel( 
@@ -25,7 +25,7 @@ class PessoaFisicaTipoModel(
     
     pessoa_fisica_tipo_id = models.AutoField(primary_key=True) 
     pessoa_fisica_tipo_id = models.ForeignKey(PessoaFisicaModel, on_delete=models.CASCADE)
-    usuario_tipo_tipo = models.ForeignKey(UsuarioTipo, on_delete=models.CASCADE)
+    usuario_tipo_tipo = models.ForeignKey(UsuarioTipoModel, on_delete=models.CASCADE)
 
     class Meta:
         """

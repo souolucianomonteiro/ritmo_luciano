@@ -1,5 +1,29 @@
 # pylint: disable=no-member
+"""
+Módulo responsável pela implementação do repositório concreto de PessoaFisica.
 
+Este módulo implementa o repositório concreto que interage com as models do banco
+de dados PessoaFisicaModel, LocalizacaoModel e outras entidades relacionadas.
+Ele implementa as operações definidas no contrato PessoaFisicaContract, realizando 
+as interações com o banco de dados para salvar, buscar, atualizar, excluir, 
+alterar status, gerenciar endereços e redes sociais associadas a uma pessoa física.
+
+Classes:
+    PessoaFisicaRepository: Repositório concreto que implementa o contrato
+    PessoaFisicaContract para gerenciar PessoaFisica no banco de dados.
+
+Métodos:
+    - get_by_id: Busca uma pessoa física pelo ID.
+    - save: Salva ou atualiza uma pessoa física e seus relacionamentos.
+    - delete: Exclui uma pessoa física do banco de dados.
+    - list_all: Lista todas as pessoas físicas cadastradas.
+    - alterar_status: Altera o status da pessoa física.
+    - adicionar_endereco: Adiciona um endereço à pessoa física.
+    - remover_endereco: Remove um endereço da pessoa física.
+    - _model_to_domain: Converte uma instância de PessoaFisicaModel para a entidade de domínio.
+    - _atualizar_enderecos: Atualiza a lista de endereços de uma pessoa física.
+    - _salvar_redes_sociais: Gerencia as redes sociais associadas a uma pessoa física.
+"""
 from typing import Optional, List
 from django.db import transaction
 from domain.shared.exceptions.entity_not_found_exception import (
@@ -9,6 +33,8 @@ from domain.shared.exceptions.operation_failed_exception import (
 from domain.marketing.entities.pessoa_juridica import PessoaJuridicaDomain
 from domain.marketing.repositories.pessoa_juridica import (
                                         PessoaJuridicaContract)
+from domain.marketing.domain_service.ativar_pessoa_juridica import (
+                                                        AtivarPessoaJuridica)
 from infrastructure.models.marketing.pessoa_juridica import PessoaJuridicaModel
 from infrastructure.repositories.marketing.pessoa_fisica import (
                                             PessoaFisicaRepository)
@@ -125,6 +151,25 @@ class PessoaJuridicaRepository(PessoaJuridicaContract):
         except Exception as exc:
             raise OperationFailedException(f"Erro ao listar todas as pessoas jurídicas: {str(exc)}") from exc
 
+    def ativar_pessoa_juridica(self, pessoa_juridica_id: int) -> dict:
+        """
+        Ativa a pessoa jurídica se as condições forem atendidas.
+
+        Args:
+            pessoa_juridica_id (int): O identificador da pessoa jurídica a ser ativada.
+
+        Returns:
+            dict: Retorna o dicionário com o status e mensagem do serviço de ativação.
+        """
+        # Cria uma instância do serviço de ativação
+        ativar_servico = AtivarPessoaJuridica(pessoa_juridica_id, self)
+
+        # Executa o serviço de ativação e recebe o retorno
+        resultado = ativar_servico.executar()
+
+        # Retorna o resultado diretamente ou faz algum tratamento adicional se necessário
+        return resultado
+
     def _atualizar_relacionamentos(self, pessoa_juridica_model: PessoaJuridicaModel, pessoa_juridica: PessoaJuridicaDomain) -> None:
         """
         Atualiza os relacionamentos de uma pessoa jurídica usando os repositórios
@@ -175,4 +220,3 @@ class PessoaJuridicaRepository(PessoaJuridicaContract):
             website=pessoa_juridica_model.website,
             redes_sociais=list(pessoa_juridica_model.redes_sociais.values_list('id', flat=True))
         )
-

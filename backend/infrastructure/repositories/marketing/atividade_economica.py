@@ -16,13 +16,13 @@ Exceções lançadas:
 """
 from django.core.exceptions import ObjectDoesNotExist
 from domain.marketing.repositories.atividade_economica import (
-                                    AtividadeEconomicaContract)
+    AtividadeEconomicaContract)
 from domain.shared.exceptions.entity_not_found_exception import (
-                                            EntityNotFoundException)
+    EntityNotFoundException)
 from domain.shared.exceptions.operation_failed_exception import (
-                                        OperationFailedException)
+    OperationFailedException)
 from infrastructure.models.marketing.atividade_economica import (
-                                        AtividadeEconomicaModel)
+    AtividadeEconomicaModel)
 
 
 class AtividadeEconomicaRepository(AtividadeEconomicaContract):
@@ -56,10 +56,9 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
             atividade = AtividadeEconomicaModel.objects.get(id=atividade_econ_id)
             return atividade
 
-        except ObjectDoesNotExist: 
+        except ObjectDoesNotExist as e: 
             raise EntityNotFoundException(
-                f"Atividade econômica com ID {atividade_econ_id} "
-                f"não encontrada."
+                f"Atividade econômica com ID {atividade_econ_id} não encontrada."
             ) from e
 
         except Exception as e:
@@ -87,12 +86,15 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
                 f"Erro ao listar as atividades econômicas: {str(e)}"
             ) from e
 
-    def save(self, atividade_economica: AtividadeEconomicaModel) -> None:
+    def save(self, atividade_economica: AtividadeEconomicaModel) -> str:
         """
         Salva ou atualiza uma entidade AtividadeEconomicaModel no banco de dados.
 
         Args:
             atividade_economica (AtividadeEconomicaModel): A entidade a ser salva ou atualizada.
+
+        Returns:
+            str: Mensagem indicando se a operação foi realizada com sucesso.
 
         Raises:
             OperationFailedException: Se ocorrer um erro inesperado ao salvar a entidade.
@@ -100,18 +102,22 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
         try:
             # Salva a atividade econômica no banco de dados
             atividade_economica.save()
+            return "Atividade econômica salva com sucesso."
 
         except Exception as e:
             raise OperationFailedException(
                 f"Erro ao salvar a atividade econômica: {str(e)}"
             ) from e
 
-    def delete(self, atividade_econ_id: int) -> None:
+    def delete(self, atividade_econ_id: int) -> str:
         """
         Remove uma entidade AtividadeEconomicaModel do banco de dados pelo ID.
 
         Args:
             atividade_econ_id (int): O identificador único da atividade econômica.
+
+        Returns:
+            str: Mensagem indicando o sucesso da exclusão.
 
         Raises:
             EntityNotFoundException: Se a atividade econômica com o ID fornecido
@@ -124,11 +130,12 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
             
             # Remove a entidade
             atividade.delete()
+            return "Atividade econômica removida com sucesso."
 
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist as e:
             raise EntityNotFoundException(
                 f"Atividade econômica com ID {atividade_econ_id} não encontrada."
-            )from e
+            ) from e
 
         except Exception as e:
             raise OperationFailedException(

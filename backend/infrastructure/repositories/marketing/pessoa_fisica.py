@@ -60,10 +60,10 @@ class PessoaFisicaRepository:
         try:
             pessoa_model = PessoaFisicaModel.objects.get(pessoa_fisica_id=pessoa_fisica_id)
             return pessoa_model
-        except PessoaFisicaModel.DoesNotExist:
-            raise EntityNotFoundException(f"Pessoa Física com ID {pessoa_fisica_id} não encontrada.") from exc
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao buscar pessoa física: {str(exc)}") from exc
+        except PessoaFisicaModel.DoesNotExist as e:
+            raise EntityNotFoundException(f"Pessoa Física com ID {pessoa_fisica_id} não encontrada.") from e
+        except Exception as e:
+            raise OperationFailedException(f"Erro ao buscar pessoa física: {str(e)}") from e
 
     @transaction.atomic
     def save(self, pessoa_model: PessoaFisicaModel, redes_sociais: Dict[int, str]) -> str:
@@ -91,8 +91,8 @@ class PessoaFisicaRepository:
                 return "Pessoa Física criada com sucesso."
             else:
                 return "Pessoa Física atualizada com sucesso."
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao salvar a pessoa física: {str(exc)}") from exc
+        except Exception as e:
+            raise OperationFailedException(f"Erro ao salvar a pessoa física: {str(e)}") from e
 
     @transaction.atomic
     def delete(self, pessoa_fisica_id: int) -> str:
@@ -115,10 +115,10 @@ class PessoaFisicaRepository:
             pessoa_model.delete()
 
             return "Pessoa Física excluída com sucesso."
-        except PessoaFisicaModel.DoesNotExist:
-            raise EntityNotFoundException(f"Pessoa Física com ID {pessoa_fisica_id} não encontrada.") from exc
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao excluir a pessoa física: {str(exc)}") from exc
+        except PessoaFisicaModel.DoesNotExist as e:
+            raise EntityNotFoundException(f"Pessoa Física com ID {pessoa_fisica_id} não encontrada.") from e
+        except Exception as e:
+            raise OperationFailedException(f"Erro ao excluir a pessoa física: {str(e)}") from e
 
     def list_all(self) -> List[PessoaFisicaModel]:
         """
@@ -129,8 +129,8 @@ class PessoaFisicaRepository:
         """
         try:
             return PessoaFisicaModel.objects.all()
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao listar pessoas físicas: {str(exc)}") from exc
+        except Exception as e:
+            raise OperationFailedException(f"Erro ao listar pessoas físicas: {str(e)}") from e
 
     @transaction.atomic
     def alterar_status(self, pessoa_fisica_id: int, status: str) -> str:
@@ -150,10 +150,10 @@ class PessoaFisicaRepository:
             pessoa_model.save()
 
             return "Status da pessoa física alterado com sucesso."
-        except PessoaFisicaModel.DoesNotExist:
-            raise EntityNotFoundException(f"Pessoa Física com ID {pessoa_fisica_id} não encontrada.") from exc
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao alterar o status: {str(exc)}") from exc
+        except PessoaFisicaModel.DoesNotExist as e:
+            raise EntityNotFoundException(f"Pessoa Física com ID {pessoa_fisica_id} não encontrada.") from e
+        except Exception as e:
+            raise OperationFailedException(f"Erro ao alterar o status: {str(e)}") from e
 
     @transaction.atomic
     def _salvar_redes_sociais(self, pessoa_model: PessoaFisicaModel, redes_sociais: Dict[int, str]) -> None:
@@ -203,6 +203,6 @@ class PessoaFisicaRepository:
             ids_informados = list(redes_sociais.keys())
             redes_existentes.exclude(rede_social_id__in=ids_informados).delete()
 
-        except Exception as exc:
+        except Exception as e:
             raise OperationFailedException(
-                f"Erro ao salvar redes sociais: {str(exc)}") from exc
+                f"Erro ao salvar redes sociais: {str(e)}") from e

@@ -1,3 +1,4 @@
+# pylint: disable=unused-variable
 """
 Módulo responsável pela definição da model PessoaJuridicaModel.
 
@@ -12,20 +13,21 @@ Classes:
     suas informações associadas.
 """
 from django.db import models
-from django.core.exceptions import ValidationError
+from domain.shared.validations.valida_cnpj import validar_cnpj
+from domain.shared.exceptions.validation_exception import ValidationException
 from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.inactivate import InactivateMixin
+from infrastructure.mixins.status import StatusMixin  # Incluindo o StatusMixin
 from infrastructure.models.marketing.pessoa_fisica import PessoaFisicaModel
 from infrastructure.models.marketing.endereco import EnderecoModel
 from infrastructure.models.marketing.atividade_economica import (
                                         AtividadeEconomicaModel)
 from infrastructure.models.shared.resources.rede_social import RedeSocialModel
-from domain.shared.validations.valida_cnpj import validar_cnpj
 
 
 class PessoaJuridicaModel(
-    AuditMixin, SoftDeleteMixin, InactivateMixin, models.Model
+    AuditMixin, SoftDeleteMixin, InactivateMixin, StatusMixin, models.Model
 ):
     """
     Model que representa uma Pessoa Jurídica no sistema.
@@ -41,7 +43,15 @@ class PessoaJuridicaModel(
         atividades_economicas (ManyToMany): Relacionamento com as atividades econômicas.
         website (Optional[str]): Website da empresa.
         redes_sociais (ManyToMany): Relacionamento com redes sociais da empresa.
+        status (CharField): Status da empresa (ativo, inativo, suspenso etc.)
     """
+
+    STATUS_CHOICES = [
+        ('criada', 'Criada'),
+        ('ativada', 'Ativada'),
+        ('inativada', 'Inativada'),
+        ('suspensa', 'Suspensa'),
+    ]
 
     razao_social = models.CharField(max_length=255)
     nome_fantasia = models.CharField(max_length=255)
@@ -72,22 +82,27 @@ class PessoaJuridicaModel(
     # Relacionamento com Redes Sociais
     redes_sociais = models.ManyToManyField(RedeSocialModel, related_name='empresas', blank=True)
 
+    # Status da Pessoa Jurídica (Criada,Ativada, Inativada, Suspensa, etc.)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='criada')
+
+    def get_status_choices(self):
+        """
+        Retorna as opções de status disponíveis para a Pessoa Jurídica.
+        
+        Returns:
+            list: Lista de tuplas com os status disponíveis.
+        """
+        return self.STATUS_CHOICES
+
     def clean(self):
         """
         Validações customizadas para a model PessoaJuridica.
 
-        Este método garante que o CNPJ é válido e que o número de administradores
-        está entre 1 e 2.
+        Este método garante que o CNPJ é válido.
         """
         # Valida o CNPJ
         if not validar_cnpj(self.cnpj):
-            raise ValidationError({'cnpj': 'CNPJ inválido.'})
-
-        # Valida o número de administradores
-        if self.administradores.count() < 1:
-            raise ValidationError({'administradores': 'Deve haver pelo menos 1 administrador.'})
-        if self.administradores.count() > 2:
-            raise ValidationError({'administradores': 'Não pode haver mais de 2 administradores.'})
+            raise ValidationException({'cnpj': 'CNPJ inválido.'})
 
     def __str__(self):
         """
@@ -109,3 +124,4 @@ class PessoaJuridicaModel(
         db_table = 'infrastructure_pessoa_juridica'
         verbose_name = 'Pessoa Jurídica'
         verbose_name_plural = 'Pessoas Jurídicas'
+

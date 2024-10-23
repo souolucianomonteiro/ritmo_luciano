@@ -4,13 +4,20 @@ Módulo que implementa o repositório concreto para UsuarioTipo.
 
 Este repositório interage com o banco de dados através da model UsuarioTipoModel,
 implementando as operações definidas no contrato UsuarioTipoContract.
+
+Classes:
+    UsuarioTipoRepository: Implementa o contrato UsuarioTipoContract e gerencia 
+    as operações de persistência e recuperação de UsuarioTipoModel.
 """
 
 from typing import List, Optional
-from infrastructure.models.marketing.usuario_tipo import UsuarioTipoModel
+from domain.shared.exceptions.entity_not_found_exception import (
+                                            EntityNotFoundException)
+from domain.shared.exceptions.operation_failed_exception import (
+                                            OperationFailedException)
 from domain.marketing.entities.usuario_tipo import UsuarioTipoDomain
 from domain.marketing.repositories.usuario_tipo import UsuarioTipoContract
-from django.core.exceptions import ObjectDoesNotExist
+from infrastructure.models.marketing.usuario_tipo import UsuarioTipoModel
 
 
 class UsuarioTipoRepository(UsuarioTipoContract):
@@ -21,7 +28,7 @@ class UsuarioTipoRepository(UsuarioTipoContract):
     de dados através da model UsuarioTipoModel.
     """
 
-    def salvar(self, usuario_tipo: UsuarioTipoDomain) -> None:
+    def salvar(self, usuario_tipo: UsuarioTipoDomain) -> str:
         """
         Salva uma instância de UsuarioTipo no banco de dados.
 
@@ -30,12 +37,19 @@ class UsuarioTipoRepository(UsuarioTipoContract):
 
         Args:
             usuario_tipo (UsuarioTipoDomain): A instância de UsuarioTipo a ser salva.
+
+        Returns:
+            str: Mensagem de sucesso indicando que o tipo de usuário foi salvo.
         """
-        usuario_tipo_model = UsuarioTipoModel(
-            nome=usuario_tipo.nome,
-            descricao=usuario_tipo.descricao
-        )
-        usuario_tipo_model.save()
+        try:
+            usuario_tipo_model = UsuarioTipoModel(
+                nome=usuario_tipo.nome,
+                descricao=usuario_tipo.descricao
+            )
+            usuario_tipo_model.save()
+            return "Tipo de usuário salvo com sucesso."
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao salvar o tipo de usuário: {str(exc)}") from exc
 
     def buscar_por_id(self, usuario_tipo_id: int) -> Optional[UsuarioTipoDomain]:
         """
@@ -54,8 +68,10 @@ class UsuarioTipoRepository(UsuarioTipoContract):
                 nome=usuario_tipo_model.nome,
                 descricao=usuario_tipo_model.descricao
             )
-        except ObjectDoesNotExist:
-            return None
+        except UsuarioTipoModel.DoesNotExist as exc:
+            raise EntityNotFoundException(f"Tipo de usuário com ID {usuario_tipo_id} não encontrado.") from exc
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao buscar o tipo de usuário: {str(exc)}") from exc
 
     def listar_todos(self) -> List[UsuarioTipoDomain]:
         """
@@ -64,11 +80,14 @@ class UsuarioTipoRepository(UsuarioTipoContract):
         Returns:
             List[UsuarioTipoDomain]: Uma lista com todos os tipos de usuário.
         """
-        usuario_tipos = UsuarioTipoModel.objects.all()
-        return [
-            UsuarioTipoDomain(
-                usuario_tipo_id=usuario_tipo.id,
-                nome=usuario_tipo.nome,
-                descricao=usuario_tipo.descricao
-            ) for usuario_tipo in usuario_tipos
-        ]
+        try:
+            usuario_tipos = UsuarioTipoModel.objects.all()
+            return [
+                UsuarioTipoDomain(
+                    usuario_tipo_id=usuario_tipo.id,
+                    nome=usuario_tipo.nome,
+                    descricao=usuario_tipo.descricao
+                ) for usuario_tipo in usuario_tipos
+            ]
+        except Exception as exc:
+            raise OperationFailedException(f"Erro ao listar os tipos de usuário: {str(exc)}") from exc

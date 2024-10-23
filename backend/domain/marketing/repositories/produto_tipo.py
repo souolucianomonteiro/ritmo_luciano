@@ -1,68 +1,63 @@
 """Repositório abstrato para o gerenciamento de Tipo de Produto no domínio."""
 from abc import ABC, abstractmethod
-from typing import Optional
-from domain.marketing.entities.produto_tipo import ProdutoTipoDomain
+from typing import Optional, List
+from domain.marketing.entities.produto_tipo import TipoProdutoDomain
 
 
-class TipoProdutoRepository(ABC):
+class TipoProdutoContract(ABC):
     """
-    Classe que define a interface para as operações essenciais de CRUD
-    sobre o objeto de domínio TipoProdutoDomain. Não interage diretamente
-    com a infraestrutura ou banco de dados, mantendo o foco na lógica do
-    domínio.
+    Interface abstrata que define os métodos essenciais para o repositório
+    de TipoProduto.
+
+    Métodos:
+        get_by_id: Recupera um tipo de produto pelo ID.
+        save: Salva ou atualiza um tipo de produto.
+        delete: Exclui um tipo de produto pelo ID.
+        list_all: Lista todos os tipos de produtos.
     """
 
     @abstractmethod
-    def get_by_id(self, tipo_produto_id: int) -> Optional[ProdutoTipoDomain]:
+    def get_by_id(self, tipo_produto_id: int) -> Optional[TipoProdutoDomain]:
         """
-        Busca um TipoProdutoDomain pelo seu ID.
+        Recupera um tipo de produto pelo seu identificador único.
 
-        Parâmetros:
-            tipo_produto_id (int): O ID do tipo de produto a ser buscado.
+        Args:
+            tipo_produto_id (int): O identificador único do tipo de produto.
 
-        Retorna:
-            Optional[TipoProdutoDomain]: O objeto de domínio TipoProdutoDomain se encontrado, 
-            ou None caso não exista.
+        Returns:
+            Optional[TipoProdutoDomain]: O tipo de produto, ou None se não encontrado.
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
-    def get_by_name(self, nome: str) -> Optional[ProdutoTipoDomain]:
+    def save(self, tipo_produto: TipoProdutoDomain) -> TipoProdutoDomain:
         """
-        Busca um TipoProdutoDomain pelo seu nome.
+        Salva ou atualiza um tipo de produto.
 
-        Parâmetros:
-            nome (str): O nome do tipo de produto a ser buscado.
+        Args:
+            tipo_produto (TipoProdutoDomain): O tipo de produto a ser salvo.
 
-        Retorna:
-            Optional[TipoProdutoDomain]: O objeto de domínio TipoProdutoDomain
-            correspondente ao nome, ou None caso não exista.
+        Returns:
+            TipoProdutoDomain: O tipo de produto salvo ou atualizado.
         """
-        pass
-
-    @abstractmethod
-    def save(self, tipo_produto: ProdutoTipoDomain) -> ProdutoTipoDomain:
-        """
-        Salva ou atualiza um TipoProdutoDomain.
-
-        Parâmetros:
-            tipo_produto (TipoProdutoDomain): O objeto de domínio a ser salvo
-            ou atualizado.
-
-        Retorna:
-            TipoProdutoDomain: O objeto de domínio salvo ou atualizado.
-        """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def delete(self, tipo_produto_id: int) -> None:
         """
-        Remove um TipoProdutoDomain com base no seu ID.
+        Exclui um tipo de produto pelo seu identificador único.
 
-        Parâmetros:
-            tipo_produto_id (int): O ID do tipo de produto a ser removido.
-
-        Retorna:
-            None
+        Args:
+            tipo_produto_id (int): O identificador único do tipo de produto.
         """
-        pass
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_all(self) -> List[TipoProdutoDomain]:
+        """
+        Retorna uma lista de todos os tipos de produtos cadastrados.
+
+        Returns:
+            List[TipoProdutoDomain]: A lista de tipos de produtos.
+        """
+        raise NotImplementedError

@@ -370,59 +370,63 @@ INTERNAL_IPS = [
 
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
+    'version': 1,  # Versão do sistema de logging
+    'disable_existing_loggers': False,  # Não desativa loggers já existentes
     
-    'formatters': {
+    'formatters': {  # Define os formatos de log
         'verbose': {
-            # Formato dos logs incluindo nível, data, módulo, função e linha
+            # Formato completo, incluindo nível de log, data/hora, módulo, função, linha e mensagem
             'format': '{levelname} {asctime} {module} {funcName} {lineno} {message}',
-            'style': '{',
+            'style': '{',  # O estilo usa chaves para formatação
         },
     },
     
-    'handlers': {
+    'handlers': {  # Define como e onde os logs serão enviados
         'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'class': 'logging.StreamHandler',  # Envia os logs para o console (terminal)
+            'formatter': 'verbose',  # Usa o formato detalhado definido acima
         },
         'file_errors': {
-            'level': 'ERROR',
-            # Usa RotatingFileHandler para rotação automática de logs de erro
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': (r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
-                         r'\backend\infrastructure\logs\django_errors.log'),
-            'formatter': 'verbose',
-            'maxBytes': 1024 * 1024 * 5,  # Limite de 5 MB por arquivo de log
+            'level': 'ERROR',  # Captura apenas logs de nível ERROR e superior
+            'class': 'logging.handlers.RotatingFileHandler',  # Usa um arquivo com rotação automática
+            'filename': r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital\backend\infrastructure\logs\django_errors.log',  # Caminho para o arquivo de log de erros do Django
+            'formatter': 'verbose',  # Usa o formato detalhado
+            'maxBytes': 1024 * 1024 * 5,  # Limita o tamanho do arquivo a 5 MB
+            'backupCount': 3,  # Mantém até 3 arquivos de backup (exemplo: django_errors.log.1, django_errors.log.2...)
+        },
+        'file_personalizadas': {
+            'level': 'ERROR',  # Captura apenas logs de nível ERROR para exceções personalizadas
+            'class': 'logging.handlers.RotatingFileHandler',  # Usa um arquivo com rotação automática
+            'filename': r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital\backend\infrastructure\logs\personalizadas_errors.log',  # Caminho para o arquivo de log de exceções personalizadas
+            'formatter': 'verbose',  # Usa o formato detalhado
+            'maxBytes': 1024 * 1024 * 5,  # Limita o tamanho do arquivo a 5 MB
             'backupCount': 3,  # Mantém até 3 arquivos de backup
         },
         'file_ocorrencias': {
-            'level': 'INFO',
-            # Usa RotatingFileHandler para rotação automática de logs de ocorrências
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': (r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital'
-                         r'\backend\infrastructure\logs\ocorrencias.log'),  # Novo arquivo para logs de ocorrências
-            'formatter': 'verbose',
-            'maxBytes': 1024 * 1024 * 5,  # Limite de 5 MB por arquivo de log
+            'level': 'INFO',  # Captura logs de nível INFO e superior
+            'class': 'logging.handlers.RotatingFileHandler',  # Usa um arquivo com rotação automática
+            'filename': r'C:\Users\lucia\projeto_ritmo\loja\ritmo_digital\backend\infrastructure\logs\ocorrencias.log',  # Caminho para o arquivo de log de ocorrências
+            'formatter': 'verbose',  # Usa o formato detalhado
+            'maxBytes': 1024 * 1024 * 5,  # Limita o tamanho do arquivo a 5 MB
             'backupCount': 3,  # Mantém até 3 arquivos de backup
         },
     },
     
-    'loggers': {
+    'loggers': {  # Define os loggers que irão usar os handlers
         'django': {
-            'handlers': ['console', 'file_errors'],
-            'level': 'WARNING',  # Agora captura também logs de WARNING
-            'propagate': True,  # Propaga os logs de erro e warning
+            'handlers': ['console', 'file_errors'],  # Usa o console e o arquivo de erros do Django
+            'level': 'WARNING',  # Captura logs de nível WARNING e superior
+            'propagate': True,  # Propaga os logs para loggers superiores (caso existam)
         },
         'ocorrencias': {
-            'handlers': ['console', 'file_ocorrencias'],
-            'level': 'INFO',  # Captura logs de nível INFO
-            'propagate': False,  # Não propaga logs informacionais para outros loggers
+            'handlers': ['file_ocorrencias'],  # Usa o arquivo de ocorrências
+            'level': 'INFO',  # Captura logs de nível INFO e superior
+            'propagate': False,  # Não propaga logs para outros loggers
         },
         'excecoes_personalizadas': {
-            'handlers': ['file_errors'],
-            'level': 'ERROR',  # Captura erros de exceções personalizadas
-            'propagate': False,  # Não propaga os logs de exceções personalizadas
+            'handlers': ['file_personalizadas'],  # Usa o arquivo de exceções personalizadas
+            'level': 'ERROR',  # Captura apenas logs de nível ERROR
+            'propagate': False,  # Não propaga logs para outros loggers
         },
     },
 }

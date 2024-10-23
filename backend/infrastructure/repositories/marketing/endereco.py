@@ -15,9 +15,9 @@ Classes:
 
 from django.core.exceptions import ObjectDoesNotExist
 from domain.shared.exceptions.entity_not_found_exception import (
-                                            EntityNotFoundException)
+    EntityNotFoundException)
 from domain.shared.exceptions.operation_failed_exception import (
-                                        OperationFailedException)
+    OperationFailedException)
 from domain.marketing.entities.endereco import EnderecoDomain
 from domain.marketing.repositories.endereco import EnderecoContract
 from infrastructure.models.marketing.endereco import EnderecoModel
@@ -52,7 +52,6 @@ class EnderecoRepository(EnderecoContract):
         try:
             # Busca o endereço no banco de dados
             endereco_model = EnderecoModel.objects.get(id=endereco_id)
-            # Converte o modelo de banco de dados em uma entidade de domínio
             return self._from_model_to_domain(endereco_model)
         except ObjectDoesNotExist as e:
             raise EntityNotFoundException(
@@ -78,14 +77,13 @@ class EnderecoRepository(EnderecoContract):
         try:
             # Lista todos os endereços do banco de dados
             enderecos = EnderecoModel.objects.all()
-            # Converte cada EnderecoModel para EnderecoDomain
             return [self._from_model_to_domain(endereco) for endereco in enderecos]
         except Exception as e:
             raise OperationFailedException(
                 f"Erro ao listar os endereços: {str(e)}"
             ) from e
 
-    def save(self, endereco: EnderecoDomain) -> EnderecoDomain:
+    def save(self, endereco: EnderecoDomain) -> dict:
         """
         Salva ou atualiza um endereço no banco de dados.
 
@@ -94,29 +92,33 @@ class EnderecoRepository(EnderecoContract):
             atualizada no repositório.
 
         Returns:
-            EnderecoDomain: A entidade de endereço salva/atualizada.
+            dict: Contém a entidade salva e uma mensagem de sucesso.
 
         Raises:
             OperationFailedException: Se ocorrer um erro inesperado ao salvar o endereço.
         """
         try:
-            # Converte EnderecoDomain para EnderecoModel
             endereco_model = self._from_domain_to_model(endereco)
-            # Atualiza ou cria um novo endereço e marca como não excluído logicamente
             endereco_model.is_deleted = False
             endereco_model.save()
-            return self._from_model_to_domain(endereco_model)
+            return {
+                'endereco': self._from_model_to_domain(endereco_model),
+                'mensagem': 'Endereço salvo com sucesso.'
+            }
         except Exception as e:
             raise OperationFailedException(
                 f"Erro ao salvar o endereço: {str(e)}"
             ) from e
 
-    def soft_delete(self, endereco_id: int) -> None:
+    def soft_delete(self, endereco_id: int) -> str:
         """
         Realiza a exclusão lógica (soft delete) de um endereço pelo ID.
 
         Args:
             endereco_id (int): O identificador único do endereço a ser excluído.
+
+        Returns:
+            str: Mensagem de sucesso da exclusão lógica.
 
         Raises:
             EntityNotFoundException: Se o endereço com o ID fornecido não for
@@ -125,11 +127,10 @@ class EnderecoRepository(EnderecoContract):
             endereço.
         """
         try:
-            # Busca o endereço no banco de dados
             endereco_model = EnderecoModel.objects.get(id=endereco_id)
-            # Marca o endereço como excluído logicamente
             endereco_model.is_deleted = True
             endereco_model.save()
+            return f"Endereço com ID {endereco_id} foi excluído logicamente com sucesso."
         except ObjectDoesNotExist as e:
             raise EntityNotFoundException(
                 f"Endereço com ID {endereco_id} não encontrado."
@@ -154,9 +155,7 @@ class EnderecoRepository(EnderecoContract):
             endereços.
         """
         try:
-            # Busca endereços associados a uma pessoa física
             enderecos = EnderecoModel.objects.filter(pessoa_fisica_id=pessoa_fisica_id)
-            # Converte cada EnderecoModel para EnderecoDomain
             return [self._from_model_to_domain(endereco) for endereco in enderecos]
         except Exception as e:
             raise OperationFailedException(
@@ -178,9 +177,7 @@ class EnderecoRepository(EnderecoContract):
             endereços.
         """
         try:
-            # Busca endereços associados a uma pessoa jurídica
             enderecos = EnderecoModel.objects.filter(pessoa_juridica_id=pessoa_juridica_id)
-            # Converte cada EnderecoModel para EnderecoDomain
             return [self._from_model_to_domain(endereco) for endereco in enderecos]
         except Exception as e:
             raise OperationFailedException(
@@ -242,5 +239,5 @@ class EnderecoRepository(EnderecoContract):
             pessoa_juridica_id=endereco.pessoa_juridica_id,
             is_active=endereco.is_active,
             data_inicio=endereco.data_inicio,
-            data_fim=endereco.data_fim,
+            data_fim=endereco.data_fim
         )

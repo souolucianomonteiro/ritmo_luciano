@@ -1,3 +1,16 @@
+"""
+Módulo responsável pela definição do contrato abstrato para PessoaJuridica.
+
+Este módulo define a interface PessoaJuridicaContract, que estabelece os
+métodos essenciais para a persistência e gerenciamento da entidade de domínio 
+PessoaJuridica. Ele abrange operações como recuperação, criação, atualização 
+e exclusão de registros de pessoas jurídicas, além de métodos para gerenciar 
+relacionamentos com administradores, atividades econômicas, endereços e redes sociais.
+
+Classes:
+    PessoaJuridicaContract: Interface abstrata para o repositório de PessoaJuridica.
+"""
+
 from abc import ABC, abstractmethod
 from typing import Optional, List
 from domain.marketing.entities.pessoa_juridica import PessoaJuridicaDomain
