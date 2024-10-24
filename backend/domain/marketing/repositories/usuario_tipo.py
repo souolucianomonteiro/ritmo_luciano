@@ -18,7 +18,7 @@ class UsuarioTipoContract(ABC):
     """
 
     @abstractmethod
-    def salvar(self, usuario_tipo: UsuarioTipoDomain) -> None:
+    def salvar(self, usuario_tipo: UsuarioTipoDomain, user) -> None:
         """
         Salva uma instância de UsuarioTipo no repositório.
 

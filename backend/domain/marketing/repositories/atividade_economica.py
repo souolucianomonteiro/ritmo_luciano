@@ -33,7 +33,7 @@ class AtividadeEconomicaContract(ABC):
     """
 
     @abstractmethod
-    def get_by_id(self, atividade_econ_id: int) -> AtividadeEconomicaDomain:
+    def get_by_id(self, atividade_econ_id: int,) -> AtividadeEconomicaDomain:
         """
         Recupera uma entidade AtividadeEconomicaDomain pelo seu ID.
 
@@ -67,7 +67,7 @@ class AtividadeEconomicaContract(ABC):
         pass
 
     @abstractmethod
-    def save(self, atividade_economica: AtividadeEconomicaDomain) -> None:
+    def save(self, atividade_economica: AtividadeEconomicaDomain, user) -> None:
         """
         Salva ou atualiza uma entidade de AtividadeEconomicaDomain.
 
@@ -85,7 +85,7 @@ class AtividadeEconomicaContract(ABC):
         pass
 
     @abstractmethod
-    def delete(self, atividade_econ_id: int) -> None:
+    def delete(self, atividade_econ_id: int, user) -> None:
         """
         Remove uma entidade AtividadeEconomicaDomain do repositório pelo ID.
 

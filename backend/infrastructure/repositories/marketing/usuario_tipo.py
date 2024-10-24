@@ -28,7 +28,7 @@ class UsuarioTipoRepository(UsuarioTipoContract):
     de dados através da model UsuarioTipoModel.
     """
 
-    def salvar(self, usuario_tipo: UsuarioTipoDomain) -> str:
+    def salvar(self, usuario_tipo: UsuarioTipoDomain, user) -> str:
         """
         Salva uma instância de UsuarioTipo no banco de dados.
 
@@ -46,7 +46,7 @@ class UsuarioTipoRepository(UsuarioTipoContract):
                 nome=usuario_tipo.nome,
                 descricao=usuario_tipo.descricao
             )
-            usuario_tipo_model.save()
+            usuario_tipo_model.save(user=user)
             return "Tipo de usuário salvo com sucesso."
         except Exception as exc:
             raise OperationFailedException(f"Erro ao salvar o tipo de usuário: {str(exc)}") from exc

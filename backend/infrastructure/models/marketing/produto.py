@@ -2,10 +2,11 @@
 
 import uuid
 from django.db import models
+from infrastructure.mixins.audit import AuditMixin
 from infrastructure.models.marketing.produto_tipo import TipoProdutoModel
 
 
-class ProdutoModel(models.Model):
+class ProdutoModel(AuditMixin, models.Model):
     """
     Model para o Produto.
 

@@ -1,17 +1,12 @@
 """Módulo que implementa a model da relação pessoa física X usuario tipo"""
 
 from django.db import models
-from infrastructure.mixins.audit import AuditMixin
-from infrastructure.mixins.inactivate import InactivateMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.models.marketing.pessoa_fisica import PessoaFisicaModel
 from infrastructure.models.marketing.usuario_tipo import UsuarioTipoModel
 
 
-class PessoaFisicaTipoModel( 
-                       AuditMixin, InactivateMixin,
-                       SoftDeleteMixin, models.Model
-                    ):
+class PessoaFisicaTipoModel(SoftDeleteMixin, models.Model):
     """
     Model que representa a associação entre Pessoa Fisica e Usuario Tipo.
 

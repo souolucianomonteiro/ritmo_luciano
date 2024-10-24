@@ -66,7 +66,7 @@ class PessoaFisicaRepository:
             raise OperationFailedException(f"Erro ao buscar pessoa física: {str(e)}") from e
 
     @transaction.atomic
-    def save(self, pessoa_model: PessoaFisicaModel, redes_sociais: Dict[int, str]) -> str:
+    def save(self, pessoa_model: PessoaFisicaModel, redes_sociais: Dict[int, str], user) -> str:
         """
         Salva ou atualiza uma pessoa física no banco de dados e suas redes sociais associadas.
 
@@ -81,7 +81,7 @@ class PessoaFisicaRepository:
             created = not pessoa_model.pk  # Verifica se a pessoa está sendo criada ou atualizada
 
             # Salva ou atualiza a pessoa física no banco de dados
-            pessoa_model.save()
+            pessoa_model.save(user=user)
 
             # Gerencia o relacionamento de redes sociais
             self._salvar_redes_sociais(pessoa_model, redes_sociais)
@@ -95,7 +95,7 @@ class PessoaFisicaRepository:
             raise OperationFailedException(f"Erro ao salvar a pessoa física: {str(e)}") from e
 
     @transaction.atomic
-    def delete(self, pessoa_fisica_id: int) -> str:
+    def delete(self, pessoa_fisica_id: int, user) -> str:
         """
         Exclui uma pessoa física do banco de dados pelo ID.
 
@@ -112,7 +112,7 @@ class PessoaFisicaRepository:
             PessoaFisicaRedeSocialModel.objects.filter(pessoa_fisica=pessoa_model).delete()
 
             # Exclui a pessoa física
-            pessoa_model.delete()
+            pessoa_model.delete(user=user)
 
             return "Pessoa Física excluída com sucesso."
         except PessoaFisicaModel.DoesNotExist as e:

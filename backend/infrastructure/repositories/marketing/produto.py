@@ -52,7 +52,7 @@ class ProdutoRepository(ProdutoContract):
             raise OperationFailedException(f"Erro ao buscar o produto: {str(e)}") from e
 
     @transaction.atomic
-    def save(self, produto: ProdutoDomain) -> str:
+    def save(self, produto: ProdutoDomain, user) -> str:
         """
         Salva ou atualiza um produto no banco de dados.
 
@@ -75,7 +75,7 @@ class ProdutoRepository(ProdutoContract):
                 raise EntityNotFoundException(f"Tipo de Produto com ID {produto.tipo_produto_id} não encontrado.")
 
             # Criando ou atualizando o produto no banco de dados
-            created = ProdutoModel.objects.update_or_create(
+            produto_model, created = ProdutoModel.objects.update_or_create(
                 id=produto.produto_id,
                 defaults={
                     'nome': produto.nome,
@@ -84,6 +84,9 @@ class ProdutoRepository(ProdutoContract):
                 }
             )
 
+            # Garantir que os campos de auditoria sejam preenchidos passando o user
+            produto_model.save(user=user)
+            
             # Retorna uma mensagem de acordo com a operação realizada
             if created:
                 return "Produto criado com sucesso."
@@ -96,7 +99,7 @@ class ProdutoRepository(ProdutoContract):
             raise OperationFailedException(f"Erro ao salvar o produto: {str(e)}") from e
 
     @transaction.atomic
-    def delete(self, produto_id: str) -> str:
+    def delete(self, produto_id: str, user) -> str:
         """
         Exclui um produto do banco de dados pelo ID.
 
@@ -112,7 +115,7 @@ class ProdutoRepository(ProdutoContract):
         """
         try:
             produto_model = ProdutoModel.objects.get(id=produto_id)
-            produto_model.delete()
+            produto_model.delete(user=user)
             return "Produto excluído com sucesso."
         except ProdutoModel.DoesNotExist as e:
             raise EntityNotFoundException(f"Produto com ID {produto_id} não encontrado.") from e

@@ -1,3 +1,4 @@
+
 """
 Mixin para auditoria de alterações em models Django.
 
@@ -6,9 +7,9 @@ modificação e os usuários responsáveis pelas operações de criação e alte
 dos registros no banco de dados.
 """
 from django.db import models
-from django.utils.timezone import now
 from django.conf import settings
 from infrastructure.mixins.mixin_base import MixinBase
+
 
 class AuditMixin(MixinBase):
     """
@@ -43,23 +44,20 @@ class AuditMixin(MixinBase):
 
     def save(self, *args, **kwargs):
         """
-        Sobrescreve o método save para atualizar o campo updated_at e o
-        usuário responsável (updated_by) sempre que o registro for salvo.
+        Sobrescreve o método save para registrar o usuário que criou ou 
+        atualizou o registro. O usuário deve ser passado nos kwargs.
+
+        Args:
+            user (User): O usuário autenticado que está criando ou atualizando 
+            o registro.
         """
-        request = kwargs.pop('request', None)
-        if request and request.user.is_authenticated:
-            if not self.pk:  # Registro está sendo criado
-                self.created_by = request.user
-            self.updated_by = request.user
-        self.updated_at = now()
-        super().save(*args, **kwargs)
+        user = kwargs.pop('user', None)  # Obtém o usuário autenticado dos kwargs
+        if user and user.is_authenticated:
+            if not self.pk:  # Registro está sendo criado pela primeira vez
+                self.created_by = user  # Registra quem criou
+            self.updated_by = user  # Atualiza quem fez a última modificação
+
+        super().save(*args, **kwargs)  # Chama o save da classe pai
 
     class Meta:
-        """
-        Metadados para a classe modelo.
-
-        Define que a classe é abstrata, ou seja, não será criada uma tabela
-        diretamente para este modelo no banco de dados. Outras classes podem
-        herdar este modelo e estender sua funcionalidade.
-        """
-        abstract = True
+        abstract = True  # Define que este é um mixin abstrato

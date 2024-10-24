@@ -29,7 +29,7 @@ class ProfissaoRepository(ProfissaoContract):
     """
 
     @transaction.atomic
-    def salvar(self, profissao: ProfissaoDomain) -> str:
+    def salvar(self, profissao: ProfissaoDomain, user) -> str:
         """
         Salva ou atualiza uma instância de Profissao no banco de dados.
 
@@ -47,13 +47,16 @@ class ProfissaoRepository(ProfissaoContract):
         """
         try:
             # Salva ou atualiza a profissão e retorna um indicador de criação
-            _, created = ProfissaoModel.objects.update_or_create(
+            profissao_model, created = ProfissaoModel.objects.update_or_create(
                 id=profissao.profissao_id,
                 defaults={
                     'codigo': profissao.codigo,
                     'descricao': profissao.descricao,
                 }
             )
+
+            # Garantir que os campos de auditoria sejam preenchidos passando o user
+            profissao_model.save(user=user)
 
             # Retorna a mensagem apropriada
             if created:

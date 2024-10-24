@@ -208,8 +208,11 @@ DATABASES = {
         'PASSWORD': '4053',
         'HOST': 'localhost',
         'PORT': '5432',
+        'OPTIONS': {
+            'log_min_duration_statement': 1000,  # Loga queries SQL que demoram mais de 1 segundo (1000 ms)
         },
-    'sqlite': {
+        },
+        'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }

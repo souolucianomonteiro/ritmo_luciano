@@ -26,12 +26,12 @@ class PessoaFisicaContract(ABC):
         raise NotImplementedError
     
     @abstractmethod
-    def save(self, pessoa: PessoaFisicaDomain) -> PessoaFisicaDomain:
+    def save(self, pessoa: PessoaFisicaDomain, user) -> PessoaFisicaDomain:
         """Salva ou atualiza uma pessoa física no repositório."""
         raise NotImplementedError
     
     @abstractmethod
-    def delete(self, pessoa_fisica_id: int) -> None:
+    def delete(self, pessoa_fisica_id: int, user) -> None:
         """Exclui uma pessoa física do repositório pelo ID."""
         raise NotImplementedError
     

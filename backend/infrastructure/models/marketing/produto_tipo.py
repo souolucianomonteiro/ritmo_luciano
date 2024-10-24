@@ -1,12 +1,11 @@
 """"Módulo que implementa a model produto_tipo"""
 
 from django.db import models
-from infrastructure.mixins.audit import AuditMixin
 from infrastructure.mixins.softdelete import SoftDeleteMixin
 from infrastructure.mixins.status import StatusMixin
 
 
-class TipoProdutoModel(AuditMixin, SoftDeleteMixin, StatusMixin, models.Model):
+class TipoProdutoModel(SoftDeleteMixin, StatusMixin, models.Model):
     """
     Model que representa o Tipo de Produto no banco de dados.
 

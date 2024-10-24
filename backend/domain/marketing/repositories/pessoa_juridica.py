@@ -40,7 +40,7 @@ class PessoaJuridicaContract(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def save(self, pessoa_juridica: PessoaJuridicaDomain) -> PessoaJuridicaDomain:
+    def save(self, pessoa_juridica: PessoaJuridicaDomain, user) -> PessoaJuridicaDomain:
         """
         Salva ou atualiza uma pessoa jurídica no repositório.
 
@@ -53,7 +53,7 @@ class PessoaJuridicaContract(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, pessoa_juridica_id: int) -> None:
+    def delete(self, pessoa_juridica_id: int, user) -> None:
         """
         Exclui uma pessoa jurídica do repositório pelo ID.
 

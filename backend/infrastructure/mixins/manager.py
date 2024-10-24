@@ -5,7 +5,6 @@ Este manager filtra automaticamente os registros excluídos (soft delete) em
 consultas normais e oferece métodos para acessar registros excluídos ou
 ativos conforme a necessidade.
 """
-
 from django.db import models
 
 
@@ -22,15 +21,16 @@ class SoftDeleteManager(models.Manager):
         """
         return super().get_queryset().filter(is_deleted=False)
 
-    def deleted(self):
+    def only_deleted(self):
         """
         Retorna apenas os registros que foram marcados como excluídos
         (is_deleted=True).
         """
         return super().get_queryset().filter(is_deleted=True)
 
-    def with_deleted(self):
+    def all_with_deleted(self):
         """
-        Retorna todos os registros, incluindo os excluídos (is_deleted=True).
+        Retorna todos os registros, incluindo aqueles que foram excluídos 
+        logicamente (is_deleted=True).
         """
         return super().get_queryset()

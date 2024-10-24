@@ -27,7 +27,7 @@ class ProdutoContract(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def save(self, produto: ProdutoDomain) -> ProdutoDomain:
+    def save(self, produto: ProdutoDomain, user) -> ProdutoDomain:
         """
         Salva ou atualiza um produto no repositório.
 
@@ -40,7 +40,7 @@ class ProdutoContract(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, produto_id: UUID) -> None:
+    def delete(self, produto_id: UUID, user) -> None:
         """
         Exclui um produto pelo ID.
 

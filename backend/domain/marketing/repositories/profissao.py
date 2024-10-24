@@ -18,7 +18,7 @@ class ProfissaoContract(ABC):
     """
 
     @abstractmethod
-    def salvar(self, profissao: ProfissaoDomain) -> None:
+    def salvar(self, profissao: ProfissaoDomain, user) -> None:
         """
         Salva uma instância de Profissao no repositório.
 

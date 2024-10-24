@@ -86,7 +86,7 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
                 f"Erro ao listar as atividades econômicas: {str(e)}"
             ) from e
 
-    def save(self, atividade_economica: AtividadeEconomicaModel) -> str:
+    def save(self, atividade_economica: AtividadeEconomicaModel, user) -> str:
         """
         Salva ou atualiza uma entidade AtividadeEconomicaModel no banco de dados.
 
@@ -101,7 +101,7 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
         """
         try:
             # Salva a atividade econômica no banco de dados
-            atividade_economica.save()
+            atividade_economica.save(user=user)
             return "Atividade econômica salva com sucesso."
 
         except Exception as e:
@@ -109,7 +109,7 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
                 f"Erro ao salvar a atividade econômica: {str(e)}"
             ) from e
 
-    def delete(self, atividade_econ_id: int) -> str:
+    def delete(self, atividade_econ_id: int, user) -> str:
         """
         Remove uma entidade AtividadeEconomicaModel do banco de dados pelo ID.
 
@@ -129,7 +129,7 @@ class AtividadeEconomicaRepository(AtividadeEconomicaContract):
             atividade = AtividadeEconomicaModel.objects.get(id=atividade_econ_id)
             
             # Remove a entidade
-            atividade.delete()
+            atividade.delete(user=user)
             return "Atividade econômica removida com sucesso."
 
         except ObjectDoesNotExist as e:

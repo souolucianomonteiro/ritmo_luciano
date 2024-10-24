@@ -65,7 +65,7 @@ class PessoaJuridicaRepository(PessoaJuridicaContract):
         self.rede_social_repo = rede_social_repo
 
     @transaction.atomic
-    def save(self, pessoa_juridica: PessoaJuridicaDomain) -> dict:
+    def save(self, pessoa_juridica: PessoaJuridicaDomain, user) -> dict:
         """
         Salva ou atualiza uma pessoa jurídica no banco de dados.
         Retorna um dicionário contendo o objeto salvo e um booleano
@@ -91,19 +91,23 @@ class PessoaJuridicaRepository(PessoaJuridicaContract):
                 }
             )
 
+            # Garantir que os campos de auditoria sejam preenchidos passando o user
+            pessoa_juridica_model.save(user=user)
+
             # Atualizar os relacionamentos de administradores, atividades econômicas, endereços e redes sociais
             self._atualizar_relacionamentos(pessoa_juridica_model, pessoa_juridica)
 
             # Retorna o objeto salvo e um indicador se foi criado ou atualizado
             return {
                 'pessoa_juridica': pessoa_juridica_model,
-                'created': created
+                'created': created,
+                
             }
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao salvar a pessoa jurídica: {str(exc)}") from exc
+        except Exception as e:
+            raise OperationFailedException(f"Erro ao salvar a pessoa jurídica: {str(exc)}") from e
 
     @transaction.atomic
-    def delete(self, pessoa_juridica_id: int) -> str:
+    def delete(self, pessoa_juridica_id: int, user) -> str:
         """
         Exclui uma pessoa jurídica pelo ID no banco de dados.
         Retorna uma mensagem de sucesso ou levanta uma exceção em caso de erro.
@@ -115,10 +119,13 @@ class PessoaJuridicaRepository(PessoaJuridicaContract):
             str: Mensagem de sucesso.
         """
         try:
-            PessoaJuridicaModel.objects.filter(id=pessoa_juridica_id).delete()
+            pessoa_juridica = PessoaJuridicaModel.objects.get(id=pessoa_juridica_id)
+            pessoa_juridica.delete(user=user)     
             return "Pessoa Jurídica excluída com sucesso."
-        except Exception as exc:
-            raise OperationFailedException(f"Erro ao excluir a pessoa jurídica: {str(exc)}") from exc
+        except PessoaJuridicaModel.DoesNotExist:
+            raise EntityNotFoundException(f"Pessoa Jurídica com ID {pessoa_juridica_id} não encontrada.") from e
+        except Exception as e:
+            raise OperationFailedException(f"Erro ao excluir a pessoa jurídica: {str(e)}") from e
 
     @transaction.atomic
     def get_by_id(self, pessoa_juridica_id: int) -> Optional[PessoaJuridicaDomain]:
